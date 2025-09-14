@@ -1,0 +1,76 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="lg:flex lg:items-center lg:justify-between">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        <%= @country.name %>
+      </h2>
+      <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+        <div class="mt-2 flex items-center text-sm text-gray-500">
+          <span class="font-medium">Country Code:</span>
+          <span class="ml-1"><%= @country.code %></span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5 flex lg:mt-0 lg:ml-4">
+      <%= link_to "Edit", edit_admin_country_path(@country), class: "sm:ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      <%= link_to "Back to Countries", admin_countries_path, class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
+  </div>
+  
+  <!-- Country Statistics -->
+  <div class="mt-8">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Statistics</h3>
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Total Leagues</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @country.leagues.count %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Total Teams</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @country.teams.count %></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Leagues in this Country -->
+  <% if @country.leagues.any? %>
+    <div class="mt-8">
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Leagues</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">All leagues in <%= @country.name %></p>
+        </div>
+        <ul class="divide-y divide-gray-200">
+          <% @country.leagues.each do |league| %>
+            <li>
+              <div class="px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                      <span class="text-sm font-medium text-gray-700"><%= league.name.first %></span>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= link_to league.name, admin_league_path(league), class: "text-indigo-600 hover:text-indigo-900" %>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <%= pluralize(league.teams.count, 'team') %>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <%= link_to "Edit", edit_admin_league_path(league), class: "text-indigo-600 hover:text-indigo-900 text-sm" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+</div>

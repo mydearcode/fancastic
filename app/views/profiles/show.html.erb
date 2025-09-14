@@ -1,0 +1,79 @@
+<div class="max-w-4xl mx-auto p-6">
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Header with team colors -->
+    <% if @user.team.present? %>
+      <div class="h-32 bg-gradient-to-r" style="background: linear-gradient(135deg, <%= @user.team.color_primary %>, <%= @user.team.color_secondary %>);"></div>
+    <% else %>
+      <div class="h-32 bg-gradient-to-r from-gray-400 to-gray-600"></div>
+    <% end %>
+    
+    <!-- Profile content -->
+    <div class="px-6 py-4">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-4">
+          <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-2xl font-bold text-gray-600">
+            <%= @user.username.first.upcase if @user.username.present? %>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900"><%= @user.username %></h1>
+            <p class="text-gray-600"><%= @user.email_address %></p>
+          </div>
+        </div>
+        
+        <% if defined?(@is_own_profile) && @is_own_profile == false %>
+          <!-- Other user's profile - show message button if allowed -->
+          <% if @user.message_privacy == 'everyone' || (@user.message_privacy == 'followers' && true) %>
+            <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded border-0" %>
+          <% elsif @user.message_privacy == 'nobody' %>
+            <span class="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed">Messages Disabled</span>
+          <% end %>
+        <% else %>
+          <!-- Own profile - show edit button -->
+          <%= link_to "Edit Profile", profile_edit_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        <% end %>
+      </div>
+      
+      <!-- Team information -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Team</h3>
+          <% if @user.team.present? %>
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background-color: <%= @user.team.color_primary %>">
+                <%= @user.team.symbol_slug.upcase if @user.team.symbol_slug.present? %>
+              </div>
+              <div>
+                <p class="font-medium"><%= @user.team.name %></p>
+                <p class="text-sm text-gray-600"><%= @user.team.league.name %> - <%= @user.team.country.name %></p>
+              </div>
+            </div>
+          <% else %>
+            <p class="text-gray-500">No team selected</p>
+          <% end %>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Settings</h3>
+          <div class="space-y-2">
+            <div>
+              <span class="text-sm font-medium text-gray-600">Energy:</span>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                <div class="bg-green-600 h-2.5 rounded-full" style="width: <%= @user.energy %>%"></div>
+              </div>
+              <span class="text-sm text-gray-500"><%= @user.energy %>/100</span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-gray-600">Message Privacy:</span>
+              <span class="text-sm text-gray-900 capitalize"><%= @user.message_privacy %></span>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-gray-600">Role:</span>
+              <span class="text-sm text-gray-900 capitalize"><%= @user.role %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

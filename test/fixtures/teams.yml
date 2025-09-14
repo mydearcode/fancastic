@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  symbol_slug: MyString
+  color_primary: MyString
+  color_secondary: MyString
+  league: one
+  country: one
+
+two:
+  name: MyString
+  symbol_slug: MyString
+  color_primary: MyString
+  color_secondary: MyString
+  league: two
+  country: two

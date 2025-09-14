@@ -1,0 +1,63 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-xl font-semibold text-gray-900">Teams</h1>
+      <p class="mt-2 text-sm text-gray-700">Manage all teams in the system.</p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <%= link_to "Add Team", new_admin_team_path, class: "inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" %>
+    </div>
+  </div>
+  
+  <div class="mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">League</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fans</th>
+                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @teams.each do |team| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= link_to team.name, admin_team_path(team), class: "text-indigo-600 hover:text-indigo-900" %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= link_to team.league.name, admin_league_path(team.league), class: "text-indigo-600 hover:text-indigo-900" %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= link_to team.country.name, admin_country_path(team.country), class: "text-indigo-600 hover:text-indigo-900" %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= team.users.count %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <%= link_to "Edit", edit_admin_team_path(team), class: "text-indigo-600 hover:text-indigo-900 mr-4" %>
+                    <%= link_to "Delete", admin_team_path(team), method: :delete, 
+                        confirm: "Are you sure?", 
+                        class: "text-red-600 hover:text-red-900" %>
+                  </td>
+                </tr>
+              <% end %>
+              
+              <% if @teams.empty? %>
+                <tr>
+                  <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                    No teams found. <%= link_to "Add the first team", new_admin_team_path, class: "text-indigo-600 hover:text-indigo-900" %>.
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
