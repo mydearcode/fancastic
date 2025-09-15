@@ -10,6 +10,9 @@ class PostsController < ApplicationController
   end
 
   def show
+    @replies = @post.replies.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+                    .order(created_at: :desc)
+    @reply_post = Post.new(visibility: 'everyone')
   end
 
   def new
@@ -159,20 +162,23 @@ class PostsController < ApplicationController
       return
     end
     
-    if request.post?
-      # Handle reply creation
-      @reply_post = Current.user.posts.build(post_params.merge(in_reply_to_post: @post))
-      
-      if @reply_post.save
-        Current.user.perform_action('reply', @post)
-        redirect_to root_path, notice: 'Reply posted successfully!'
-      else
-        render :reply, status: :unprocessable_entity
-      end
+    # Handle reply creation
+    @reply_post = Current.user.posts.build(post_params.merge(in_reply_to_post_id: @post.id, visibility: 'everyone'))
+    
+    if @reply_post.save
+      Current.user.perform_action('reply', @post)
+      redirect_to post_path(@post), notice: 'Reply posted successfully!'
     else
-      # Show reply form
-      @reply_post = Current.user.posts.build(in_reply_to_post: @post)
+      redirect_to post_path(@post), alert: 'Failed to post reply. Please try again.'
     end
+  end
+  
+  def quotes
+    @post = Post.find(params[:id])
+    @quotes = Post.includes(:user, :quote_of_post)
+                  .where(quote_of_post: @post)
+                  .order(created_at: :desc)
+                  .limit(50)
   end
 
   private

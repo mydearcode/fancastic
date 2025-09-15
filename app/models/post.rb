@@ -56,10 +56,16 @@ class Post < ApplicationRecord
   end
   
   def reposts_count
-    reposts.count
+    # Combined count of reposts and quotes (Twitter/X style)
+    reposts.count + quotes.count
   end
   
   def quotes_count
+    quotes.count
+  end
+  
+  def quotes_only_count
+    # For quotes view page - only actual quotes
     quotes.count
   end
   

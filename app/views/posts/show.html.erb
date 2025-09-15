@@ -1,4 +1,62 @@
-<div>
-  <h1 class="font-bold text-4xl">Posts#show</h1>
-  <p>Find me in app/views/posts/show.html.erb</p>
+<div class="max-w-2xl mx-auto px-4 py-6">
+  <!-- Back Navigation -->
+  <div class="mb-6">
+    <%= link_to root_path, class: "inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors" do %>
+      <span class="mr-2">←</span>
+      Back to feed
+    <% end %>
+  </div>
+
+  <!-- Main Post -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+    <%= render 'post', post: @post %>
+  </div>
+
+  <!-- Reply Form -->
+  <% if Current.user.can_perform_action?('reply') %>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Reply to this post</h3>
+      
+      <%= form_with model: @reply_post, url: reply_post_path(@post), method: :post, local: true, class: "space-y-4" do |form| %>
+        <%= form.hidden_field :in_reply_to_post_id, value: @post.id %>
+        
+        <div>
+          <%= form.text_area :text, 
+              placeholder: "What's your reply?", 
+              rows: 3,
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" %>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-500">Replying costs 2 energy</span>
+          <%= form.submit "Reply (-2 Energy)", 
+              class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-gray-50 rounded-lg border border-gray-200 p-6 mb-6 text-center">
+      <p class="text-gray-500">Not enough energy to reply. Wait for energy to restore.</p>
+    </div>
+  <% end %>
+
+  <!-- Replies Section -->
+  <div class="space-y-4">
+    <h3 class="text-lg font-medium text-gray-900">
+      Replies 
+      <span class="text-sm font-normal text-gray-500">(<%= @replies.count %>)</span>
+    </h3>
+    
+    <% if @replies.any? %>
+      <% @replies.each do |reply| %>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <%= render 'post', post: reply %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
+        <p class="text-gray-500">No replies yet. Be the first to reply!</p>
+      </div>
+    <% end %>
+  </div>
 </div>

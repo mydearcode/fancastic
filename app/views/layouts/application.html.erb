@@ -76,5 +76,30 @@
       <!-- Modal Container for Turbo Frames -->
       <%= turbo_frame_tag "quote_modal" %>
     </main>
+    
+    <script>
+      function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const allDropdowns = document.querySelectorAll('[id^="repost-dropdown-"]');
+        
+        // Close all other dropdowns
+        allDropdowns.forEach(d => {
+          if (d.id !== dropdownId) {
+            d.classList.add('hidden');
+          }
+        });
+        
+        // Toggle current dropdown
+        dropdown.classList.toggle('hidden');
+      }
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!event.target.closest('.relative')) {
+          const allDropdowns = document.querySelectorAll('[id^="repost-dropdown-"]');
+          allDropdowns.forEach(d => d.classList.add('hidden'));
+        }
+      });
+    </script>
   </body>
 </html>

@@ -21,12 +21,23 @@
         </div>
         
         <% if defined?(@is_own_profile) && @is_own_profile == false %>
-          <!-- Other user's profile - show message button if allowed -->
-          <% if @user.message_privacy == 'everyone' || (@user.message_privacy == 'followers' && true) %>
-            <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded border-0" %>
-          <% elsif @user.message_privacy == 'nobody' %>
-            <span class="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed">Messages Disabled</span>
-          <% end %>
+          <!-- Other user's profile - show follow and message buttons -->
+          <div class="flex space-x-3">
+            <% if Current.user.following?(@user) %>
+              <%= button_to "Unfollow", user_follow_path(@user), method: :delete, 
+                  class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded border-0",
+                  form: { data: { turbo_method: :delete } } %>
+            <% else %>
+              <%= button_to "Follow", user_follow_path(@user), method: :post, 
+                  class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded border-0" %>
+            <% end %>
+            
+            <% if @user.message_privacy == 'everyone' || (@user.message_privacy == 'followers' && Current.user.following?(@user)) %>
+              <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded border-0" %>
+            <% elsif @user.message_privacy == 'nobody' %>
+              <span class="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed">Messages Disabled</span>
+            <% end %>
+          </div>
         <% else %>
           <!-- Own profile - show edit button -->
           <%= link_to "Edit Profile", profile_edit_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
@@ -55,6 +66,20 @@
         <div class="bg-gray-50 p-4 rounded-lg">
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Settings</h3>
           <div class="space-y-2">
+            <div class="grid grid-cols-2 gap-4 mb-3">
+              <div class="text-center">
+                <%= link_to user_followers_path(@user), class: "block hover:text-blue-600" do %>
+                  <div class="text-lg font-bold text-gray-900"><%= @user.followers_count %></div>
+                  <div class="text-sm text-gray-600">Followers</div>
+                <% end %>
+              </div>
+              <div class="text-center">
+                <%= link_to user_following_path(@user), class: "block hover:text-blue-600" do %>
+                  <div class="text-lg font-bold text-gray-900"><%= @user.following_count %></div>
+                  <div class="text-sm text-gray-600">Following</div>
+                <% end %>
+              </div>
+            </div>
             <div>
               <span class="text-sm font-medium text-gray-600">Energy:</span>
               <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">

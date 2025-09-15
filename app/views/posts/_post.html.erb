@@ -27,14 +27,20 @@
       <div class="border-l-4 border-gray-300 pl-4">
         <% if post.repost_of_post.quote_of_post_id.present? %>
           <!-- Reposted Quote Post -->
-          <p class="text-gray-900 mb-4"><%= post.repost_of_post.text %></p>
+          <%= link_to post_path(post.repost_of_post), class: "block" do %>
+            <p class="text-gray-900 mb-4 hover:text-gray-700 transition-colors cursor-pointer"><%= post.repost_of_post.text %></p>
+          <% end %>
           <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <p class="text-gray-700"><%= post.repost_of_post.quote_of_post.text %></p>
+            <%= link_to post_path(post.repost_of_post.quote_of_post), class: "block" do %>
+              <p class="text-gray-700 hover:text-gray-600 transition-colors cursor-pointer"><%= post.repost_of_post.quote_of_post.text %></p>
+            <% end %>
             <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.repost_of_post.quote_of_post.user.username}", user_profile_path(post.repost_of_post.quote_of_post.user), class: "text-blue-600 hover:text-blue-800" %></p>
           </div>
         <% else %>
           <!-- Regular Repost -->
-          <p class="text-gray-900"><%= post.repost_of_post.text %></p>
+          <%= link_to post_path(post.repost_of_post), class: "block" do %>
+            <p class="text-gray-900 hover:text-gray-700 transition-colors cursor-pointer"><%= post.repost_of_post.text %></p>
+          <% end %>
         <% end %>
         <p class="text-sm text-gray-500 mt-2">Originally by <%= link_to "@#{post.repost_of_post.user.username}", user_profile_path(post.repost_of_post.user), class: "text-blue-600 hover:text-blue-800" %></p>
       </div>
@@ -42,9 +48,13 @@
       <% target_post = post.repost_of_post %>
     <% elsif post.quote_of_post_id.present? %>
       <!-- Quote Post -->
-      <p class="text-gray-900 mb-4"><%= post.text %></p>
+      <%= link_to post_path(post), class: "block" do %>
+        <p class="text-gray-900 mb-4 hover:text-gray-700 transition-colors cursor-pointer"><%= post.text %></p>
+      <% end %>
       <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <p class="text-gray-700"><%= post.quote_of_post.text %></p>
+        <%= link_to post_path(post.quote_of_post), class: "block" do %>
+          <p class="text-gray-700 hover:text-gray-600 transition-colors cursor-pointer"><%= post.quote_of_post.text %></p>
+        <% end %>
         <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.quote_of_post.user.username}", user_profile_path(post.quote_of_post.user), class: "text-blue-600 hover:text-blue-800" %></p>
       </div>
       <% # For quote posts, target is the post itself %>
@@ -54,12 +64,16 @@
       <div class="text-gray-600 mb-2">
         <i class="fas fa-reply"></i> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-600 hover:text-blue-800" %>
       </div>
-      <p class="text-gray-900"><%= post.text %></p>
+      <%= link_to post_path(post), class: "block" do %>
+        <p class="text-gray-900 hover:text-gray-700 transition-colors cursor-pointer"><%= post.text %></p>
+      <% end %>
       <% # For reply posts, target is the post itself %>
       <% target_post = post %>
     <% else %>
       <!-- Regular Post -->
-      <p class="text-gray-900"><%= post.text %></p>
+      <%= link_to post_path(post), class: "block" do %>
+        <p class="text-gray-900 hover:text-gray-700 transition-colors cursor-pointer"><%= post.text %></p>
+      <% end %>
       <% # For regular posts, target is the post itself %>
       <% target_post = post %>
     <% end %>
@@ -73,34 +87,59 @@
   <div class="flex justify-between items-center pt-4 border-t border-gray-100">
     <div class="flex space-x-6 text-sm text-gray-500">
       <!-- Reply -->
-      <% if Current.user.can_perform_action?('reply') %>
-        <%= link_to reply_post_path(target_post), class: "hover:text-blue-500 transition-colors flex items-center space-x-1",
-            title: "Reply (-3 energy)" do %>
-          <span>💬</span>
-          <span><%= target_post.replies_count %></span>
-        <% end %>
-      <% else %>
-        <span class="text-gray-400 cursor-not-allowed flex items-center space-x-1" title="Not enough energy to reply">
-          <span>💬</span>
-          <span><%= target_post.replies_count %></span>
-        </span>
+      <%= link_to post_path(target_post), class: "hover:text-blue-500 transition-colors flex items-center space-x-1",
+          title: "View post and reply" do %>
+        <span>💬</span>
+        <span><%= target_post.replies_count %></span>
       <% end %>
       
-      <!-- Repost -->
-      <% if Current.user.can_perform_action?('repost') %>
-        <%= link_to repost_post_path(target_post), method: :post, 
-            data: { turbo_method: :post, turbo_confirm: target_post.reposted_by?(Current.user) ? "Remove your repost?" : "Repost this to your followers?" }, 
-            class: "hover:text-green-500 transition-colors flex items-center space-x-1 #{'text-green-500' if target_post.reposted_by?(Current.user)}",
-            title: target_post.reposted_by?(Current.user) ? "Remove repost (-2 energy)" : "Repost (-2 energy)" do %>
-          <span>🔄</span>
-          <span><%= target_post.reposts_count %></span>
+      <!-- Repost Dropdown -->
+      <div class="relative inline-block text-left">
+        <% if Current.user.can_perform_action?('repost') || Current.user.can_perform_action?('quote') %>
+          <button type="button" onclick="toggleDropdown('repost-dropdown-<%= target_post.id %>')" 
+                  class="hover:text-green-500 transition-colors flex items-center space-x-1 #{'text-green-500' if target_post.reposted_by?(Current.user)}" 
+                  title="Repost options">
+            <span>🔄</span>
+            <span><%= target_post.reposts_count %></span>
+          </button>
+          
+          <!-- Dropdown Menu -->
+          <div id="repost-dropdown-<%= target_post.id %>" class="hidden absolute bottom-full left-0 mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div class="py-1">
+              <% if Current.user.can_perform_action?('repost') %>
+                <%= link_to repost_post_path(target_post), method: :post,
+                    data: { turbo_method: :post, turbo_confirm: target_post.reposted_by?(Current.user) ? "Remove your repost?" : "Repost this to your followers?" },
+                    class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center" do %>
+                  <span class="mr-2">🔄</span>
+                  <%= target_post.reposted_by?(Current.user) ? "Remove repost" : "Repost" %>
+                <% end %>
+              <% end %>
+              
+              <% if Current.user.can_perform_action?('quote') %>
+                <%= link_to quote_post_path(target_post),
+                    class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center",
+                    data: { turbo_frame: "quote_modal" } do %>
+                  <span class="mr-2">💭</span>
+                  Quote
+                <% end %>
+              <% end %>
+              
+              <% if target_post.quotes_only_count > 0 %>
+                 <%= link_to quotes_post_path(target_post),
+                     class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center" do %>
+                   <span class="mr-2">👁️</span>
+                   View quotes (<%= target_post.quotes_only_count %>)
+                 <% end %>
+               <% end %>
+            </div>
+          </div>
+        <% else %>
+          <span class="text-gray-400 cursor-not-allowed flex items-center space-x-1" title="Not enough energy">
+            <span>🔄</span>
+            <span><%= target_post.reposts_count %></span>
+          </span>
         <% end %>
-      <% else %>
-        <span class="text-gray-400 cursor-not-allowed flex items-center space-x-1" title="Not enough energy to repost">
-          <span>🔄</span>
-          <span><%= target_post.reposts_count %></span>
-        </span>
-      <% end %>
+      </div>
       
       <!-- Like -->
       <% if Current.user.can_perform_action?('like') %>
@@ -118,21 +157,7 @@
         </span>
       <% end %>
       
-      <!-- Quote -->
-      <% if Current.user.can_perform_action?('quote') %>
-        <%= link_to quote_post_path(target_post), 
-            class: "hover:text-purple-500 transition-colors flex items-center space-x-1",
-            title: "Quote (-3 energy)",
-            data: { turbo_frame: "quote_modal" } do %>
-          <span>💭</span>
-          <span><%= target_post.quotes_count %></span>
-        <% end %>
-      <% else %>
-        <span class="text-gray-400 cursor-not-allowed flex items-center space-x-1" title="Not enough energy to quote">
-          <span>💭</span>
-          <span><%= target_post.quotes_count %></span>
-        </span>
-      <% end %>
+
     </div>
   </div>
 </div>

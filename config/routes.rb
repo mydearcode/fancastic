@@ -4,16 +4,25 @@ Rails.application.routes.draw do
     member do
       post :like
       post :repost
-      get :reply
       post :reply
       get :quote
       post :quote
+      get :quotes
     end
   end
   get "profile", to: "profiles#show"
   get "profile/edit", to: "profiles#edit"
   patch "profile", to: "profiles#update"
   get "users/:id", to: "profiles#show_user", as: :user_profile
+  
+  # Follow routes
+  resources :users, only: [] do
+    post :follow, to: "follows#create"
+    delete :follow, to: "follows#destroy"
+    get :followers, to: "follows#followers"
+    get :following, to: "follows#following"
+  end
+  
   resource :session
   resources :registrations, only: [:new, :create]
   resources :passwords, param: :token

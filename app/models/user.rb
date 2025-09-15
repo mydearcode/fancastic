@@ -13,6 +13,12 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: :post
   
+  # Follow associations
+  has_many :active_follows, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
+  has_many :passive_follows, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
+  has_many :following, through: :active_follows, source: :followed
+  has_many :followers, through: :passive_follows, source: :follower
+  
   # FanPulse energy system
   has_many :interaction_logs, class_name: 'FanPulse::InteractionLog', dependent: :destroy
 
@@ -43,5 +49,28 @@ class User < ApplicationRecord
   
   def low_energy?
     energy < 20
+  end
+  
+  # Follow helper methods
+  def follow(user)
+    return false if user == self
+    return false if following?(user)
+    active_follows.create(followed: user)
+  end
+  
+  def unfollow(user)
+    active_follows.find_by(followed: user)&.destroy
+  end
+  
+  def following?(user)
+    following.include?(user)
+  end
+  
+  def followers_count
+    followers.count
+  end
+  
+  def following_count
+    following.count
   end
 end

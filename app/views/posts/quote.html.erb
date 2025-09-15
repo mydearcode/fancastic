@@ -42,8 +42,8 @@
       <div class="flex justify-between items-center">
         <div class="flex space-x-4">
           <%= form.select :visibility, 
-              options_for_select(Post.visibilities.map { |key, value| [key.humanize, key] }, 'public'),
-              { prompt: "Visibility" },
+              options_for_select(Post.visibilities.map { |key, value| [key.humanize, key] }, 'everyone'),
+              {},
               { class: "px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" } %>
         </div>
         
