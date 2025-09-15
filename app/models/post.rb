@@ -11,12 +11,17 @@ class Post < ApplicationRecord
   has_many :reposts, class_name: "Post", foreign_key: "repost_of_post_id", dependent: :destroy
   has_many :quotes, class_name: "Post", foreign_key: "quote_of_post_id", dependent: :destroy
   
+  # Likes association
+  has_many :likes, dependent: :destroy
+  has_many :liked_by_users, through: :likes, source: :user
+  
   # Visibility enum
   enum :visibility, { everyone: 0, team_only: 1, followers: 2, only_me: 3 }
   
   # Validations
   validates :text, presence: true, unless: :is_repost?
   validates :visibility, presence: true
+  validates :repost_of_post_id, uniqueness: { scope: :user_id, message: "You have already reposted this post" }, if: :is_repost?
   
   # Scopes and helper methods
   scope :replies, -> { where.not(in_reply_to_post_id: nil) }
@@ -34,5 +39,31 @@ class Post < ApplicationRecord
   
   def is_quote?
     quote_of_post_id.present? && text.present?
+  end
+  
+  def liked_by?(user)
+    return false unless user
+    likes.exists?(user: user)
+  end
+  
+  def reposted_by?(user)
+    return false unless user
+    reposts.exists?(user: user)
+  end
+  
+  def likes_count
+    likes.count
+  end
+  
+  def reposts_count
+    reposts.count
+  end
+  
+  def quotes_count
+    quotes.count
+  end
+  
+  def replies_count
+    replies.count
   end
 end

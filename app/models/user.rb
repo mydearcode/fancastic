@@ -9,6 +9,10 @@ class User < ApplicationRecord
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
   
+  # Likes association
+  has_many :likes, dependent: :destroy
+  has_many :liked_posts, through: :likes, source: :post
+  
   # FanPulse energy system
   has_many :interaction_logs, class_name: 'FanPulse::InteractionLog', dependent: :destroy
 

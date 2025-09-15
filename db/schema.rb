@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_15_094750) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_120937) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,6 +59,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_094750) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_leagues_on_country_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "post_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_likes_on_post_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -125,6 +134,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_094750) do
   add_foreign_key "conversation_participants", "users"
   add_foreign_key "fan_pulse_interaction_logs", "users"
   add_foreign_key "leagues", "countries"
+  add_foreign_key "likes", "posts"
+  add_foreign_key "likes", "users"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
   add_foreign_key "posts", "users"

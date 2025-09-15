@@ -1,6 +1,11 @@
-<div class="max-w-2xl mx-auto p-4">
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-bold mb-4">Quote Post</h2>
+<%= turbo_frame_tag "quote_modal" do %>
+  <!-- Modal Overlay -->
+  <div id="quote-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closeModal(event)">
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Quote Post</h2>
+        <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+      </div>
     
     <!-- Energy Bar -->
     <div class="flex items-center space-x-2 mb-4">
@@ -11,7 +16,7 @@
       <span class="text-sm text-gray-500"><%= Current.user.energy %>/100</span>
     </div>
     
-    <%= form_with model: @quote_post, local: true, class: "space-y-4" do |form| %>
+    <%= form_with model: @quote_post, url: quote_post_path(@post), method: :post, local: true, class: "space-y-4", data: { turbo_frame: "_top" } do |form| %>
       <%= form.hidden_field :quote_of_post_id, value: @post.id %>
       
       <div>
@@ -21,16 +26,18 @@
       </div>
       
       <!-- Original Post Preview -->
-      <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <div class="flex items-center mb-2">
-          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2">
-            <%= @post.user.username.first.upcase %>
+      <% if @post && @post.user %>
+        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <div class="flex items-center mb-2">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2">
+              <%= @post.user.username.first.upcase %>
+            </div>
+            <span class="font-semibold text-gray-900">@<%= @post.user.username %></span>
+            <span class="text-sm text-gray-500 ml-2"><%= time_ago_in_words(@post.created_at) %> ago</span>
           </div>
-          <span class="font-semibold text-gray-900">@<%= @post.user.username %></span>
-          <span class="text-sm text-gray-500 ml-2"><%= time_ago_in_words(@post.created_at) %> ago</span>
+          <p class="text-gray-700"><%= @post.text %></p>
         </div>
-        <p class="text-gray-700"><%= @post.text %></p>
-      </div>
+      <% end %>
       
       <div class="flex justify-between items-center">
         <div class="flex space-x-4">
@@ -41,10 +48,26 @@
         </div>
         
         <div class="flex space-x-3">
-          <%= link_to "Cancel", root_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-medium transition-colors" %>
+          <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-medium transition-colors">Cancel</button>
           <%= form.submit "Quote Post (-3 Energy)", class: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" %>
         </div>
       </div>
     <% end %>
+    </div>
   </div>
-</div>
+  
+  <script>
+    function closeModal(event) {
+      if (event.target === event.currentTarget) {
+        document.getElementById('quote_modal').innerHTML = '';
+      }
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        document.getElementById('quote_modal').innerHTML = '';
+      }
+    });
+  </script>
+<% end %>

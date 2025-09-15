@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     member do
       post :like
       post :repost
+      get :reply
+      post :reply
       get :quote
       post :quote
     end

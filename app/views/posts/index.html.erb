@@ -54,110 +54,12 @@
   <!-- Posts Feed -->
   <div class="space-y-4">
     <% if @posts.any? %>
-      <% @posts.each do |post| %>
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <!-- Post Header -->
-          <div class="flex items-center mb-4">
-            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3">
-              <%= post.user.username.first.upcase %>
-            </div>
-            <div>
-              <%= link_to user_profile_path(post.user), class: "font-semibold text-gray-900 hover:text-blue-600 transition-colors" do %>
-                @<%= post.user.username %>
-              <% end %>
-              <p class="text-sm text-gray-500"><%= time_ago_in_words(post.created_at) %> ago</p>
-            </div>
-            <div class="ml-auto">
-              <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                <%= post.visibility.humanize %>
-              </span>
-            </div>
-          </div>
-
-          <!-- Post Content -->
-          <div class="mb-4">
-            <% if post.repost_of_post_id.present? && post.text.blank? %>
-              <!-- Pure Repost -->
-              <div class="text-gray-600 mb-2">
-                <i class="fas fa-retweet"></i> Reposted
-              </div>
-              <div class="border-l-4 border-gray-300 pl-4">
-                <p class="text-gray-900"><%= post.repost_of_post.text %></p>
-                <p class="text-sm text-gray-500 mt-2">Originally by <%= link_to "@#{post.repost_of_post.user.username}", user_profile_path(post.repost_of_post.user), class: "text-blue-600 hover:text-blue-800" %></p>
-              </div>
-            <% elsif post.quote_of_post_id.present? %>
-              <!-- Quote Post -->
-              <p class="text-gray-900 mb-4"><%= post.text %></p>
-              <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <p class="text-gray-700"><%= post.quote_of_post.text %></p>
-                <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.quote_of_post.user.username}", user_profile_path(post.quote_of_post.user), class: "text-blue-600 hover:text-blue-800" %></p>
-              </div>
-            <% elsif post.in_reply_to_post_id.present? %>
-              <!-- Reply -->
-              <div class="text-gray-600 mb-2">
-                <i class="fas fa-reply"></i> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-600 hover:text-blue-800" %>
-              </div>
-              <p class="text-gray-900"><%= post.text %></p>
-            <% else %>
-              <!-- Regular Post -->
-              <p class="text-gray-900"><%= post.text %></p>
-            <% end %>
-
-            <% if post.image_url.present? %>
-              <img src="<%= post.image_url %>" alt="Post image" class="mt-4 rounded-lg max-w-full h-auto">
-            <% end %>
-          </div>
-
-          <!-- Post Actions -->
-          <div class="flex items-center space-x-6 text-gray-500">
-            <!-- Reply -->
-            <%= link_to post_path(post), class: "hover:text-blue-500 transition-colors" do %>
-              💬 Reply (-3)
-            <% end %>
-            
-            <!-- Repost -->
-            <% if Current.user.can_perform_action?('repost') %>
-              <%= link_to repost_post_path(post), method: :post, class: "hover:text-green-500 transition-colors" do %>
-                🔄 Repost (-2)
-              <% end %>
-            <% else %>
-              <span class="text-gray-400 cursor-not-allowed">🔄 Repost (-2)</span>
-            <% end %>
-            
-            <!-- Like -->
-            <% if Current.user.can_perform_action?('like') %>
-              <%= link_to like_post_path(post), method: :post, class: "hover:text-red-500 transition-colors" do %>
-                ❤️ Like (-1)
-              <% end %>
-            <% else %>
-              <span class="text-gray-400 cursor-not-allowed">❤️ Like (-1)</span>
-            <% end %>
-            
-            <!-- Quote -->
-            <% if Current.user.can_perform_action?('quote') %>
-              <%= link_to quote_post_path(post), class: "hover:text-purple-500 transition-colors" do %>
-                💭 Quote (-3)
-              <% end %>
-            <% else %>
-              <span class="text-gray-400 cursor-not-allowed">💭 Quote (-3)</span>
-            <% end %>
-
-            <% if post.user == Current.user %>
-              <div class="ml-auto flex space-x-2">
-                <%= link_to edit_post_path(post), class: "text-blue-500 hover:text-blue-600" do %>
-                  <i class="fas fa-edit"></i>
-                <% end %>
-                <%= link_to post_path(post), method: :delete, 
-                    confirm: "Are you sure?", 
-                    class: "text-red-500 hover:text-red-600" do %>
-                  <i class="fas fa-trash"></i>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
+       <div id="posts">
+         <% @posts.each do |post| %>
+           <%= render 'post', post: post %>
+         <% end %>
+       </div>
+     <% else %>
       <div class="text-center py-12">
         <h3 class="text-xl font-medium text-gray-900 mb-2">No posts yet</h3>
         <p class="text-gray-500">Be the first to share something!</p>
