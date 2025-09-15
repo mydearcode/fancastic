@@ -25,6 +25,14 @@
             rows: 3 %>
       </div>
       
+      <div>
+        <%= form.file_field :image, 
+            accept: "image/*",
+            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+            placeholder: "Add an image (optional)" %>
+        <p class="text-xs text-gray-500 mt-1">Supported formats: JPEG, PNG, GIF, WebP (max 10MB)</p>
+      </div>
+      
       <!-- Original Post Preview -->
       <% if @post && @post.user %>
         <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">

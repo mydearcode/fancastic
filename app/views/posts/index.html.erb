@@ -1,70 +1,64 @@
-<div class="max-w-2xl mx-auto p-4">
+<div class="max-w-2xl mx-auto p-6">
   <!-- Post Creation Form -->
-  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">What's happening?</h2>
-      
-      <!-- Energy Bar -->
-      <div class="flex items-center space-x-2">
-        <span class="text-sm font-medium text-gray-600">Energy:</span>
-        <div class="w-24 bg-gray-200 rounded-full h-2.5">
-          <div class="bg-green-600 h-2.5 rounded-full <%= 'bg-yellow-500' if Current.user.energy < 50 %> <%= 'bg-red-500' if Current.user.energy < 20 %>" style="width: <%= Current.user.energy %>%"></div>
+  <div class="bg-black border border-gray-800 rounded-xl p-6 mb-6">
+    <div class="flex items-center mb-4">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+        <%= Current.user.username.first.upcase %>
+      </div>
+      <div>
+        <h3 class="font-semibold text-white">@<%= Current.user.username %></h3>
+        <div class="flex items-center text-sm text-gray-400">
+          <span class="mr-2">⚡ <%= Current.user.energy %></span>
+          <div class="w-20 h-2 bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300" 
+                 style="width: <%= [Current.user.energy, 100].min %>%"></div>
+          </div>
         </div>
-        <span class="text-sm text-gray-500"><%= Current.user.energy %>/100</span>
       </div>
     </div>
     
-    <%= form_with model: @post, local: true, class: "space-y-4" do |form| %>
-      <% if @post.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-md p-4">
-          <h3 class="text-red-800 font-medium">Please fix the following errors:</h3>
-          <ul class="mt-2 text-red-700 text-sm list-disc list-inside">
-            <% @post.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
-      <div>
-        <%= form.text_area :text, placeholder: "Share your thoughts...", 
-            class: "w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent", 
+    <%= form_with model: @post, local: false, data: { turbo_frame: "posts_feed" } do |form| %>
+      <div class="mb-4">
+        <%= form.text_area :text, 
+            placeholder: "What's happening?", 
+            class: "w-full p-4 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-xl",
             rows: 3 %>
       </div>
-
+      
+      <div class="mb-4">
+        <%= form.file_field :image, 
+            class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-colors",
+            accept: "image/*" %>
+      </div>
+      
       <div class="flex justify-between items-center">
-        <div class="flex space-x-4">
+        <div class="flex items-center space-x-4">
           <%= form.select :visibility, 
-              options_for_select(Post.visibilities.map { |key, value| [key.humanize, key] }, 'everyone'),
-              {},
-              { class: "px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" } %>
+              options_for_select([['🌍 Everyone', 'everyone'], ['👥 Followers', 'followers'], ['🔒 Only Me', 'only_me']], @post.visibility),
+              {}, 
+              { class: "px-4 py-2 bg-black border border-gray-800 rounded-full text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-300" } %>
         </div>
         
-        <% if Current.user.can_perform_action?('post') %>
-          <%= form.submit "Post (-5 Energy)", class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" %>
-        <% else %>
-          <button type="button" disabled class="bg-gray-400 text-white px-6 py-2 rounded-lg font-medium cursor-not-allowed">
-            Not Enough Energy (-5 Energy)
-          </button>
-        <% end %>
+        <%= form.submit "Post", 
+            class: "px-8 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black transition-colors font-semibold disabled:opacity-50" %>
       </div>
     <% end %>
   </div>
 
   <!-- Posts Feed -->
-  <div class="space-y-4">
-    <% if @posts.any? %>
-       <div id="posts">
-         <% @posts.each do |post| %>
-           <%= render 'post', post: post %>
-         <% end %>
-       </div>
-     <% else %>
-      <div class="text-center py-12">
-        <h3 class="text-xl font-medium text-gray-900 mb-2">No posts yet</h3>
-        <p class="text-gray-500">Be the first to share something!</p>
-      </div>
-    <% end %>
-  </div>
-</div>
+  <%= turbo_frame_tag "posts_feed" do %>
+    <div class="space-y-1">
+      <% @posts.each do |post| %>
+        <%= render 'post', post: post %>
+      <% end %>
+      
+      <% if @posts.empty? %>
+        <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
+          <div class="text-gray-500 text-4xl mb-4">🌟</div>
+          <h3 class="text-xl font-semibold text-white mb-2">No posts yet</h3>
+          <p class="text-gray-400">Be the first to share something amazing!</p>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>

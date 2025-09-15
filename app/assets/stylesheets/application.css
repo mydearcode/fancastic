@@ -1,12 +1,112 @@
 /*
- * This is a manifest file that'll be compiled into application.css.
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
  *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
  *
- * Consider organizing styles into separate files for maintainability.
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
  */
 
-@import "../tailwind/application.css";
+
+
+/* Custom styles for dark theme */
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Navigation styles */
+nav {
+  background-color: #000000;
+  border-bottom: 1px solid #374151;
+}
+
+.nav-link {
+  color: #ffffff;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #60a5fa;
+}
+
+/* Post card styles */
+.post-card {
+  background-color: #000000;
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.post-card:hover {
+  border-color: #4b5563;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.5rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Form styles */
+textarea, input, select {
+  background-color: #000000;
+  border: 1px solid #374151;
+  color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+}
+
+textarea:focus, input:focus, select:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Additional utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.rounded {
+  border-radius: 0.375rem;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}

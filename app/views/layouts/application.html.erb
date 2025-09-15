@@ -18,46 +18,62 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50">
+  <body class="bg-black text-white font-sans">
     <!-- Navigation Header -->
-    <nav class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="bg-black border-b border-gray-800 fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-opacity-80">
+      <div class="max-w-6xl mx-auto px-4">
         <div class="flex justify-between items-center h-16">
           <!-- Logo -->
           <div class="flex items-center">
-            <%= link_to root_path, class: "text-2xl font-bold text-blue-600" do %>
+            <%= link_to root_path, class: "text-2xl font-bold text-white hover:text-blue-400 transition-colors" do %>
               ⚽ Fancastic
             <% end %>
           </div>
 
           <!-- Navigation Links -->
           <% if Current.user %>
-            <div class="flex items-center space-x-6">
-              <%= link_to "Feed", root_path, class: "text-gray-700 hover:text-blue-600 font-medium" %>
-              <%= link_to "Messages", conversations_path, class: "text-gray-700 hover:text-blue-600 font-medium" %>
-              <%= link_to "Profile", profile_path, class: "text-gray-700 hover:text-blue-600 font-medium" %>
+            <div class="flex items-center space-x-8">
+              <%= link_to root_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
+                <span>🏠</span>
+                <span class="hidden sm:inline">Home</span>
+              <% end %>
+              <%= link_to conversations_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
+                <span>✉️</span>
+                <span class="hidden sm:inline">Messages</span>
+              <% end %>
+              <%= link_to profile_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
+                <span>👤</span>
+                <span class="hidden sm:inline">Profile</span>
+              <% end %>
               <% if Current.user.admin? %>
-                <%= link_to "Admin", admin_root_path, class: "text-purple-600 hover:text-purple-700 font-medium" %>
+                <%= link_to admin_root_path, class: "text-purple-400 hover:text-purple-300 font-medium transition-colors flex items-center space-x-2" do %>
+                  <span>⚙️</span>
+                  <span class="hidden sm:inline">Admin</span>
+                <% end %>
               <% end %>
               
               <!-- User Menu -->
               <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                   <%= Current.user.username.first.upcase %>
                 </div>
-                <span class="text-gray-700 font-medium">@<%= Current.user.username %></span>
-                <%= link_to "Sign out", session_path, method: :delete, 
-                    class: "text-red-600 hover:text-red-700 font-medium" %>
+                <span class="text-gray-300 font-medium hidden md:inline">@<%= Current.user.username %></span>
+                <%= link_to session_path, method: :delete, 
+                    class: "text-red-400 hover:text-red-300 font-medium transition-colors" do %>
+                  <span class="sm:hidden">🚪</span>
+                  <span class="hidden sm:inline">Sign out</span>
+                <% end %>
               </div>
             </div>
           <% else %>
             <div class="flex items-center space-x-4">
-              <%= link_to "Sign in", new_session_path, class: "text-gray-700 hover:text-blue-600 font-medium" %>
-              <%= link_to "Sign up", new_registration_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium" %>
+              <%= link_to "Sign in", new_session_path, class: "text-white hover:text-blue-400 font-medium transition-colors" %>
+              <%= link_to "Sign up", new_registration_path, class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition-colors" %>
             </div>
           <% end %>
         </div>
@@ -65,7 +81,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-20 pb-8">
+    <main class="pt-20 pb-8 min-h-screen">
       <!-- Flash Messages -->
       <div id="flash" class="max-w-2xl mx-auto mb-4 px-4">
         <%= render 'shared/flash', notice: notice, alert: alert %>
