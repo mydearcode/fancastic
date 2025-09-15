@@ -38,6 +38,12 @@
             </div>
             
             <div>
+              <%= form.label :symbol_slug, "Symbol Slug", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :symbol_slug, class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+              <p class="mt-1 text-sm text-gray-500">Unique identifier for the team (e.g., MAN, LIV, CHE)</p>
+            </div>
+            
+            <div>
               <%= form.label :country_id, "Country", class: "block text-sm font-medium text-gray-700" %>
               <%= form.select :country_id, 
                   options_from_collection_for_select(Country.all.order(:name), :id, :name, @team.country_id), 
@@ -51,6 +57,18 @@
                   options_from_collection_for_select(League.includes(:country).all.order(:name), :id, ->(league) { "#{league.name} (#{league.country.name})" }, @team.league_id), 
                   { prompt: "Select a league" }, 
                   { class: "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+            </div>
+            
+            <div>
+              <%= form.label :color_primary, "Primary Color", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.color_field :color_primary, class: "mt-1 h-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+              <p class="mt-1 text-sm text-gray-500">Choose the team's primary color</p>
+            </div>
+            
+            <div>
+              <%= form.label :color_secondary, "Secondary Color", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.color_field :color_secondary, class: "mt-1 h-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+              <p class="mt-1 text-sm text-gray-500">Choose the team's secondary color</p>
             </div>
           </div>
           

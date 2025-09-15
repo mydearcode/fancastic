@@ -45,6 +45,6 @@ class Admin::CountriesController < Admin::AdminController
   end
   
   def country_params
-    params.require(:country).permit(:name, :code)
+    params.require(:country).permit(:name, :code, :color_primary, :color_secondary)
   end
 end

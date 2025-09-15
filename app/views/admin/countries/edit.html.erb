@@ -42,6 +42,18 @@
               <%= form.text_field :code, placeholder: "e.g., US, UK, ES", class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
               <p class="mt-2 text-sm text-gray-500">2-3 letter country code (ISO format recommended)</p>
             </div>
+            
+            <div>
+              <%= form.label :color_primary, "Primary Color", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.color_field :color_primary, class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+              <p class="mt-2 text-sm text-gray-500">Primary team/country color (hex format)</p>
+            </div>
+            
+            <div>
+              <%= form.label :color_secondary, "Secondary Color", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.color_field :color_secondary, class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+              <p class="mt-2 text-sm text-gray-500">Secondary team/country color (hex format)</p>
+            </div>
           </div>
           
           <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 space-x-3">

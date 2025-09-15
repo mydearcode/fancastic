@@ -45,6 +45,6 @@ class Admin::TeamsController < Admin::AdminController
   end
   
   def team_params
-    params.require(:team).permit(:name, :league_id, :country_id)
+    params.require(:team).permit(:name, :symbol_slug, :league_id, :country_id, :color_primary, :color_secondary)
   end
 end
