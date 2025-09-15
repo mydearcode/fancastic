@@ -1,19 +1,29 @@
-<%= link_to post_path(post), class: "block", data: { turbo_frame: "_top" } do %>
-<div id="post_<%= post.id %>" class="bg-black border-b border-gray-800 px-4 py-3 hover:bg-gray-950 transition-colors cursor-pointer">
+<!-- Determine target post for interactions -->
+<% target_post = post.repost_of_post_id.present? && post.text.blank? ? post.repost_of_post : post %>
+
+<div id="post_<%= post.id %>" class="bg-black border-b border-gray-800 py-3 hover:bg-gray-950 transition-colors cursor-pointer relative">
+  
+  <% if post.repost_of_post_id.present? && post.text.blank? %>
+    <!-- Repost indicator at the top -->
+    <div class="text-gray-400 mb-2 text-sm flex items-center pl-12">
+      <span class="mr-1">🔄</span> <%= link_to post.user.username, user_profile_path(post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" }, onclick: "event.stopPropagation();" %> Reposted
+    </div>
+  <% end %>
+  
   <!-- Post Header -->
   <div class="flex items-start space-x-3">
     <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-      <%= post.user.username.first.upcase %>
+      <%= target_post.user.username.first.upcase %>
     </div>
     <div class="flex-1 min-w-0">
       <div class="flex items-center space-x-2 mb-1">
-        <span class="font-bold text-white"><%= post.user.username %></span>
-        <span class="text-gray-500 font-normal">@<%= post.user.username %></span>
+        <span class="font-bold text-white"><%= link_to target_post.user.username, user_profile_path(target_post.user), class: "text-white hover:text-gray-300", data: { turbo_frame: "_top" }, onclick: "event.stopPropagation();" %></span>
+        <span class="text-gray-500 font-normal">@<%= target_post.user.username %></span>
         <span class="text-gray-500">·</span>
-        <span class="text-gray-500 text-sm"><%= time_ago_in_words(post.created_at) %></span>
-        <% if post.visibility != 'everyone' %>
+        <span class="text-gray-500 text-sm"><%= time_ago_in_words(target_post.created_at) %></span>
+        <% if target_post.visibility != 'everyone' %>
           <span class="px-2 py-0.5 text-xs bg-gray-800 text-gray-300 rounded-full">
-            <%= post.visibility.humanize %>
+            <%= target_post.visibility.humanize %>
           </span>
         <% end %>
       </div>
@@ -22,19 +32,26 @@
       <div class="mt-1">
         <% if post.repost_of_post_id.present? && post.text.blank? %>
           <!-- Pure Repost -->
-          <div class="text-gray-400 mb-2 text-sm flex items-center">
-            <span class="mr-1">🔄</span> Reposted
-          </div>
-          <div class="border-l-2 border-gray-700 pl-3 ml-2">
-            <% if post.repost_of_post.quote_of_post_id.present? %>
-              <!-- Reposted Quote Post -->
-              <%= link_to post_path(post.repost_of_post), class: "block" do %>
-                <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= post.repost_of_post.text %></p>
+          <div class="pl-0 ml-0">
+            <% if post.repost_of_post.in_reply_to_post_id.present? %>
+              <!-- Reposted Reply Post -->
+              <div class="text-gray-400 mb-2 text-sm flex items-center">
+                <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.repost_of_post.in_reply_to_post.user.username}", user_profile_path(post.repost_of_post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" }, onclick: "event.stopPropagation();" %>
+              </div>
+              <p class="text-white"><%= post.repost_of_post.text %></p>
+              <% if post.repost_of_post.image.attached? %>
+                <div class="mt-3">
+                  <%= image_tag post.repost_of_post.image, 
+                      class: "max-w-full h-auto rounded-2xl border border-gray-700",
+                      style: "max-height: 400px; object-fit: cover;",
+                      alt: "Reposted image" %>
+                </div>
               <% end %>
+            <% elsif post.repost_of_post.quote_of_post_id.present? %>
+              <!-- Reposted Quote Post -->
+              <p class="text-white mb-3"><%= post.repost_of_post.text %></p>
               <div class="border border-gray-700 rounded-xl p-3 bg-gray-900">
-                <%= link_to post_path(post.repost_of_post.quote_of_post), class: "block" do %>
-                  <p class="text-gray-300 hover:text-white transition-colors"><%= post.repost_of_post.quote_of_post.text %></p>
-                <% end %>
+                <p class="text-gray-300"><%= post.repost_of_post.quote_of_post.text %></p>
                 <% if post.repost_of_post.quote_of_post.image.attached? %>
                   <div class="mt-3">
                     <%= image_tag post.repost_of_post.quote_of_post.image, 
@@ -47,9 +64,7 @@
               </div>
             <% else %>
               <!-- Regular Repost -->
-              <%= link_to post_path(post.repost_of_post), class: "block" do %>
-                <p class="text-white hover:text-gray-300 transition-colors"><%= post.repost_of_post.text %></p>
-              <% end %>
+              <p class="text-white"><%= post.repost_of_post.text %></p>
               <% if post.repost_of_post.image.attached? %>
                 <div class="mt-3">
                   <%= image_tag post.repost_of_post.image, 
@@ -59,10 +74,7 @@
                 </div>
               <% end %>
             <% end %>
-            <p class="text-sm text-gray-500 mt-2">Originally by <%= link_to "@#{post.repost_of_post.user.username}", user_profile_path(post.repost_of_post.user), class: "text-blue-400 hover:text-blue-300" %></p>
           </div>
-          <% # Set the target post for interactions to be the original post %>
-          <% target_post = post.repost_of_post %>
         <% elsif post.quote_of_post_id.present? %>
           <!-- Quote Post -->
           <%= link_to post_path(post), class: "block" do %>
@@ -83,20 +95,19 @@
             <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.quote_of_post.user.username}", user_profile_path(post.quote_of_post.user), class: "text-blue-400 hover:text-blue-300" %></p>
           </div>
           <% # For quote posts, target is the post itself %>
-          <% target_post = post %>
         <% elsif post.in_reply_to_post_id.present? %>
           <!-- Reply -->
           <div class="text-gray-400 mb-2 text-sm flex items-center">
-            <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300" %>
+            <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" }, onclick: "event.stopPropagation();" %>
           </div>
-          <p class="text-white hover:text-gray-300 transition-colors"><%= post.text %></p>
+          <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top" } do %>
+            <p class="text-white hover:text-gray-300 transition-colors"><%= post.text %></p>
+          <% end %>
           <% # For reply posts, target is the post itself %>
-          <% target_post = post %>
         <% else %>
           <!-- Regular Post -->
           <p class="text-white hover:text-gray-300 transition-colors text-[15px] leading-5"><%= post.text %></p>
           <% # For regular posts, target is the post itself %>
-          <% target_post = post %>
         <% end %>
 
         <% if post.image.attached? %>
@@ -111,17 +122,17 @@
 
     </div>
   </div>
-  
-  <!-- Post Actions -->
-  <div class="flex items-center justify-start text-sm text-gray-500 pt-3 mt-3 px-4">
-        <!-- Reply -->
-        <%= link_to post_path(target_post), class: "hover:text-blue-400 transition-colors flex items-center space-x-2 group",
-            title: "Reply", onclick: "event.stopPropagation();" do %>
-          <div class="p-2 rounded-full group-hover:bg-blue-900 group-hover:bg-opacity-20 transition-colors">
-            <span class="text-lg">💬</span>
-          </div>
-          <span class="group-hover:text-blue-400"><%= target_post.replies_count %></span>
-        <% end %>
+
+<!-- Post Actions -->
+<div class="flex items-center justify-start text-sm text-gray-500 pt-3 mt-3 ml-15">
+      <!-- Reply -->
+      <button type="button" class="hover:text-blue-400 transition-colors flex items-center space-x-2 group"
+              title="Reply" onclick="event.stopPropagation(); window.location.href='<%= post_path(target_post) %>#reply_form';">
+        <div class="p-2 rounded-full group-hover:bg-blue-900 group-hover:bg-opacity-20 transition-colors">
+          <span class="text-lg">💬</span>
+        </div>
+        <span class="group-hover:text-blue-400"><%= target_post.replies_count %></span>
+      </button>
     
         <!-- Repost Dropdown -->
         <div class="relative inline-block text-left">
@@ -177,10 +188,12 @@
     
         <!-- Like -->
         <% if Current.user.can_perform_action?('like') %>
-          <%= link_to like_post_path(target_post), method: :post, 
-              data: { turbo_method: :post }, 
-              class: "hover:text-red-400 transition-colors flex items-center space-x-2 group #{'text-red-400' if target_post.liked_by?(Current.user)}",
-              title: target_post.liked_by?(Current.user) ? "Unlike" : "Like", onclick: "event.stopPropagation();" do %>
+          <%= button_to like_post_path(target_post), 
+              method: :post,
+              class: "hover:text-red-400 transition-colors flex items-center space-x-2 group #{'text-red-400' if target_post.liked_by?(Current.user)} bg-transparent border-0 p-0",
+              title: target_post.liked_by?(Current.user) ? "Unlike" : "Like", 
+              onclick: "event.stopPropagation();",
+              form: { style: "display: inline;" } do %>
             <div class="p-2 rounded-full group-hover:bg-red-900 group-hover:bg-opacity-20 transition-colors">
               <span class="text-lg"><%= target_post.liked_by?(Current.user) ? '❤️' : '🤍' %></span>
             </div>
@@ -194,6 +207,6 @@
             <span><%= target_post.likes_count %></span>
           </span>
         <% end %>
-  </div>
 </div>
-<% end %>
+
+<%= link_to "", post_path(target_post), class: "absolute inset-0", data: { turbo_frame: "_top" } %>

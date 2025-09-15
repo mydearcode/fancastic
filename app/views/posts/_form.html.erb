@@ -1,0 +1,57 @@
+<%= turbo_frame_tag "post_form" do %>
+  <div class="bg-black border border-gray-800 rounded-xl p-6 mb-6">
+    <div class="flex items-center mb-4">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+        <%= Current.user.username.first.upcase %>
+      </div>
+      <div>
+        <h3 class="font-semibold text-white">@<%= Current.user.username %></h3>
+        <div class="flex items-center text-sm text-gray-400">
+          <span class="mr-2">⚡ <%= Current.user.energy %></span>
+          <div class="w-20 h-2 bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300" 
+                 style="width: <%= [Current.user.energy, 100].min %>%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <%= form_with model: post, local: false, data: { turbo_frame: "post_form" } do |form| %>
+      <% if post.errors.any? %>
+        <div class="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+          <h4 class="text-red-300 font-medium mb-2">Please fix the following errors:</h4>
+          <ul class="text-red-300 text-sm">
+            <% post.errors.full_messages.each do |message| %>
+              <li>• <%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
+      <div class="mb-4">
+        <%= form.text_area :text, 
+            placeholder: "What's happening?", 
+            class: "w-full p-4 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-xl",
+            rows: 3 %>
+      </div>
+      
+      <div class="mb-4">
+        <%= form.file_field :image, 
+            class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-colors",
+            accept: "image/*" %>
+      </div>
+      
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+          <%= form.select :visibility, 
+              options_for_select([['🌍 Everyone', 'everyone'], ['👥 Followers', 'followers'], ['🔒 Only Me', 'only_me']], post.visibility),
+              {}, 
+              { class: "px-4 py-2 bg-black border border-gray-800 rounded-full text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-300" } %>
+        </div>
+        
+        <%= form.submit "Post", 
+            class: "px-8 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black transition-colors font-semibold disabled:opacity-50" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

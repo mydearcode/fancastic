@@ -111,6 +111,11 @@
       
       // Close dropdowns when clicking outside
       document.addEventListener('click', function(event) {
+        // Don't interfere with link navigation or any clickable elements
+        if (event.target.closest('a') || event.target.closest('button') || event.target.closest('[onclick]')) {
+          return;
+        }
+        
         if (!event.target.closest('.relative')) {
           const allDropdowns = document.querySelectorAll('[id^="repost-dropdown-"]');
           allDropdowns.forEach(d => d.classList.add('hidden'));

@@ -13,56 +13,25 @@
   </div>
 
   <!-- Reply Form -->
-  <% if Current.user.can_perform_action?('reply') %>
-    <div class="bg-black border border-gray-800 rounded-xl p-6 mb-6">
-      <h3 class="text-lg font-medium text-white mb-4">Reply to this post</h3>
-      
-      <%= form_with model: @reply_post, url: reply_post_path(@post), method: :post, local: true, class: "space-y-4" do |form| %>
-        <%= form.hidden_field :in_reply_to_post_id, value: @post.id %>
-        
-        <div>
-          <%= form.text_area :text, 
-              placeholder: "What's your reply?", 
-              rows: 3,
-              class: "w-full px-4 py-3 bg-black border border-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-white placeholder-gray-500" %>
-        </div>
-        
-        <div>
-          <%= form.file_field :image, 
-              accept: "image/*",
-              class: "w-full px-3 py-2 bg-black border border-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white",
-              placeholder: "Add an image (optional)" %>
-          <p class="text-xs text-gray-500 mt-1">Supported formats: JPEG, PNG, GIF, WebP (max 10MB)</p>
-        </div>
-        
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-400">Replying costs 2 energy</span>
-          <%= form.submit "Reply (-2 Energy)", 
-              class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors" %>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6 text-center">
-      <p class="text-gray-400">Not enough energy to reply. Wait for energy to restore.</p>
-    </div>
+  <% if Current.user %>
+    <%= render 'reply_form', post: @post, reply_post: @reply_post %>
   <% end %>
 
-  <!-- Replies Section -->
-  <div class="space-y-1">
-    <h3 class="text-lg font-medium text-white mb-4">
-      Replies 
-      <span class="text-sm font-normal text-gray-400">(<%= @replies.count %>)</span>
-    </h3>
-    
-    <% if @replies.any? %>
-      <% @replies.each do |reply| %>
-        <%= render 'post', post: reply %>
-      <% end %>
-    <% else %>
-      <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
-        <p class="text-gray-400">No replies yet. Be the first to reply!</p>
-      </div>
+<!-- Replies Section -->
+<div class="space-y-1">
+  <h3 class="text-lg font-medium text-white mb-4">
+    Replies 
+    <span class="text-sm font-normal text-gray-400">(<%= @replies.count %>)</span>
+  </h3>
+  
+  <% if @replies.any? %>
+    <% @replies.each do |reply| %>
+      <%= render 'post', post: reply %>
     <% end %>
-  </div>
+  <% else %>
+    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
+      <p class="text-gray-400">No replies yet. Be the first to reply!</p>
+    </div>
+  <% end %>
+</div>
 </div>

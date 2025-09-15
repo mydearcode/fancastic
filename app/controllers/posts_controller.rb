@@ -36,7 +36,10 @@ class PostsController < ApplicationController
       @posts = Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
                    .order(created_at: :desc)
                    .limit(50)
-      render :index, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("post_form", partial: "posts/form", locals: { post: @post }) }
+        format.html { render :index, status: :unprocessable_entity }
+      end
     end
   end
 
