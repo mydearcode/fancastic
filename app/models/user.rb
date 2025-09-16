@@ -4,6 +4,10 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   belongs_to :team, optional: true
   
+  # Profile images
+  has_one_attached :profile_picture
+  has_one_attached :cover_picture
+  
   # Messaging associations
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
