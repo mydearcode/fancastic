@@ -1,0 +1,14 @@
+<%= turbo_stream.append "posts" do %>
+  <%= render @posts %>
+<% end %>
+
+<%= turbo_stream.update "pagination" do %>
+  <% if !@posts.empty? && @pagy&.pages && @pagy.pages > 1 && @pagy.page < @pagy.pages %>
+    <div class="flex justify-center">
+      <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
+        Loading more posts...
+      </button>
+      <%= link_to "Next Page", root_path(tab: @tab, page: @pagy.next), class: "hidden", rel: "next", data: { turbo_frame: "posts_container" } %>
+    </div>
+  <% end %>
+<% end %>

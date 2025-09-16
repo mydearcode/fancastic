@@ -177,7 +177,16 @@ class PostsController < ApplicationController
         
         if @quote_post.save
           Current.user.perform_action('quote')
-          redirect_to posts_path, notice: 'Post quoted successfully!'
+          respond_to do |format|
+            format.html { redirect_to posts_path, notice: 'Post quoted successfully!' }
+            format.turbo_stream do
+              # First, clear the modal
+              render turbo_stream: [
+                turbo_stream.replace("quote_modal", ""),
+                turbo_stream.prepend("posts", partial: "posts/post", locals: { post: @quote_post })
+              ]
+            end
+          end
         else
           render :quote
         end
