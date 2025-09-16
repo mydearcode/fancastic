@@ -161,7 +161,10 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     
     unless Current.user.can_perform_action?('reply')
-      redirect_back(fallback_location: root_path, alert: 'Not enough energy to reply to this post.')
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, alert: 'Not enough energy to reply to this post.') }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Not enough energy to reply to this post." }) }
+      end
       return
     end
     
@@ -170,9 +173,15 @@ class PostsController < ApplicationController
     
     if @reply_post.save
       Current.user.perform_action('reply', @post)
-      redirect_to post_path(@post), notice: 'Reply posted successfully!'
+      respond_to do |format|
+        format.html { redirect_to post_path(@post), notice: 'Reply posted successfully!' }
+        format.turbo_stream
+      end
     else
-      redirect_to post_path(@post), alert: 'Failed to post reply. Please try again.'
+      respond_to do |format|
+        format.html { redirect_to post_path(@post), alert: 'Failed to post reply. Please try again.' }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("reply_form", partial: "posts/reply_form", locals: { post: @post, reply_post: @reply_post }) }
+      end
     end
   end
   

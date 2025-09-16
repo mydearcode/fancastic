@@ -7,6 +7,16 @@
     <% end %>
   </div>
 
+  <!-- Original Post (if this is a reply) -->
+  <% if @post.is_reply? %>
+    <div class="mb-4">
+      <div class="border-l-4 border-gray-800 pl-4">
+        <h4 class="text-sm font-medium text-gray-400 mb-2">Original Post</h4>
+        <%= render 'post', post: @post.in_reply_to_post %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Main Post -->
   <div class="mb-6">
     <%= render 'post', post: @post %>
@@ -24,14 +34,16 @@
     <span class="text-sm font-normal text-gray-400">(<%= @replies.count %>)</span>
   </h3>
   
-  <% if @replies.any? %>
-    <% @replies.each do |reply| %>
-      <%= render 'post', post: reply %>
+  <div id="replies">
+    <% if @replies.any? %>
+      <% @replies.each do |reply| %>
+        <%= render 'post', post: reply %>
+      <% end %>
+    <% else %>
+      <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
+        <p class="text-gray-400">No replies yet. Be the first to reply!</p>
+      </div>
     <% end %>
-  <% else %>
-    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
-      <p class="text-gray-400">No replies yet. Be the first to reply!</p>
-    </div>
-  <% end %>
+  </div>
 </div>
 </div>
