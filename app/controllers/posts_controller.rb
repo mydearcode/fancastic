@@ -3,9 +3,40 @@ class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy, :like, :repost, :reply, :quote]
 
   def index
-    @posts = Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
-                 .order(created_at: :desc)
-                 .limit(50)
+    @tab = params[:tab] || 'following'
+    # Store the current tab in session to persist between requests
+    session[:current_tab] = @tab
+    
+    @posts = case @tab
+    when 'following'
+      # Posts from users the current user follows
+      Post.joins("INNER JOIN follows ON follows.followed_id = posts.user_id")
+          .where(follows: { follower_id: Current.user.id })
+          .includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+          .order(created_at: :desc)
+          .limit(50)
+    when 'teammates'
+      # Posts from users with the same team as current user
+      team_id = Current.user.team_id
+      Post.joins(:user)
+          .where(users: { team_id: team_id })
+          .includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+          .order(created_at: :desc)
+          .limit(50)
+    when 'popular'
+      # Popular posts based on likes count
+      Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+          .left_joins(:likes)
+          .group('posts.id')
+          .order('COUNT(likes.id) DESC, posts.created_at DESC')
+          .limit(50)
+    else
+      # Default to all posts if tab is invalid
+      Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+          .order(created_at: :desc)
+          .limit(50)
+    end
+    
     @post = Post.new
   end
 
@@ -31,7 +62,10 @@ class PostsController < ApplicationController
     if @post.save
       # Consume energy for posting
       Current.user.perform_action('post', @post)
-      redirect_to root_path, notice: 'Post created successfully!'
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to root_path, notice: 'Post created successfully!' }
+      end
     else
       @posts = Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
                    .order(created_at: :desc)
@@ -56,7 +90,10 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to root_path, notice: 'Post deleted successfully!'
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to root_path, notice: 'Post deleted successfully!' }
+    end
   end
   
   def like

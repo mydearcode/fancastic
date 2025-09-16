@@ -1,0 +1,5 @@
+<%= turbo_stream.remove "post_#{@post.id}" %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= render 'shared/flash', notice: "Post deleted successfully!" %>
+<% end %>

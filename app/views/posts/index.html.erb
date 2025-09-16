@@ -1,12 +1,27 @@
-<div class="max-w-2xl mx-auto p-6">
-  <!-- Post Creation Form -->
-  <%= render 'form', post: @post %>
+<div class="max-w-2xl mx-auto py-6">
+
+  <!-- Feed Tabs -->
+  <div class="flex border-b border-gray-800 mb-4">
+    <%= link_to "Following", root_path(tab: "following"), 
+        class: "px-4 py-2 text-sm font-medium #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+        data: { turbo: true } %>
+    
+    <%= link_to "Team Mates", root_path(tab: "teammates"), 
+        class: "px-4 py-2 text-sm font-medium #{@tab == 'teammates' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+        data: { turbo: true } %>
+    
+    <%= link_to "Popular", root_path(tab: "popular"), 
+        class: "px-4 py-2 text-sm font-medium #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+        data: { turbo: true } %>
+  </div>
+
   <!-- Posts Feed -->
   <%= turbo_frame_tag "posts_feed" do %>
-    <div class="space-y-0">
+    <div id="posts" class="space-y-1">
       <% @posts.each do |post| %>
         <%= render 'post', post: post %>
       <% end %>
+      
       <% if @posts.empty? %>
         <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
           <div class="text-gray-500 text-4xl mb-4">🌟</div>
@@ -17,3 +32,4 @@
     </div>
   <% end %>
 </div>
+

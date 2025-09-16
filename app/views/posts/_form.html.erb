@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "post_form" do %>
-  <div class="bg-black border border-gray-800 rounded-xl p-6 mb-6">
+  <div class="bg-black border border-gray-800 rounded-xl mb-6">
     <div class="flex items-center mb-4">
       <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
         <% if Current.user.profile_picture.attached? %>
@@ -22,7 +22,7 @@
       </div>
     </div>
     
-    <%= form_with model: post, local: false, data: { turbo_frame: "post_form" } do |form| %>
+    <%= form_with model: post, local: false, data: { turbo_frame: "post_form", controller: "modal-form", action: "turbo:submit-end->modal-form#closeModal" } do |form| %>
       <% if post.errors.any? %>
         <div class="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-2">Please fix the following errors:</h4>

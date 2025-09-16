@@ -1,0 +1,11 @@
+<%= turbo_stream.prepend "posts" do %>
+  <%= render 'post', post: @post %>
+<% end %>
+
+<%= turbo_stream.replace "post_form" do %>
+  <%= render 'form', post: Post.new %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= render 'shared/flash', notice: "Post created successfully!" %>
+<% end %>

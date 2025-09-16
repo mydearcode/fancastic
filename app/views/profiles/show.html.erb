@@ -18,7 +18,14 @@
             <% end %>
           </div>
           <div>
-            <h1 class="text-xl font-bold text-white"><%= @user.full_name.present? ? @user.full_name : @user.username %></h1>
+            <div class="flex items-center space-x-2">
+              <h1 class="text-xl font-bold text-white"><%= @user.full_name.present? ? @user.full_name : @user.username %></h1>
+              <% if @user.team.present? && @user.team.symbol_slug.present? %>
+                <span class="px-2 py-0.5 text-xs font-medium rounded" style="background-color: <%= @user.team.color_primary %>; color: <%= @user.team.color_secondary %>;">
+                  <%= @user.team.symbol_slug.upcase %>
+                </span>
+              <% end %>
+            </div>
             <p class="text-gray-400 text-sm">@<%= @user.username %></p>
           </div>
         </div>
