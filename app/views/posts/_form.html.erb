@@ -2,21 +2,21 @@
   <div class="bg-black border border-gray-800 rounded-xl mb-6">
     <div class="flex items-center mb-4">
       <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
-        <% if Current.user.profile_picture.attached? %>
+        <% if Current.user && Current.user.profile_picture.attached? %>
           <%= image_tag Current.user.profile_picture, class: "w-full h-full object-cover" %>
         <% else %>
-          <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-            <%= Current.user.username.first.upcase %>
+          <div class="w-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold h-full">
+            <%= Current.user&.username&.first&.upcase || '?' %>
           </div>
         <% end %>
       </div>
       <div>
-        <h3 class="font-semibold text-white">@<%= Current.user.username %></h3>
+        <h3 class="font-semibold text-white">@<%= Current.user&.username || 'guest' %></h3>
         <div class="flex items-center text-sm text-gray-400">
-          <span class="mr-2">⚡ <%= Current.user.energy %></span>
+          <span class="mr-2">⚡ <%= Current.user&.energy || 0 %></span>
           <div class="w-20 h-2 bg-gray-800 rounded-full overflow-hidden">
             <div class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300" 
-                 style="width: <%= [Current.user.energy, 100].min %>%"></div>
+                 style="width: <%= Current.user ? [Current.user.energy, 100].min : 0 %>%"></div>
           </div>
         </div>
       </div>

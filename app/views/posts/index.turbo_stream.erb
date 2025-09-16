@@ -1,14 +1,17 @@
 <%= turbo_stream.append "posts" do %>
-  <%= render @posts %>
+  <% @posts.each do |post| %>
+    <%= render 'post', post: post %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.update "pagination" do %>
-  <% if !@posts.empty? && @pagy&.pages && @pagy.pages > 1 && @pagy.page < @pagy.pages %>
-    <div class="flex justify-center">
-      <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
-        Loading more posts...
-      </button>
-      <%= link_to "Next Page", root_path(tab: @tab, page: @pagy.next), class: "hidden", rel: "next", data: { turbo_frame: "posts_container" } %>
+  <% if @pagy.next %>
+    <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next) %>">
+      <div class="flex justify-center">
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
+          Loading more posts...
+        </button>
+      </div>
     </div>
   <% end %>
 <% end %>

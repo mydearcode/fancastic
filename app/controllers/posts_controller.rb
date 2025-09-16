@@ -7,14 +7,13 @@ class PostsController < ApplicationController
     # Store the current tab in session to persist between requests
     session[:current_tab] = @tab
     
-    @posts = case @tab
+    posts_query = case @tab
     when 'following'
       # Posts from users the current user follows
       Post.joins("INNER JOIN follows ON follows.followed_id = posts.user_id")
           .where(follows: { follower_id: Current.user.id })
           .includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
           .order(created_at: :desc)
-          .limit(50)
     when 'teammates'
       # Posts from users with the same team as current user
       team_id = Current.user.team_id
@@ -22,19 +21,23 @@ class PostsController < ApplicationController
           .where(users: { team_id: team_id })
           .includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
           .order(created_at: :desc)
-          .limit(50)
     when 'popular'
       # Popular posts based on likes count
       Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
           .left_joins(:likes)
           .group('posts.id')
           .order('COUNT(likes.id) DESC, posts.created_at DESC')
-          .limit(50)
     else
       # Default to all posts if tab is invalid
       Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
           .order(created_at: :desc)
-          .limit(50)
+    end
+          
+    @pagy, @posts = pagy(posts_query, items: 5)
+    
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
     
     @post = Post.new

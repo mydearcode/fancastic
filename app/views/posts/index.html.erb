@@ -17,7 +17,7 @@
 
   <!-- Posts Feed -->
   <%= turbo_frame_tag "posts_feed" do %>
-    <div id="posts" class="space-y-1">
+    <div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
       <% @posts.each do |post| %>
         <%= render 'post', post: post %>
       <% end %>
@@ -30,6 +30,18 @@
         </div>
       <% end %>
     </div>
+    
+    <% unless @posts.empty? %>
+      <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next) if @pagy.next %>">
+        <% if @pagy.next %>
+          <div class="flex justify-center">
+            <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
+              Loading more posts...
+            </button>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 </div>
 
