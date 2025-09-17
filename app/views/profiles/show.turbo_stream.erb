@@ -1,0 +1,13 @@
+<%= turbo_stream.append "posts-container" do %>
+  <% @posts.each do |post| %>
+    <%= render 'posts/post', post: post %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update "pagination" do %>
+  <!-- No loading button - posts load automatically on scroll -->
+<% end %>
+
+<%= turbo_stream.update "infinite-scroll-container" do %>
+  <div data-infinite-scroll-next-url-value="<%= profile_path(@user, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
+<% end %>

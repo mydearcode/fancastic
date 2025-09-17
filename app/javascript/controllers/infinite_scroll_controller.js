@@ -29,8 +29,7 @@ export default class extends Controller {
   loadMore() {
     // Check if we have a URL value to fetch
     if (this.hasUrlValue && this.urlValue) {
-      // Show loading indicator
-      this.paginationTarget.innerHTML = '<div class="flex justify-center"><button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium">Loading more posts...</button></div>'
+      // No loading indicator - silent loading
       
       // Construct the URL with the current page
       const url = new URL(this.urlValue, window.location.origin)
@@ -47,7 +46,7 @@ export default class extends Controller {
       })
       .catch(error => {
         console.error("Error loading more posts:", error)
-        this.paginationTarget.innerHTML = '<div class="flex justify-center"><button class="px-4 py-2 bg-red-600 text-white rounded-full text-sm font-medium">Failed to load posts. Try again.</button></div>'
+        // No error indicator
       })
     }
   }

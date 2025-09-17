@@ -77,29 +77,83 @@
         
         <div class="bg-gray-900 shadow sm:rounded-lg border border-gray-800">
           <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-white mb-2">Settings</h3>
-          <div class="space-y-2">
-            <div class="grid grid-cols-2 gap-4 mb-3">
-              <div class="text-center">
-                <%= link_to user_followers_path(@user), class: "block hover:text-blue-600" do %>
-                  <div class="text-lg font-bold text-white"><%= @user.followers_count %></div>
-                  <div class="text-sm text-gray-400">Followers</div>
-                <% end %>
+            <h3 class="text-lg font-semibold text-white mb-2">Stats</h3>
+            <div class="space-y-2">
+              <div class="grid grid-cols-2 gap-4 mb-3">
+                <div class="text-center">
+                  <%= link_to user_followers_path(@user), class: "block hover:text-blue-600" do %>
+                    <div class="text-lg font-bold text-white"><%= @user.followers_count %></div>
+                    <div class="text-sm text-gray-400">Followers</div>
+                  <% end %>
+                </div>
+                <div class="text-center">
+                  <%= link_to user_following_path(@user), class: "block hover:text-blue-600" do %>
+                    <div class="text-lg font-bold text-white"><%= @user.following_count %></div>
+                    <div class="text-sm text-gray-400">Following</div>
+                  <% end %>
+                </div>
               </div>
-              <div class="text-center">
-                <%= link_to user_following_path(@user), class: "block hover:text-blue-600" do %>
-                  <div class="text-lg font-bold text-white"><%= @user.following_count %></div>
-                  <div class="text-sm text-gray-400">Following</div>
-                <% end %>
+              <div>
+                <span class="text-sm font-medium text-gray-600">Energy:</span>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                  <div class="bg-green-600 h-2.5 rounded-full" style="width: <%= @user.energy %>%"></div>
+                </div>
+                <span class="text-sm text-gray-500"><%= @user.energy %>/100</span>
               </div>
             </div>
-            <div>
-              <span class="text-sm font-medium text-gray-600">Energy:</span>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                <div class="bg-green-600 h-2.5 rounded-full" style="width: <%= @user.energy %>%"></div>
-              </div>
-              <span class="text-sm text-gray-500"><%= @user.energy %>/100</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tabs for Posts, Replies, Likes -->
+      <div class="mt-6 border-b border-gray-700">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+          <%= link_to profile_path(@user, tab: 'posts', format: :html), 
+               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'posts' || params[:tab].blank? ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+             Posts
+           <% end %>
+           
+           <%= link_to profile_path(@user, tab: 'replies', format: :html), 
+               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'replies' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+             Replies
+           <% end %>
+           
+           <%= link_to profile_path(@user, tab: 'likes', format: :html), 
+               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'likes' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+             Likes
+           <% end %>
+        </nav>
+      </div>
+      
+      <!-- Content area for posts -->
+      <div class="mt-6">
+        <div id="posts-container" data-infinite-scroll-target="entries">
+          <%= render partial: 'posts/posts_container', locals: { posts: @posts } %>
+          
+          <% if @posts.empty? %>
+            <div class="text-center py-10">
+              <p class="text-gray-500 dark:text-gray-400">
+                <% if params[:tab] == 'replies' %>
+                  No replies yet
+                <% elsif params[:tab] == 'likes' %>
+                  No likes yet
+                <% else %>
+                  No posts yet
+                <% end %>
+              </p>
             </div>
+          <% end %>
+        </div>
+        
+        <% unless @posts.empty? %>
+          <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= profile_path(@user, tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) %>">
+            <!-- Pagination without button - posts load automatically on scroll -->
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
             <div>
               <span class="text-sm font-medium text-gray-600">Message Privacy:</span>
               <span class="text-sm text-gray-900 capitalize"><%= @user.message_privacy %></span>
