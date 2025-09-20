@@ -44,7 +44,7 @@ gem "thruster", require: false
 gem "tailwindcss-rails"
 
 # Use Pagy for pagination [https://github.com/ddnexus/pagy]
-gem "pagy", "~> 6.0"
+gem "pagy", "~> 9.4"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
