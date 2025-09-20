@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Suspended account route
+  get 'suspended_account(/:username)', to: 'suspended_accounts#show', as: :suspended_account
+  resources :reports, only: [:new, :create]
   root "posts#index"
   resources :posts do
     member do
@@ -35,10 +38,26 @@ Rails.application.routes.draw do
   
   # Admin routes
   namespace :admin do
-    root "admin#index"
+    root to: "admin#index"
     resources :countries
     resources :leagues
     resources :teams
+    resources :reports, only: [:index, :destroy, :update]
+    resources :users, only: [:index] do
+      collection do
+        get :search
+        get :suspension_logs
+      end
+      member do
+        patch :suspend
+        patch :unsuspend
+      end
+    end
+    resources :suspended_users, only: [:index] do
+      member do
+        patch :unsuspend
+      end
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -10,24 +10,28 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50">
+  <body class="bg-gray-900 text-gray-100">
     <!-- Admin Navigation -->
-    <nav class="bg-white shadow-sm border-b">
+    <nav class="bg-gray-800 shadow-sm border-b border-gray-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex items-center">
-            <%= link_to "Fancastic Admin", admin_root_path, class: "text-xl font-bold text-gray-900" %>
+            <%= link_to "Fancastic Admin", admin_root_path, class: "text-xl font-bold text-white" %>
           </div>
           
           <div class="flex items-center space-x-4">
-            <%= link_to "Dashboard", admin_root_path, class: "text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium" %>
-            <%= link_to "Countries", admin_countries_path, class: "text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium" %>
-            <%= link_to "Leagues", admin_leagues_path, class: "text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium" %>
-            <%= link_to "Teams", admin_teams_path, class: "text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Dashboard", admin_root_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Countries", admin_countries_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Leagues", admin_leagues_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Teams", admin_teams_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Users", admin_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Suspended Users", admin_suspended_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Suspension Logs", suspension_logs_admin_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <a href="<%= admin_reports_path %>" class="<%= current_page?(admin_reports_path) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %> px-3 py-2 rounded-md text-sm font-medium">Reports</a>
             
-            <div class="border-l border-gray-300 pl-4">
-              <%= link_to "Back to Site", root_path, class: "text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-sm font-medium" %>
-              <%= link_to "Logout", session_path, method: :delete, class: "text-red-600 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium" %>
+            <div class="border-l border-gray-600 pl-4">
+              <%= link_to "Back to Site", root_path, class: "text-blue-400 hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium" %>
+              <%= link_to "Logout", session_path, method: :delete, class: "text-red-400 hover:text-red-300 px-3 py-2 rounded-md text-sm font-medium" %>
             </div>
           </div>
         </div>
@@ -37,13 +41,13 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <% if notice %>
-        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+        <div class="mb-4 bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded">
           <%= notice %>
         </div>
       <% end %>
       
       <% if alert %>
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div class="mb-4 bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded">
           <%= alert %>
         </div>
       <% end %>

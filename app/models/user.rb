@@ -25,12 +25,35 @@ class User < ApplicationRecord
   
   # FanPulse energy system
   has_many :interaction_logs, class_name: 'FanPulse::InteractionLog', dependent: :destroy
+  
+  # Suspension logs
+  has_many :suspension_logs, class_name: 'UserSuspensionLog', dependent: :destroy
+  has_many :suspended_users, class_name: 'UserSuspensionLog', foreign_key: 'suspended_by_id'
+  has_many :unsuspended_users, class_name: 'UserSuspensionLog', foreign_key: 'unsuspended_by_id'
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   
   # Enums
   enum :message_privacy, { everyone: 0, followers: 1, nobody: 2 }
   enum :role, { user: 0, moderator: 1, admin: 2 }
+  enum :suspend_reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3, moderator_action: 4 }
+  
+  # Reports
+  has_many :reports, foreign_key: 'reporter_id', dependent: :nullify
+  has_many :reported_as, as: :reportable, class_name: 'Report', dependent: :destroy
+  
+  # Suspension methods
+  def suspend!(reason)
+    update(suspended: true, suspend_reason: reason, suspend_date: Date.today)
+  end
+  
+  def unsuspend!
+    update(suspended: false, suspend_reason: nil, suspend_date: nil)
+  end
+  
+  def suspended?
+    suspended
+  end
   
   # Validations
   validates :username, presence: true, uniqueness: true

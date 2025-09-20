@@ -11,6 +11,7 @@ module Admin
       @teams_count = Team.count
       @users_count = User.count
       @posts_count = Post.count
+      @reports_count = Report.count
     end
     
     private

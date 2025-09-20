@@ -6,6 +6,18 @@
     
     <!-- Profile content -->
     <div class="px-6 py-4">
+      <% if @user.suspended? %>
+        <div class="bg-red-900 text-white p-4 mb-4 rounded-md border border-red-700">
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-bold">This account has been suspended</span>
+          </div>
+          <p class="mt-1 text-sm">Reason: <%= @user.suspend_reason.humanize %></p>
+          <p class="text-xs text-red-300 mt-1">Suspended on: <%= @user.suspend_date&.strftime("%B %d, %Y") || "Unknown date" %></p>
+        </div>
+      <% end %>
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-4">
           <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md -mt-10 bg-gray-300 relative z-10">
@@ -46,6 +58,13 @@
               <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
             <% elsif @user.message_privacy == 'nobody' %>
               <span class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-gray-100 cursor-not-allowed">Messages Disabled</span>
+            <% end %>
+            
+            <!-- Report button -->
+            <%= link_to new_report_path(reportable_type: "User", reportable_id: @user.id), 
+                data: { turbo_frame: "modal" },
+                class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500" do %>
+              <span class="mr-1">🚩</span> Report
             <% end %>
           </div>
         <% else %>

@@ -54,6 +54,12 @@ class PostsController < ApplicationController
   end
 
   def create
+    # Check if user is suspended
+    if Current.user.suspended?
+      redirect_to root_path, alert: "Your account has been suspended. Reason: #{Current.user.suspend_reason.humanize}"
+      return
+    end
+    
     # Check if user has enough energy to post
     unless Current.user.can_perform_action?('post')
       redirect_to root_path, alert: 'Not enough energy to create a post. Wait for energy to restore or try a smaller action.'

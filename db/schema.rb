@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_123952) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -131,6 +131,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_123952) do
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
+  create_table "reports", force: :cascade do |t|
+    t.bigint "reporter_id", null: false
+    t.string "reportable_type", null: false
+    t.bigint "reportable_id", null: false
+    t.integer "reason"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable"
+    t.index ["reporter_id"], name: "index_reports_on_reporter_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "ip_address"
@@ -153,6 +165,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_123952) do
     t.index ["league_id"], name: "index_teams_on_league_id"
   end
 
+  create_table "user_suspension_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "suspended_by_id", null: false
+    t.bigint "unsuspended_by_id"
+    t.datetime "suspended_at"
+    t.datetime "unsuspended_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "suspend_reason"
+    t.index ["suspended_by_id"], name: "index_user_suspension_logs_on_suspended_by_id"
+    t.index ["unsuspended_by_id"], name: "index_user_suspension_logs_on_unsuspended_by_id"
+    t.index ["user_id"], name: "index_user_suspension_logs_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -165,6 +191,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_123952) do
     t.integer "role", default: 0, null: false
     t.boolean "admin"
     t.string "full_name"
+    t.boolean "suspended"
+    t.integer "suspend_reason"
+    t.date "suspend_date"
+    t.datetime "suspended_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
@@ -182,7 +212,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_123952) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "reports", "users", column: "reporter_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "teams", "countries"
   add_foreign_key "teams", "leagues"
+  add_foreign_key "user_suspension_logs", "users"
+  add_foreign_key "user_suspension_logs", "users", column: "suspended_by_id"
+  add_foreign_key "user_suspension_logs", "users", column: "unsuspended_by_id"
 end

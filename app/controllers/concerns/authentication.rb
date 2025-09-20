@@ -48,5 +48,7 @@ module Authentication
     def terminate_session
       Current.session.destroy
       cookies.delete(:session_id)
+      # Oturum sonlandırıldığında Current.user değerini de temizle
+      Current.reset
     end
 end
