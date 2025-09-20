@@ -5,9 +5,17 @@ export default class extends Controller {
   static values = { url: String, page: { type: Number, default: 2 } }
 
   initialize() {
+    this.setupObserver()
+  }
+  
+  setupObserver() {
+    this.loading = false
+    this.finished = false
+    
+    // Create a new observer each time to ensure clean state
     this.intersectionObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !this.loading && !this.finished) {
           this.loadMore()
         }
       })
@@ -15,6 +23,9 @@ export default class extends Controller {
   }
 
   connect() {
+    // Reset state on connect (happens when tabs change)
+    this.setupObserver()
+    
     if (this.hasPaginationTarget) {
       this.intersectionObserver.observe(this.paginationTarget)
     }
@@ -24,12 +35,16 @@ export default class extends Controller {
     if (this.hasPaginationTarget) {
       this.intersectionObserver.unobserve(this.paginationTarget)
     }
+    
+    // Clean up the observer
+    this.intersectionObserver.disconnect()
   }
 
   loadMore() {
-    // Check if we have a URL value to fetch
-    if (this.hasUrlValue && this.urlValue) {
-      // No loading indicator - silent loading
+    // Check if we have a URL value to fetch and we're not already loading
+    if (this.hasUrlValue && this.urlValue && !this.loading) {
+      // Set loading state to prevent multiple requests
+      this.loading = true
       
       // Construct the URL with the current page
       const url = new URL(this.urlValue, window.location.origin)
@@ -41,12 +56,19 @@ export default class extends Controller {
       })
       .then(response => response.text())
       .then(html => {
-        Turbo.renderStreamMessage(html)
-        this.pageValue++
+        // Check if we got an empty response or no more pages
+        if (!html.includes('turbo-stream') || html.includes('pagination"></div>')) {
+          this.finished = true
+        } else {
+          Turbo.renderStreamMessage(html)
+        }
       })
       .catch(error => {
         console.error("Error loading more posts:", error)
-        // No error indicator
+      })
+      .finally(() => {
+        // Reset loading state after request completes
+        this.loading = false
       })
     }
   }
