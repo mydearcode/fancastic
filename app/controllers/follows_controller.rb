@@ -7,11 +7,13 @@ class FollowsController < ApplicationController
     if Current.user.follow(@user)
       respond_to do |format|
         format.html { redirect_back(fallback_location: user_profile_path(@user)) }
+        format.turbo_stream
         format.json { render json: { status: 'followed', followers_count: @user.followers_count } }
       end
     else
       respond_to do |format|
         format.html { redirect_back(fallback_location: user_profile_path(@user), alert: 'Unable to follow user') }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Unable to follow user" }) }
         format.json { render json: { error: 'Unable to follow user' }, status: :unprocessable_entity }
       end
     end
@@ -22,6 +24,7 @@ class FollowsController < ApplicationController
     Current.user.unfollow(@user)
     respond_to do |format|
       format.html { redirect_back(fallback_location: user_profile_path(@user)) }
+      format.turbo_stream
       format.json { render json: { status: 'unfollowed', followers_count: @user.followers_count } }
     end
   end

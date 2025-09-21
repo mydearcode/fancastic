@@ -102,9 +102,9 @@
               <% end %>
             <% elsif post.repost_of_post.quote_of_post_id.present? %>
               <!-- Reposted Quote Post -->
-              <p class="text-white mb-3"><%= embed_youtube_videos(post.repost_of_post.text) %></p>
+              <p class="text-white mb-3"><%= embed_videos(post.repost_of_post.text) %></p>
               <div class="border border-gray-700 rounded-xl p-3 bg-gray-900">
-                <p class="text-gray-300"><%= embed_youtube_videos(post.repost_of_post.quote_of_post.text) %></p>
+                <p class="text-gray-300"><%= embed_videos(post.repost_of_post.quote_of_post.text) %></p>
                 <% if post.repost_of_post.quote_of_post.image.attached? %>
                   <div class="mt-3">
                     <%= image_tag post.repost_of_post.quote_of_post.image, 
@@ -117,7 +117,7 @@
               </div>
             <% else %>
               <!-- Regular Repost -->
-              <p class="text-white"><%= embed_youtube_videos(post.repost_of_post.text) %></p>
+              <p class="text-white"><%= embed_videos(post.repost_of_post.text) %></p>
               <% if post.repost_of_post.image.attached? %>
                 <div class="mt-3">
                   <%= image_tag post.repost_of_post.image, 
@@ -132,12 +132,12 @@
           <!-- Quote Post -->
           <div class="relative">
             <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
-              <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= embed_youtube_videos(post.text) %></p>
+              <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= embed_videos(post.text) %></p>
             <% end %>
           </div>
           <div class="border border-gray-700 rounded-xl p-3 bg-gray-900 relative">
             <%= link_to post_path(post.quote_of_post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
-              <p class="text-gray-300 hover:text-white transition-colors"><%= embed_youtube_videos(post.quote_of_post.text) %></p>
+              <p class="text-gray-300 hover:text-white transition-colors"><%= embed_videos(post.quote_of_post.text) %></p>
               <% if post.quote_of_post.image.attached? %>
                 <div class="mt-3">
                   <%= image_tag post.quote_of_post.image, 
@@ -156,12 +156,12 @@
       <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
     </div>
           <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
-            <p class="text-white hover:text-gray-300 transition-colors"><%= embed_youtube_videos(post.text) %></p>
+            <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= embed_videos(post.text) %></p>
           <% end %>
           <% # For reply posts, target is the post itself %>
         <% else %>
           <!-- Regular Post -->
-          <p class="text-white hover:text-gray-300 transition-colors text-[15px] leading-5"><%= embed_youtube_videos(post.text) %></p>
+          <p class="text-white hover:text-gray-300 transition-colors text-[15px] leading-5"><%= embed_videos(post.text) %></p>
           <% # For regular posts, target is the post itself %>
         <% end %>
 

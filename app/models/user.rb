@@ -34,7 +34,7 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   
   # Enums
-  enum :message_privacy, { everyone: 0, followers: 1, nobody: 2 }
+  enum :message_privacy, { everyone: 0, followers: 1, team_mates: 2, nobody: 3 }
   enum :role, { user: 0, moderator: 1, admin: 2 }
   enum :suspend_reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3, moderator_action: 4 }
   

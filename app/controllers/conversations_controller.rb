@@ -134,8 +134,11 @@ class ConversationsController < ApplicationController
     when 'everyone'
       true
     when 'followers'
-      # For now, assume everyone can message (you can implement following later)
-      true
+      # Check if target user is following the current user (karşılıklı takip)
+      user.following?(Current.user)
+    when 'team_mates'
+      # Check if both users are on the same team or if target user is following current user
+      (Current.user.team_id.present? && Current.user.team_id == user.team_id) || user.following?(Current.user)
     when 'nobody'
       false
     else

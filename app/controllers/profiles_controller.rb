@@ -82,4 +82,23 @@ class ProfilesController < ApplicationController
   def set_teams
     @teams = Team.includes(:league, :country).order("countries.name, leagues.name, teams.name")
   end
+  
+  def can_message_user?(user)
+    case user.message_privacy
+    when 'everyone'
+      true
+    when 'followers'
+      # Check if target user is following the current user (karşılıklı takip)
+      user.following?(Current.user)
+    when 'team_mates'
+      # Check if both users are on the same team or if target user is following current user
+      (Current.user.team_id.present? && Current.user.team_id == user.team_id) || user.following?(Current.user)
+    when 'nobody'
+      false
+    else
+      false
+    end
+  end
+  
+  helper_method :can_message_user?
 end

@@ -32,13 +32,17 @@
             
             <% if Current.user != follower %>
               <div class="flex space-x-2">
-                <% if Current.user.following?(follower) %>
-                  <%= button_to "Unfollow", user_follow_path(follower), method: :delete, 
-                      class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0" %>
-                <% else %>
-                  <%= button_to "Follow", user_follow_path(follower), method: :post, 
-                      class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0" %>
-                <% end %>
+                <div id="follow_button_<%= follower.id %>">
+                  <% if Current.user.following?(follower) %>
+                    <%= button_to "Unfollow", user_follow_path(follower), method: :delete, 
+                        class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        data: { turbo_stream: true } %>
+                  <% else %>
+                    <%= button_to "Follow", user_follow_path(follower), method: :post, 
+                        class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        data: { turbo_stream: true } %>
+                  <% end %>
+                </div>
               </div>
             <% end %>
           </div>

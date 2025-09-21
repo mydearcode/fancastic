@@ -45,19 +45,20 @@
         <% if defined?(@is_own_profile) && @is_own_profile == false %>
           <!-- Other user's profile - show follow and message buttons -->
           <div class="flex space-x-3">
-            <% if Current.user.following?(@user) %>
-              <%= button_to "Unfollow", user_follow_path(@user), method: :delete, 
-                  class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-                  form: { data: { turbo_method: :delete } } %>
-            <% else %>
-              <%= button_to "Follow", user_follow_path(@user), method: :post, 
-                  class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-            <% end %>
+            <div id="follow_button_<%= @user.id %>">
+              <% if Current.user.following?(@user) %>
+                <%= button_to "Unfollow", user_follow_path(@user), method: :delete, 
+                    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                    data: { turbo_stream: true } %>
+              <% else %>
+                <%= button_to "Follow", user_follow_path(@user), method: :post, 
+                    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                    data: { turbo_stream: true } %>
+              <% end %>
+            </div>
             
-            <% if @user.message_privacy == 'everyone' || (@user.message_privacy == 'followers' && Current.user.following?(@user)) %>
+            <% if can_message_user?(@user) %>
               <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
-            <% elsif @user.message_privacy == 'nobody' %>
-              <span class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-gray-100 cursor-not-allowed">Messages Disabled</span>
             <% end %>
             
             <!-- Report button -->
@@ -101,13 +102,13 @@
               <div class="grid grid-cols-2 gap-4 mb-3">
                 <div class="text-center">
                   <%= link_to user_followers_path(@user), class: "block hover:text-blue-600" do %>
-                    <div class="text-lg font-bold text-white"><%= @user.followers_count %></div>
+                    <div class="text-lg font-bold text-white" id="followers_count"><%= @user.followers_count %></div>
                     <div class="text-sm text-gray-400">Followers</div>
                   <% end %>
                 </div>
                 <div class="text-center">
                   <%= link_to user_following_path(@user), class: "block hover:text-blue-600" do %>
-                    <div class="text-lg font-bold text-white"><%= @user.following_count %></div>
+                    <div class="text-lg font-bold text-white" id="following_count"><%= @user.following_count %></div>
                     <div class="text-sm text-gray-400">Following</div>
                   <% end %>
                 </div>

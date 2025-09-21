@@ -29,6 +29,35 @@ nav {
   border-bottom: 1px solid #374151;
 }
 
+/* TikTok embed styles */
+.tiktok-embed-container {
+  position: relative;
+  max-width: 605px;
+  margin: 0 auto;
+}
+
+.tiktok-embed-container iframe {
+  max-height: 733px;
+  border: 0;
+}
+
+.tiktok-username {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+/* TikTok video unavailable message */
+.video-unavailable {
+  background-color: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+  margin: 15px 0;
+  font-size: 14px;
+}
+
 .nav-link {
   color: #ffffff;
   transition: color 0.2s;

@@ -6,7 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+
+    <meta name="csp-nonce" content="<%= request.content_security_policy_nonce %>">
 
     <%= yield :head %>
 
@@ -20,6 +21,7 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tiktok", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 

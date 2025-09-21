@@ -1,0 +1,11 @@
+/* TikTok embed stilleri */
+.tiktok-embed-container {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.tiktok-embed {
+  max-width: 605px;
+  min-width: 325px;
+}
