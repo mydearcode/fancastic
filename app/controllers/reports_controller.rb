@@ -24,6 +24,7 @@ class ReportsController < ApplicationController
     if @report.save
       respond_to do |format|
         format.html { redirect_to root_path, notice: "Report submitted successfully." }
+        format.json { render json: { success: true, message: "Report submitted successfully." } }
         format.turbo_stream { 
           render turbo_stream: [
             turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Report submitted successfully." }),
@@ -32,7 +33,10 @@ class ReportsController < ApplicationController
         }
       end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: { success: false, errors: @report.errors.full_messages } }
+      end
     end
   end
   

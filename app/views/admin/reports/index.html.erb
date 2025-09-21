@@ -6,6 +6,7 @@
       <thead>
         <tr>
           <th class="px-4 py-3 border-b border-gray-700 text-gray-200">Reported Item</th>
+          <th class="px-4 py-3 border-b border-gray-700 text-gray-200">Reported User</th>
           <th class="px-4 py-3 border-b border-gray-700 text-gray-200">Reason</th>
           <th class="px-4 py-3 border-b border-gray-700 text-gray-200">Reporter</th>
           <th class="px-4 py-3 border-b border-gray-700 text-gray-200">Status</th>
@@ -32,9 +33,29 @@
                     <div class="text-sm text-gray-400">
                       <%= link_to "@#{report.reportable.username}", user_profile_path(report.reportable), class: "text-blue-400 hover:underline" %>
                     </div>
+                  <% elsif report.reportable_type == "Conversation" %>
+                    <div class="text-sm font-medium text-white">Conversation</div>
+                    <div class="text-sm text-gray-400">
+                      <%= link_to "View Conversation", conversation_path(report.reportable), class: "text-blue-400 hover:underline" %>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Participants: <%= report.reportable.users.pluck(:username).join(", ") %>
+                    </div>
                   <% end %>
                 </div>
               </div>
+            </td>
+            <td class="px-4 py-3 border-b border-gray-700">
+              <% if report.reportable_type == "Post" %>
+                <%= link_to "@#{report.reportable.user.username}", user_profile_path(report.reportable.user), class: "text-blue-400 hover:underline" %>
+              <% elsif report.reportable_type == "User" %>
+                <%= link_to "@#{report.reportable.username}", user_profile_path(report.reportable), class: "text-blue-400 hover:underline" %>
+              <% elsif report.reportable_type == "Conversation" %>
+                <span class="text-gray-400">Multiple Users</span>
+                <div class="text-xs text-gray-500 mt-1">
+                  <%= report.reportable.users.map { |u| link_to "@#{u.username}", user_profile_path(u), class: "text-blue-400 hover:underline" }.join(", ").html_safe %>
+                </div>
+              <% end %>
             </td>
             <td class="px-4 py-3 border-b border-gray-700">
               <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -54,8 +75,9 @@
               <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                 <%= case report.status
                     when 'pending' then 'bg-yellow-800 text-yellow-100'
+                    when 'archived' then 'bg-blue-800 text-blue-100'
                     when 'resolved' then 'bg-green-800 text-green-100'
-                    when 'rejected' then 'bg-red-800 text-red-100'
+                    else 'bg-gray-800 text-gray-100'
                     end %>">
                 <%= report.status.humanize %>
               </span>
@@ -66,8 +88,8 @@
             <td class="px-4 py-3 border-b border-gray-700">
               <div class="flex space-x-2">
                 <% if report.status == 'pending' %>
-                  <%= button_to "Resolve", admin_report_path(report, report: { status: 'resolved' }), method: :patch, class: "bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded text-xs" %>
-                  <%= button_to "Reject", admin_report_path(report, report: { status: 'rejected' }), method: :patch, class: "bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs" %>
+                  <%= button_to "Archive", admin_report_path(report), method: :patch, params: { archive: true }, class: "bg-yellow-600 hover:bg-yellow-700 text-white py-1 px-2 rounded text-xs" %>
+                  <%= button_to "Suspend", admin_report_path(report), method: :patch, params: { suspend_user: true }, class: "bg-red-600 hover:bg-red-700 text-white py-1 px-2 rounded text-xs" %>
                 <% end %>
                 <%= button_to "Delete", admin_report_path(report), method: :delete, class: "bg-gray-600 hover:bg-gray-700 text-white py-1 px-2 rounded text-xs", data: { confirm: "Are you sure you want to delete this report?" } %>
               </div>

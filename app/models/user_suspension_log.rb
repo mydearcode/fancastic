@@ -6,7 +6,7 @@ class UserSuspensionLog < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   
   # Enums
-  enum :suspend_reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3, moderator_action: 4 }
+  enum :suspend_reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3, moderator_action: 4, harassment: 5, inappropriate: 6, other: 7 }
   
   # Kullanıcı adlarını döndüren yardımcı metodlar
   def user_username

@@ -3,7 +3,7 @@ class Report < ApplicationRecord
   belongs_to :reportable, polymorphic: true
   
   # Enums for report reasons and status
-  enum :reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3 }
+  enum :reason, { spam: 0, insult: 1, fraud: 2, impersonation: 3, harassment: 4, inappropriate: 5, other: 6 }
   enum :status, { pending: 0, archived: 1, resolved: 2 }
   
   # Validations

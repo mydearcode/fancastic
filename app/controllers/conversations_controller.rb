@@ -31,6 +31,18 @@ class ConversationsController < ApplicationController
     # Get selected participants
     participant_ids = params[:participant_ids]&.reject(&:blank?) || []
     
+    # Prevent self-messaging
+    if participant_ids.include?(Current.user.id.to_s)
+      redirect_to new_conversation_path, alert: 'You cannot start a conversation with yourself.'
+      return
+    end
+    
+    # If no participants selected, prevent creating empty conversation
+    if participant_ids.empty?
+      redirect_to new_conversation_path, alert: 'Please select at least one participant.'
+      return
+    end
+    
     # If only one participant is selected, check for existing conversation
     if participant_ids.length == 1
       target_user = User.find(participant_ids.first)
@@ -80,6 +92,12 @@ class ConversationsController < ApplicationController
   
   def start_with_user
     target_user = User.find(params[:user_id])
+    
+    # Prevent self-messaging
+    if target_user.id == Current.user.id
+      redirect_to user_profile_path(target_user), alert: 'You cannot start a conversation with yourself.'
+      return
+    end
     
     # Check if user can be messaged
     unless can_message_user?(target_user)
