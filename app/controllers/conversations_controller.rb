@@ -99,6 +99,12 @@ class ConversationsController < ApplicationController
       return
     end
     
+    # Check for blocking relationships
+    if Current.user.blocked?(target_user) || Current.user.blocked_by?(target_user)
+      redirect_to user_profile_path(target_user), alert: 'You cannot message this user due to blocking restrictions.'
+      return
+    end
+    
     # Check if user can be messaged
     unless can_message_user?(target_user)
       redirect_to user_profile_path(target_user), alert: 'This user has disabled messages.'
@@ -148,6 +154,9 @@ class ConversationsController < ApplicationController
   end
   
   def can_message_user?(user)
+    # Check if users have blocked each other
+    return false if blocked_interaction?(user)
+    
     case user.message_privacy
     when 'everyone'
       true

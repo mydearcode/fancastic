@@ -62,6 +62,28 @@
                         <span class="mr-3 text-lg">🚩</span>
                         Report
                       <% end %>
+                      
+                      <% other_user = conversation.other_participants(Current.user).first %>
+                      <% if other_user %>
+                        <% unless Current.user.blocked_users.include?(other_user) %>
+                          <%= link_to blocks_path, 
+                              method: :post,
+                              params: { blocked_user_id: other_user.id },
+                              data: { turbo_method: :post, turbo_stream: true, turbo_confirm: "Block @#{other_user.username}?" },
+                              class: "block px-4 py-3 text-sm text-white hover:bg-gray-800 flex items-center transition-colors" do %>
+                            <span class="mr-3 text-lg">🚫</span>
+                            Block @<%= other_user.username %>
+                          <% end %>
+                        <% else %>
+                          <%= link_to user_block_path(other_user, Current.user.user_blocks.find_by(blocked_id: other_user.id)), 
+                              method: :delete,
+                              data: { turbo_method: :delete, turbo_stream: true, turbo_confirm: "Unblock @#{other_user.username}?" },
+                              class: "block px-4 py-3 text-sm text-white hover:bg-gray-800 flex items-center transition-colors" do %>
+                            <span class="mr-3 text-lg">✅</span>
+                            Unblock @<%= other_user.username %>
+                          <% end %>
+                        <% end %>
+                      <% end %>
                     </div>
                   </div>
                 </div>

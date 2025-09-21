@@ -18,13 +18,26 @@ Rails.application.routes.draw do
   patch "profile", to: "profiles#update"
   get "users/:id", to: "profiles#show_user", as: :user_profile
   
+  # Settings routes
+  get "settings", to: "settings#index"
+  get "settings/blocked_users", to: "settings#blocked_users"
+  get "settings/privacy", to: "settings#privacy"
+  get "settings/notifications", to: "settings#notifications"
+  
   # Follow routes
   resources :users, only: [] do
     post :follow, to: "follows#create"
     delete :follow, to: "follows#destroy"
     get :followers, to: "follows#followers"
     get :following, to: "follows#following"
+    
+    # Block routes
+    post :block, to: "blocks#create"
+    delete :block, to: "blocks#destroy"
   end
+  
+  # Blocked users list
+  resources :blocks, only: [:index]
   
   resource :session
   resources :registrations, only: [:new, :create]

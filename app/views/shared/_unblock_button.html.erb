@@ -1,0 +1,4 @@
+<%= button_to "Unblock", user_block_path(user), method: :delete, 
+    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500",
+    data: { turbo_stream: true },
+    id: "block_button_#{user.id}" %>

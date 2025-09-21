@@ -1,0 +1,5 @@
+<%= button_to "Block", user_block_path(user), method: :post, 
+    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+    data: { turbo_stream: true },
+    id: "block_button_#{user.id}",
+    confirm: "Are you sure you want to block #{user.username}?" %>

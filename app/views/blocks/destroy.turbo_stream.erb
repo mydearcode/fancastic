@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "block_button_#{@user.id}" do %>
+  <%= render 'shared/block_button', user: @user %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= render 'shared/flash', notice: "Successfully unblocked #{@user.username}!" %>
+<% end %>

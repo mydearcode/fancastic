@@ -1,0 +1,76 @@
+<div class="max-w-2xl mx-auto py-6">
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <div>
+      <div class="flex items-center space-x-3 mb-2">
+        <%= link_to settings_path, class: "text-gray-400 hover:text-white transition-colors" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        <% end %>
+        <h1 class="text-2xl font-bold text-white">Blocked Users</h1>
+      </div>
+      <p class="mt-2 text-sm text-gray-400">Manage users you have blocked</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <span class="px-3 py-1 text-xs font-medium bg-gray-800 text-gray-300 rounded-full">
+        <%= @blocked_users.count %> blocked
+      </span>
+    </div>
+  </div>
+
+  <% if @blocked_users.any? %>
+    <div class="space-y-3">
+      <% @blocked_users.each do |user| %>
+        <div id="blocked_user_<%= user.id %>" class="bg-black border border-gray-800 rounded-xl p-4 hover:bg-gray-950 transition-colors">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <!-- Profile Picture -->
+              <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
+                <% if user.profile_picture.attached? %>
+                  <%= image_tag user.profile_picture, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <div class="w-full h-full bg-indigo-500 flex items-center justify-center">
+                    <%= user.username.first.upcase %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <!-- User Info -->
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-white font-medium">@<%= user.username %></h3>
+                  <% if user.team.present? %>
+                    <span class="px-2 py-0.5 text-xs font-medium rounded" style="background-color: <%= user.team.color_primary %>; color: <%= user.team.color_secondary %>;">
+                      <%= user.team.symbol_slug.upcase %>
+                    </span>
+                  <% end %>
+                </div>
+                <p class="text-xs text-gray-400">
+                  Blocked <%= time_ago_in_words(Current.user.user_blocks.find_by(blocked_id: user.id).created_at) %> ago
+                </p>
+              </div>
+            </div>
+            
+            <!-- Unblock Button -->
+            <div id="block_button_<%= user.id %>">
+              <%= render 'shared/unblock_button', user: user %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-black border border-gray-800 rounded-xl p-8">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-gray-800 rounded-full flex items-center justify-center">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-white mb-2">No blocked users</h3>
+        <p class="text-gray-400">You haven't blocked anyone yet.</p>
+        <p class="text-sm text-gray-500 mt-1">Users you block will appear here</p>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -17,7 +17,19 @@ class ProfilesController < ApplicationController
   def show_user
     @user = User.find(params[:id])
     @is_own_profile = @user == Current.user
-    load_user_content
+    
+    # Engelleme durumlarını kontrol et
+    @blocked_by_user = Current.user.blocked_by?(@user)
+    @user_blocked = Current.user.blocked?(@user)
+    
+    # Engelleme durumunda bile profil sayfasını göster, sadece içeriği değiştir
+    if @blocked_by_user || @user_blocked
+      # Engelleme durumunda boş posts array'i ata
+      @posts = []
+      @pagy = nil
+    else
+      load_user_content
+    end
     
     respond_to do |format|
       format.html { render :show }

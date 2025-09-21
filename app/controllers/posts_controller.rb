@@ -44,6 +44,10 @@ class PostsController < ApplicationController
       Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
           .order(created_at: :desc)
     end
+    
+    # Filter out posts from blocked users
+    blocked_user_ids = Current.user.blocked_user_ids + Current.user.blocking_user_ids
+    posts_query = posts_query.where.not(user_id: blocked_user_ids) if blocked_user_ids.any?
           
     @pagy, @posts = pagy(posts_query, items: 5)
     

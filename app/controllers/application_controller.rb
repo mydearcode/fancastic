@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   # Askıya alınmış kullanıcıları kontrol etmek için before_action kullanıyoruz
   # Authentication modülünden sonra çalışması için prepend_before_action yerine before_action kullanıyoruz
   before_action :check_suspended_user, if: :authenticated?
+  before_action :filter_blocked_content, if: :authenticated?
   
   private
   
@@ -39,4 +40,17 @@ class ApplicationController < ActionController::Base
       redirect_to suspended_account_path(username: username)
     end
   end
+  
+  def filter_blocked_content
+    # Engellenmiş kullanıcıların içeriklerini filtrelemek için helper method
+    # Bu method controller'larda override edilebilir
+  end
+  
+  # Helper method to check if a user is blocked by current user or vice versa
+  def blocked_interaction?(user)
+    return false unless Current.user && user
+    Current.user.blocked?(user) || Current.user.blocked_by?(user)
+  end
+  
+  helper_method :blocked_interaction?
 end

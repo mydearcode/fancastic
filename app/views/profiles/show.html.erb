@@ -1,23 +1,27 @@
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <div class="bg-gray-900 sm:rounded-lg shadow overflow-hidden border border-gray-800">
+<div class="max-w-2xl mx-auto py-6">
+  <!-- Profile content -->
+  <div class="px-4">
+    <% if @user.suspended? %>
+      <div class="bg-red-900 text-white p-4 mb-4 rounded-md border border-red-700">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="font-bold">This account has been suspended</span>
+        </div>
+        <p class="mt-1 text-sm">Reason: <%= @user.suspend_reason.humanize %></p>
+        <p class="text-xs text-red-300 mt-1">Suspended on: <%= @user.suspend_date&.strftime("%B %d, %Y") || "Unknown date" %></p>
+      </div>
+    <% end %>
+    
     <!-- Cover picture -->
-    <div class="h-32 bg-cover bg-center relative" style="<% if @user.cover_picture.attached? %>background-image: url('<%= url_for(@user.cover_picture) %>');<% else %><% if @user.team.present? %>background: linear-gradient(135deg, <%= @user.team.color_primary %>, <%= @user.team.color_secondary %>);<% else %>background: linear-gradient(135deg, #4b5563, #1f2937);<% end %><% end %>">
+    <div class="bg-black border border-gray-800 rounded-xl overflow-hidden mb-4">
+      <div class="h-32 bg-cover bg-center relative" style="<% if @user.cover_picture.attached? %>background-image: url('<%= url_for(@user.cover_picture) %>');<% else %><% if @user.team.present? %>background: linear-gradient(135deg, <%= @user.team.color_primary %>, <%= @user.team.color_secondary %>);<% else %>background: linear-gradient(135deg, #4b5563, #1f2937);<% end %><% end %>">
+      </div>
     </div>
     
-    <!-- Profile content -->
-    <div class="px-6 py-4">
-      <% if @user.suspended? %>
-        <div class="bg-red-900 text-white p-4 mb-4 rounded-md border border-red-700">
-          <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <span class="font-bold">This account has been suspended</span>
-          </div>
-          <p class="mt-1 text-sm">Reason: <%= @user.suspend_reason.humanize %></p>
-          <p class="text-xs text-red-300 mt-1">Suspended on: <%= @user.suspend_date&.strftime("%B %d, %Y") || "Unknown date" %></p>
-        </div>
-      <% end %>
+    <!-- Profile info -->
+    <div class="bg-black border border-gray-800 rounded-xl p-4 mb-4">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-4">
           <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md -mt-10 bg-gray-300 relative z-10">
@@ -54,6 +58,14 @@
                 <%= button_to "Follow", user_follow_path(@user), method: :post, 
                     class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
                     data: { turbo_stream: true } %>
+              <% end %>
+            </div>
+            
+            <div id="block_button_<%= @user.id %>">
+              <% if Current.user.blocked?(@user) %>
+                <%= render 'shared/unblock_button', user: @user %>
+              <% else %>
+                <%= render 'shared/block_button', user: @user %>
               <% end %>
             </div>
             
@@ -124,67 +136,118 @@
           </div>
         </div>
       </div>
-      
+    </div>
+    
+    <!-- Posts section -->
+    <div class="bg-black border border-gray-800 rounded-xl p-4">
       <!-- Tabs for Posts, Replies, Likes -->
       <div class="mt-6 border-b border-gray-700">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-          <%= link_to profile_path(@user, tab: 'posts', format: :html), 
-               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'posts' || params[:tab].blank? ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
-             Posts
-           <% end %>
-           
-           <%= link_to profile_path(@user, tab: 'replies', format: :html), 
-               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'replies' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
-             Replies
-           <% end %>
-           
-           <%= link_to profile_path(@user, tab: 'likes', format: :html), 
-               class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'likes' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
-             Likes
-           <% end %>
+          <% if @is_own_profile %>
+            <%= link_to profile_path(tab: 'posts', format: :html), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'posts' || params[:tab].blank? ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Posts
+             <% end %>
+             
+             <%= link_to profile_path(tab: 'replies', format: :html), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'replies' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Replies
+             <% end %>
+             
+             <%= link_to profile_path(tab: 'likes', format: :html), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'likes' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Likes
+             <% end %>
+          <% else %>
+            <%= link_to user_profile_path(@user, tab: 'posts'), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'posts' || params[:tab].blank? ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Posts
+             <% end %>
+             
+             <%= link_to user_profile_path(@user, tab: 'replies'), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'replies' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Replies
+             <% end %>
+             
+             <%= link_to user_profile_path(@user, tab: 'likes'), 
+                 class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'likes' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
+               Likes
+             <% end %>
+          <% end %>
         </nav>
       </div>
       
       <!-- Content area for posts -->
       <div class="mt-6">
-        <div id="posts-container" data-infinite-scroll-target="entries">
-          <%= render partial: 'posts/posts_container', locals: { posts: @posts } %>
-          
-          <% if @posts.empty? %>
-            <div class="text-center py-10">
-              <p class="text-gray-500 dark:text-gray-400">
-                <% if params[:tab] == 'replies' %>
-                  No replies yet
-                <% elsif params[:tab] == 'likes' %>
-                  No likes yet
-                <% else %>
-                  No posts yet
-                <% end %>
-              </p>
+        <% if @blocked_by_user %>
+          <!-- Kullanıcı sizi engellemiş durumu -->
+          <div class="text-center py-16">
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-8 max-w-md mx-auto">
+              <div class="mb-4">
+                <svg class="mx-auto h-16 w-16 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-medium text-white mb-2">Bu kullanıcı sizi engellemiştir</h3>
+              <p class="text-gray-400 text-sm">@<%= @user.username %> tarafından engellendiniz ve bu nedenle gönderilerini görüntüleyemezsiniz.</p>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% elsif @user_blocked %>
+          <!-- Siz kullanıcıyı engellemişsiniz durumu -->
+          <div class="mb-4">
+            <div class="bg-yellow-900 border border-yellow-700 rounded-lg p-4">
+              <div class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span class="text-yellow-200 font-medium">Bu kullanıcıyı engellediniz</span>
+              </div>
+              <p class="text-yellow-300 text-sm mt-1">@<%= @user.username %> adlı kullanıcıyı engellemiş durumdasınız. Gönderilerini görüntülüyorsunuz ancak etkileşimde bulunamazsınız.</p>
+            </div>
+          </div>
+          <div id="posts-container" data-infinite-scroll-target="entries">
+            <%= render partial: 'posts/posts_container', locals: { posts: @posts } %>
+            
+            <% if @posts.empty? %>
+              <div class="text-center py-10">
+                <p class="text-gray-500 dark:text-gray-400">
+                  <% if params[:tab] == 'replies' %>
+                    No replies yet
+                  <% elsif params[:tab] == 'likes' %>
+                    No likes yet
+                  <% else %>
+                    No posts yet
+                  <% end %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Normal durum -->
+          <div id="posts-container" data-infinite-scroll-target="entries">
+            <%= render partial: 'posts/posts_container', locals: { posts: @posts } %>
+            
+            <% if @posts.empty? %>
+              <div class="text-center py-10">
+                <p class="text-gray-500 dark:text-gray-400">
+                  <% if params[:tab] == 'replies' %>
+                    No replies yet
+                  <% elsif params[:tab] == 'likes' %>
+                    No likes yet
+                  <% else %>
+                    No posts yet
+                  <% end %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
         
-        <% unless @posts.empty? %>
+        <% unless @posts.empty? || @blocked_by_user %>
           <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= profile_path(@user, tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) %>">
             <!-- Pagination without button - posts load automatically on scroll -->
           </div>
         <% end %>
-      </div>
-    </div>
-  </div>
-</div>
-            <div>
-              <span class="text-sm font-medium text-gray-600">Message Privacy:</span>
-              <span class="text-sm text-gray-900 capitalize"><%= @user.message_privacy %></span>
-            </div>
-            <div>
-              <span class="text-sm font-medium text-gray-600">Role:</span>
-              <span class="text-sm text-gray-900 capitalize"><%= @user.role %></span>
-            </div>
-          </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

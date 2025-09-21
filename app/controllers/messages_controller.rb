@@ -3,6 +3,15 @@ class MessagesController < ApplicationController
   before_action :set_conversation
   
   def create
+    # Check for blocking relationships with other conversation participants
+    other_users = @conversation.users.where.not(id: Current.user.id)
+    blocked_user = other_users.find { |user| Current.user.blocked?(user) || Current.user.blocked_by?(user) }
+    
+    if blocked_user
+      redirect_to @conversation, alert: 'You cannot send messages due to blocking restrictions.'
+      return
+    end
+    
     @message = @conversation.messages.build(message_params)
     @message.user = Current.user
     

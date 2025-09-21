@@ -23,6 +23,13 @@ class User < ApplicationRecord
   has_many :following, through: :active_follows, source: :followed
   has_many :followers, through: :passive_follows, source: :follower
   
+  # Block associations
+  has_many :user_blocks, class_name: 'UserBlock', foreign_key: 'blocker_id', dependent: :destroy
+  has_many :blocking_relationships, class_name: 'UserBlock', foreign_key: 'blocker_id', dependent: :destroy
+  has_many :blocked_by_relationships, class_name: 'UserBlock', foreign_key: 'blocked_id', dependent: :destroy
+  has_many :blocked_users, through: :blocking_relationships, source: :blocked
+  has_many :blocking_users, through: :blocked_by_relationships, source: :blocker
+  
   # FanPulse energy system
   has_many :interaction_logs, class_name: 'FanPulse::InteractionLog', dependent: :destroy
   
@@ -110,5 +117,37 @@ class User < ApplicationRecord
   
   def following_count
     following.count
+  end
+  
+  # Block helper methods
+  def block(user)
+    return false if user == self
+    return false if blocked?(user)
+    blocking_relationships.create(blocked: user)
+  end
+  
+  def unblock(user)
+    blocking_relationships.find_by(blocked: user)&.destroy
+  end
+  
+  def blocked?(user)
+    blocked_users.include?(user)
+  end
+  
+  def blocked_by?(user)
+    blocking_users.include?(user)
+  end
+  
+  def blocked_users_count
+    blocked_users.count
+  end
+  
+  # Helper methods for getting blocked user IDs
+  def blocked_user_ids
+    blocked_users.pluck(:id)
+  end
+  
+  def blocking_user_ids
+    blocking_users.pluck(:id)
   end
 end

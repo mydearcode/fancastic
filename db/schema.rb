@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_21_110857) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_221414) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -175,6 +175,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_21_110857) do
     t.index ["league_id"], name: "index_teams_on_league_id"
   end
 
+  create_table "user_blocks", force: :cascade do |t|
+    t.bigint "blocker_id", null: false
+    t.bigint "blocked_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blocked_id"], name: "index_user_blocks_on_blocked_id"
+    t.index ["blocker_id", "blocked_id"], name: "index_user_blocks_on_blocker_id_and_blocked_id", unique: true
+    t.index ["blocker_id"], name: "index_user_blocks_on_blocker_id"
+  end
+
   create_table "user_suspension_logs", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "suspended_by_id", null: false
@@ -228,6 +238,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_21_110857) do
   add_foreign_key "sessions", "users"
   add_foreign_key "teams", "countries"
   add_foreign_key "teams", "leagues"
+  add_foreign_key "user_blocks", "users", column: "blocked_id"
+  add_foreign_key "user_blocks", "users", column: "blocker_id"
   add_foreign_key "user_suspension_logs", "users"
   add_foreign_key "user_suspension_logs", "users", column: "suspended_by_id"
   add_foreign_key "user_suspension_logs", "users", column: "unsuspended_by_id"

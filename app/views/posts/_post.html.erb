@@ -73,6 +73,25 @@
                   <span class="mr-3 text-lg">🚩</span>
                   Report
                 <% end %>
+                
+                <% unless Current.user.blocked_users.include?(post.user) %>
+                  <%= link_to blocks_path, 
+                      method: :post,
+                      params: { blocked_user_id: post.user.id },
+                      data: { turbo_method: :post, turbo_stream: true, turbo_confirm: "Block @#{post.user.username}?" },
+                      class: "block px-4 py-2 text-sm text-white hover:bg-gray-800 flex items-center transition-colors" do %>
+                    <span class="mr-3 text-lg">🚫</span>
+                    Block @<%= post.user.username %>
+                  <% end %>
+                <% else %>
+                  <%= link_to user_block_path(post.user, Current.user.user_blocks.find_by(blocked_id: post.user.id)), 
+                      method: :delete,
+                      data: { turbo_method: :delete, turbo_stream: true, turbo_confirm: "Unblock @#{post.user.username}?" },
+                      class: "block px-4 py-2 text-sm text-white hover:bg-gray-800 flex items-center transition-colors" do %>
+                    <span class="mr-3 text-lg">✅</span>
+                    Unblock @<%= post.user.username %>
+                  <% end %>
+                <% end %>
               <% end %>
               
               <!-- Placeholder for future "Pin to profile" option -->
