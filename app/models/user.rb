@@ -42,6 +42,17 @@ class User < ApplicationRecord
   has_many :reports, foreign_key: 'reporter_id', dependent: :nullify
   has_many :reported_as, as: :reportable, class_name: 'Report', dependent: :destroy
   
+  # Archrivals
+  has_many :archrivals, dependent: :destroy
+  has_many :rival_teams, through: :archrivals
+  validate :maximum_two_archrivals
+  
+  def maximum_two_archrivals
+    if archrivals.size > 2
+      errors.add(:base, "En fazla 2 ezeli rakip seçebilirsiniz")
+    end
+  end
+  
   # Suspension methods
   def suspend!(reason)
     update(suspended: true, suspend_reason: reason, suspend_date: Date.today)

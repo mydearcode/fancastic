@@ -27,6 +27,18 @@ class PostsController < ApplicationController
           .left_joins(:likes)
           .group('posts.id')
           .order('COUNT(likes.id) DESC, posts.created_at DESC')
+    when 'archrival'
+      # Posts from users with rival teams
+      rival_team_ids = Current.user.rival_teams.pluck(:id)
+      if rival_team_ids.present?
+        Post.joins(:user)
+            .where(users: { team_id: rival_team_ids })
+            .includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
+            .order(created_at: :desc)
+      else
+        # If no rival teams selected, show empty result
+        Post.none
+      end
     else
       # Default to all posts if tab is invalid
       Post.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)

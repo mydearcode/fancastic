@@ -1,8 +1,19 @@
-<div class="max-w-2xl mx-auto p-6">
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Edit Profile</h1>
+<%= turbo_frame_tag "modal" do %>
+<script>
+  function closeModal(event) {
+    if (event.target === event.currentTarget) {
+      document.getElementById('modal').innerHTML = '';
+    }
+  }
+</script>
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closeModal(event)">
+  <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
+      <button type="button" onclick="document.getElementById('modal').innerHTML = ''" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+    </div>
     
-    <%= form_with model: @user, url: profile_path, method: :patch, local: true, class: "space-y-6", html: { multipart: true } do |form| %>
+    <%= form_with model: @user, url: profile_path, method: :patch, class: "space-y-6", html: { multipart: true }, data: { turbo: false } do |form| %>
       <% if @user.errors.any? %>
         <div class="bg-red-50 border border-red-200 rounded-md p-4">
           <div class="flex">
@@ -107,6 +118,15 @@
             { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
       </div>
       
+      <div class="mt-4">
+        <%= form.label :rival_team_ids, "Ezeli Rakipler (en fazla 2)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.collection_select :rival_team_ids, 
+            @teams, :id, :name, 
+            { selected: @user.rival_teams.pluck(:id) }, 
+            { multiple: true, size: 5, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        <p class="mt-1 text-xs text-gray-500">Ctrl/Cmd tuşuna basarak en fazla 2 takım seçebilirsiniz</p>
+      </div>
+      
       <div>
         <%= form.label :message_privacy, class: "block text-sm font-medium text-gray-700 mb-2" %>
         <%= form.select :message_privacy, 
@@ -117,8 +137,9 @@
       
       <div class="flex items-center justify-between">
         <%= link_to "Cancel", profile_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" %>
-        <%= form.submit "Update Profile", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= form.submit "Update Profile", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", onclick: "setTimeout(function() { document.getElementById('modal').innerHTML = ''; }, 500); return true;" %>
       </div>
     <% end %>
   </div>
 </div>
+<% end %>

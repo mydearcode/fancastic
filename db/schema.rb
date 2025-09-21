@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_110857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "archrivals", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "rival_team_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rival_team_id"], name: "index_archrivals_on_rival_team_id"
+    t.index ["user_id", "rival_team_id"], name: "index_archrivals_on_user_id_and_rival_team_id", unique: true
+    t.index ["user_id"], name: "index_archrivals_on_user_id"
   end
 
   create_table "conversation_participants", force: :cascade do |t|
@@ -201,6 +211,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "archrivals", "teams", column: "rival_team_id"
+  add_foreign_key "archrivals", "users"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
   add_foreign_key "fan_pulse_interaction_logs", "users"

@@ -33,10 +33,16 @@ class ProfilesController < ApplicationController
     @user = Current.user
     
     if @user.update(user_params)
-      redirect_to profile_path, notice: "Profile updated successfully."
+      respond_to do |format|
+        format.html { redirect_to profile_path, notice: "Profile updated successfully." }
+        format.turbo_stream { redirect_to profile_path, notice: "Profile updated successfully." }
+      end
     else
       set_teams
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream { render :edit, status: :unprocessable_entity }
+      end
     end
   end
   
@@ -70,7 +76,7 @@ class ProfilesController < ApplicationController
   end
   
   def user_params
-    params.require(:user).permit(:full_name, :username, :team_id, :message_privacy, :profile_picture, :cover_picture)
+    params.require(:user).permit(:full_name, :username, :team_id, :message_privacy, :profile_picture, :cover_picture, rival_team_ids: [])
   end
   
   def set_teams

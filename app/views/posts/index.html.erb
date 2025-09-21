@@ -13,6 +13,10 @@
     <%= link_to "Popular", root_path(tab: "popular"), 
         class: "px-4 py-2 text-sm font-medium #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
         data: { turbo: true, turbo_prefetch: false } %>
+        
+    <%= link_to "Archrival", root_path(tab: "archrival"), 
+        class: "px-4 py-2 text-sm font-medium #{@tab == 'archrival' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+        data: { turbo: true, turbo_prefetch: false } %>
   </div>
 
   <!-- Posts Feed -->
