@@ -24,74 +24,174 @@
   </head>
 
   <body class="bg-black text-white font-sans">
-    <!-- Navigation Header -->
-    <nav class="bg-black border-b border-gray-800 fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-opacity-80">
-      <div class="max-w-6xl mx-auto px-4">
-        <div class="flex justify-between items-center h-16">
+    <div class="flex justify-center min-h-screen">
+      <div class="flex min-h-screen max-w-7xl w-full relative">
+        <!-- Left Column: Logo and Navigation (Desktop) -->
+        <div class="hidden md:block w-64 fixed h-full border-r border-gray-800 bg-black z-40">
+        <div class="p-4 mx-4">
           <!-- Logo -->
-          <div class="flex items-center">
-            <%= link_to root_path, class: "text-2xl font-bold text-white hover:text-blue-400 transition-colors" do %>
-              ⚽ Fancastic
-            <% end %>
-          </div>
-
-          <!-- Navigation Links -->
+          <%= link_to root_path, class: "text-2xl font-bold text-white hover:text-blue-400 transition-colors block mb-8" do %>
+            ⚽ Fancastic
+          <% end %>
+          
+          <!-- Navigation Menu -->
           <% if Current.user %>
-            <div class="flex items-center space-x-8">
-              <%= link_to root_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
-                <span>🏠</span>
-                <span class="hidden sm:inline">Home</span>
+            <nav class="space-y-4">
+              <%= link_to root_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
+                <span class="text-xl">🏠</span>
+                <span>Home</span>
               <% end %>
-              <%= link_to conversations_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
-                <span>✉️</span>
-                <span class="hidden sm:inline">Messages</span>
+              
+              <%= link_to conversations_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
+                <span class="text-xl">✉️</span>
+                <span>Messages</span>
               <% end %>
-              <%= link_to profile_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2" do %>
-                <span>👤</span>
-                <span class="hidden sm:inline">Profile</span>
+              
+              <%= link_to profile_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
+                <span class="text-xl">👤</span>
+                <span>Profile</span>
               <% end %>
-              <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-2 bg-transparent border-0 p-0 cursor-pointer">
-                <span>✏️</span>
-                <span class="hidden sm:inline">Post</span>
+              
+              <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900 w-full text-left">
+                <span class="text-xl">✏️</span>
+                <span>Post</span>
               </button>
+              
               <% if Current.user.admin? %>
-                <%= link_to admin_root_path, class: "text-purple-400 hover:text-purple-300 font-medium transition-colors flex items-center space-x-2" do %>
-                  <span>⚙️</span>
-                  <span class="hidden sm:inline">Admin</span>
+                <%= link_to admin_root_path, class: "text-purple-400 hover:text-purple-300 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
+                  <span class="text-xl">⚙️</span>
+                  <span>Admin</span>
                 <% end %>
               <% end %>
               
-              <!-- User Menu -->
-              <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  <%= Current.user.username.first.upcase %>
+              <!-- User Profile Button -->
+              <div class="mt-auto pt-4">
+                <div class="flex items-center space-x-3 p-3 rounded-full hover:bg-gray-900">
+                  <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    <%= Current.user.username.first.upcase %>
+                  </div>
+                  <div>
+                    <div class="font-medium">@<%= Current.user.username %></div>
+                    <%= button_to session_path, method: :delete, 
+                        class: "text-red-400 hover:text-red-300 text-sm font-medium transition-colors bg-transparent border-0 cursor-pointer p-0" do %>
+                      Sign out
+                    <% end %>
+                  </div>
                 </div>
-                <span class="text-gray-300 font-medium hidden md:inline">@<%= Current.user.username %></span>
-                <%= button_to session_path, method: :delete, 
-                    class: "text-red-400 hover:text-red-300 font-medium transition-colors bg-transparent border-0 cursor-pointer" do %>
-                  <span class="sm:hidden">🚪</span>
-                  <span class="hidden sm:inline">Sign out</span>
-                <% end %>
               </div>
-            </div>
+            </nav>
           <% else %>
-            <div class="flex items-center space-x-4">
-              <%= link_to "Sign in", new_session_path, class: "text-white hover:text-blue-400 font-medium transition-colors" %>
-              <%= link_to "Sign up", new_registration_path, class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition-colors" %>
+            <div class="space-y-4">
+              <%= link_to "Sign in", new_session_path, class: "text-white hover:text-blue-400 font-medium transition-colors block p-3" %>
+              <%= link_to "Sign up", new_registration_path, class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition-colors block text-center" %>
             </div>
           <% end %>
         </div>
       </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="pt-20 pb-8 min-h-screen">
-      <!-- Flash Messages -->
-      <div id="flash" class="max-w-2xl mx-auto mb-4 px-4">
-        <%= render 'shared/flash', notice: notice, alert: alert %>
+      
+      <!-- Mobile Bottom Navigation -->
+      <% if Current.user %>
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
+          <div class="flex justify-around items-center p-3">
+            <%= link_to root_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
+              <span class="text-xl block text-center">🏠</span>
+            <% end %>
+            
+            <%= link_to conversations_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
+              <span class="text-xl block text-center">✉️</span>
+            <% end %>
+            
+            <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="text-white hover:text-blue-400 transition-colors p-2 bg-transparent border-0">
+              <span class="text-xl block text-center">✏️</span>
+            </button>
+            
+            <%= link_to profile_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
+              <span class="text-xl block text-center">👤</span>
+            <% end %>
+            
+            <% if Current.user.admin? %>
+              <%= link_to admin_root_path, class: "text-purple-400 hover:text-purple-300 transition-colors p-2" do %>
+                <span class="text-xl block text-center">⚙️</span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      
+      <!-- Middle Column: Content -->
+      <div class="ml-0 md:ml-64 md:pl-4 flex-1 min-h-screen w-full md:max-w-xl mr-0 pb-24 md:pb-8">
+        <!-- Flash Messages -->
+        <div id="flash" class="mb-4 px-4 pt-4">
+          <%= render 'shared/flash', notice: notice, alert: alert %>
+        </div>
+        
+        <!-- Post Form (Only on home page) -->
+        <% if current_page?(root_path) && Current.user %>
+          <div class="border-b border-gray-800 p-4">
+            <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="w-full text-left p-3 rounded-full bg-gray-900 hover:bg-gray-800 text-gray-400 transition-colors">
+              What's happening?
+            </button>
+          </div>
+        <% end %>
+        
+        <%= yield %>
       </div>
-
-      <%= yield %>
+      
+      <!-- Right Column: Search and Trends -->
+      <div class="hidden lg:block w-80 min-h-screen border-l border-gray-800 ml-4">
+        <div class="p-4 mx-4 sticky top-0">
+          <!-- Search -->
+          <div class="mb-6">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <input type="text" placeholder="Search" class="bg-gray-900 text-white w-full pl-10 pr-4 py-2 rounded-full border border-gray-800 focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+          
+          <!-- Trends -->
+          <div class="bg-gray-900 rounded-xl p-4 mb-6">
+            <h2 class="text-xl font-bold mb-4">Trends for you</h2>
+            <div class="space-y-4">
+              <div>
+                <div class="text-xs text-gray-500">Trending in Sports</div>
+                <div class="font-bold">#ChampionsLeague</div>
+                <div class="text-xs text-gray-500">125K posts</div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500">Trending in Football</div>
+                <div class="font-bold">#PremierLeague</div>
+                <div class="text-xs text-gray-500">95K posts</div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500">Sports · Trending</div>
+                <div class="font-bold">Manchester United</div>
+                <div class="text-xs text-gray-500">85K posts</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Who to follow -->
+          <div class="bg-gray-900 rounded-xl p-4">
+            <h2 class="text-xl font-bold mb-4">Who to follow</h2>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">FC</div>
+                  <div>
+                    <div class="font-bold">Fan Club</div>
+                    <div class="text-sm text-gray-500">@fanclub</div>
+                  </div>
+                </div>
+                <button class="bg-white text-black px-4 py-1 rounded-full font-bold text-sm">Follow</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- Modal Container for Turbo Frames -->
       <%= turbo_frame_tag "quote_modal" %>
@@ -110,7 +210,8 @@
           </div>
         </div>
       </div>
-    </main>
+      </div>
+    </div>
     
     <!-- Modal container for reports -->
     <%= turbo_frame_tag "modal" %>
