@@ -15,11 +15,24 @@
         <div id="conversation_<%= conversation.id %>" class="bg-black border border-gray-800 rounded-xl p-4 hover:bg-gray-950 transition-colors relative">
           <!-- Conversation Content -->
           <div class="flex items-start space-x-3">
+            <% other_user = conversation.other_participants(Current.user).first %>
             <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 relative z-10 overflow-hidden">
-              <%= link_to conversation_path(conversation), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
-                <div class="w-full h-full bg-indigo-500 flex items-center justify-center">
-                  <%= conversation.display_title(Current.user).first.upcase %>
-                </div>
+              <% if other_user %>
+                <%= link_to user_profile_path(other_user), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
+                  <% if other_user.profile_picture.attached? %>
+                    <%= image_tag other_user.profile_picture, class: "w-full h-full object-cover" %>
+                  <% else %>
+                    <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                      <%= other_user.username.first.upcase %>
+                    </div>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <%= link_to conversation_path(conversation), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
+                  <div class="w-full h-full bg-indigo-500 flex items-center justify-center">
+                    <%= conversation.display_title(Current.user).first.upcase %>
+                  </div>
+                <% end %>
               <% end %>
             </div>
             <div class="flex-1 min-w-0">

@@ -32,11 +32,19 @@
             <div class="flex <%= 'justify-end' if message.user == Current.user %>">
               <div class="flex max-w-xs lg:max-w-md <%= 'flex-row-reverse' if message.user == Current.user %>">
                 <div class="flex-shrink-0 <%= 'ml-3' if message.user == Current.user %> <%= 'mr-3' unless message.user == Current.user %>">
-                  <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center">
-                    <span class="text-xs font-medium text-white">
-                      <%= message.user.username.first.upcase %>
-                    </span>
-                  </div>
+                  <%= link_to user_profile_path(message.user), class: "block", data: { turbo_frame: "_top" } do %>
+                    <div class="h-8 w-8 rounded-full overflow-hidden">
+                      <% if message.user.profile_picture.attached? %>
+                        <%= image_tag message.user.profile_picture, class: "w-full h-full object-cover" %>
+                      <% else %>
+                        <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                          <span class="text-xs font-medium text-white">
+                            <%= message.user.username.first.upcase %>
+                          </span>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
                 </div>
                 <div class="<%= 'bg-indigo-600 text-white' if message.user == Current.user %> <%= 'bg-gray-800 text-white' unless message.user == Current.user %> rounded-lg px-4 py-2">
                   <% unless message.user == Current.user %>

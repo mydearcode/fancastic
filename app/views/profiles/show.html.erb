@@ -47,90 +47,138 @@
         </div>
         
         <% if defined?(@is_own_profile) && @is_own_profile == false %>
-          <!-- Other user's profile - show follow and message buttons -->
-          <div class="flex space-x-3">
+          <!-- Other user's profile - minimal X.com style buttons -->
+          <div class="flex items-center space-x-2">
+            <!-- Follow/Unfollow Button -->
             <div id="follow_button_<%= @user.id %>">
               <% if Current.user.following?(@user) %>
-                <%= button_to "Unfollow", user_follow_path(@user), method: :delete, 
-                    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                <%= button_to "Following", user_follow_path(@user), method: :delete, 
+                    class: "px-4 py-1.5 text-sm font-medium border border-gray-600 text-white bg-transparent hover:bg-red-600 hover:border-red-600 rounded-full transition-colors",
                     data: { turbo_stream: true } %>
               <% else %>
                 <%= button_to "Follow", user_follow_path(@user), method: :post, 
-                    class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                    class: "px-4 py-1.5 text-sm font-medium bg-white text-black hover:bg-gray-200 rounded-full transition-colors",
                     data: { turbo_stream: true } %>
               <% end %>
             </div>
             
-            <div id="block_button_<%= @user.id %>">
-              <% if Current.user.blocked?(@user) %>
-                <%= render 'shared/unblock_button', user: @user %>
-              <% else %>
-                <%= render 'shared/block_button', user: @user %>
-              <% end %>
-            </div>
-            
+            <!-- Message Button -->
             <% if can_message_user?(@user) %>
-              <%= button_to "Message", start_conversation_with_user_path(@user.id), method: :post, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+              <%= button_to start_conversation_with_user_path(@user.id), method: :post, 
+                  class: "p-1.5 border border-gray-600 text-white hover:bg-gray-800 rounded-full transition-colors",
+                  title: "Message" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              <% end %>
             <% end %>
             
-            <!-- Report button -->
-            <%= link_to new_report_path(reportable_type: "User", reportable_id: @user.id), 
-                data: { turbo_frame: "modal" },
-                class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500" do %>
-              <span class="mr-1">🚩</span> Report
-            <% end %>
+            <!-- More Options Dropdown -->
+            <div class="relative" data-controller="dropdown">
+              <button data-action="click->dropdown#toggle" 
+                      class="p-1.5 border border-gray-600 text-white hover:bg-gray-800 rounded-full transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </button>
+              
+              <div data-dropdown-target="menu" 
+                   class="hidden absolute right-0 mt-2 w-48 bg-black border border-gray-700 rounded-lg shadow-lg z-10">
+                <!-- Block/Unblock Option -->
+                <% if Current.user.blocked?(@user) %>
+                  <%= button_to user_unblock_path(@user), method: :delete,
+                      data: { turbo_stream: true },
+                      class: "block w-full text-left px-3 py-2 text-sm text-green-400 hover:bg-gray-800 rounded" do %>
+                    ✅ Unblock @<%= @user.username %>
+                  <% end %>
+                <% else %>
+                  <%= button_to user_block_path(@user), method: :post,
+                      data: { turbo_stream: true, confirm: "Are you sure you want to block #{@user.username}?" },
+                      class: "block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-gray-800 rounded" do %>
+                    🚫 Block @<%= @user.username %>
+                  <% end %>
+                <% end %>
+                
+                <!-- Report Option -->
+                <%= link_to new_report_path(reportable_type: "User", reportable_id: @user.id), 
+                    data: { turbo_frame: "modal" },
+                    class: "block px-3 py-2 text-sm text-red-400 hover:bg-gray-800 rounded" do %>
+                  🚩 Report @<%= @user.username %>
+                <% end %>
+              </div>
+            </div>
           </div>
         <% else %>
           <!-- Own profile - show edit button -->
-          <%= link_to "Edit Profile", profile_edit_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+          <%= link_to "Edit Profile", profile_edit_path, class: "px-4 py-1.5 text-sm font-medium border border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-full transition-colors" %>
         <% end %>
       </div>
       
-      <!-- Team information -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div class="bg-gray-900 shadow sm:rounded-lg border border-gray-800">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-white mb-2">Team</h3>
-          <% if @user.team.present? %>
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background-color: <%= @user.team.color_primary %>">
-                <%= @user.team.symbol_slug.upcase if @user.team.symbol_slug.present? %>
-              </div>
-              <div>
-                <p class="font-medium text-white"><%= @user.team.name %></p>
-                <p class="text-sm text-gray-400"><%= @user.team.league.name %> - <%= @user.team.country.name %></p>
-              </div>
+      <!-- Compact Team and Stats info -->
+      <div class="flex items-center space-x-4 mb-6">
+        <!-- Team Icon -->
+        <% if @user.team.present? %>
+          <div class="relative group">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold cursor-pointer" 
+                 style="background-color: <%= @user.team.color_primary %>"
+                 title="<%= @user.team.name %> - <%= @user.team.league.name %>, <%= @user.team.country.name %>">
+              <%= @user.team.symbol_slug.upcase if @user.team.symbol_slug.present? %>
             </div>
-          <% else %>
-            <p class="text-gray-400">No team selected</p>
-          <% end %>
+            <!-- Tooltip -->
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              <%= @user.team.name %><br>
+              <span class="text-gray-400"><%= @user.team.league.name %> - <%= @user.team.country.name %></span>
+            </div>
           </div>
-        </div>
+        <% else %>
+          <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-400 text-sm" title="No team selected">
+            ?
+          </div>
+        <% end %>
         
-        <div class="bg-gray-900 shadow sm:rounded-lg border border-gray-800">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-white mb-2">Stats</h3>
-            <div class="space-y-2">
-              <div class="grid grid-cols-2 gap-4 mb-3">
-                <div class="text-center">
-                  <%= link_to user_followers_path(@user), class: "block hover:text-blue-600" do %>
-                    <div class="text-lg font-bold text-white" id="followers_count"><%= @user.followers_count %></div>
-                    <div class="text-sm text-gray-400">Followers</div>
-                  <% end %>
-                </div>
-                <div class="text-center">
-                  <%= link_to user_following_path(@user), class: "block hover:text-blue-600" do %>
-                    <div class="text-lg font-bold text-white" id="following_count"><%= @user.following_count %></div>
-                    <div class="text-sm text-gray-400">Following</div>
-                  <% end %>
-                </div>
-              </div>
-              <div>
-                <span class="text-sm font-medium text-gray-600">Energy:</span>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
-                  <div class="bg-green-600 h-2.5 rounded-full" style="width: <%= @user.energy %>%"></div>
-                </div>
-                <span class="text-sm text-gray-500"><%= @user.energy %>/100</span>
+        <!-- Stats Icons -->
+        <div class="flex items-center space-x-3">
+          <!-- Followers -->
+          <div class="relative group">
+            <%= link_to user_followers_path(@user), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+              </svg>
+              <span class="text-sm font-medium" id="followers_count"><%= @user.followers_count %></span>
+            <% end %>
+            <!-- Tooltip -->
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              Followers
+            </div>
+          </div>
+          
+          <!-- Following -->
+          <div class="relative group">
+            <%= link_to user_following_path(@user), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm font-medium" id="following_count"><%= @user.following_count %></span>
+            <% end %>
+            <!-- Tooltip -->
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              Following
+            </div>
+          </div>
+          
+          <!-- Energy -->
+          <div class="relative group">
+            <div class="flex items-center space-x-1 text-gray-400 cursor-pointer">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm font-medium"><%= @user.energy %></span>
+            </div>
+            <!-- Tooltip -->
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              Energy: <%= @user.energy %>/100<br>
+              <div class="w-20 bg-gray-700 rounded-full h-1.5 mt-1">
+                <div class="bg-green-500 h-1.5 rounded-full" style="width: <%= @user.energy %>%"></div>
               </div>
             </div>
           </div>
