@@ -1,0 +1,38 @@
+<%= turbo_frame_tag "trending_list" do %>
+  <% if trending_topics.any? %>
+    <% trending_topics.each_with_index do |trend, index| %>
+      <%= link_to trend_path(trend.phrase), class: "block px-4 py-3 border-b border-gray-800 hover:bg-gray-950 transition-colors cursor-pointer", data: { turbo: true, turbo_frame: "_top" } do %>
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <div class="text-xs text-gray-500 mb-1">
+              <%= index + 1 %>. Trending in Sports
+            </div>
+            <div class="font-bold text-white text-base mb-1">
+              <%= trend.phrase %>
+            </div>
+            <div class="text-xs text-gray-500">
+              <%= number_with_delimiter(trend.count) %> posts
+            </div>
+          </div>
+          <div class="ml-4">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="px-4 py-12 text-center">
+      <div class="text-gray-500 text-2xl mb-3">📊</div>
+      <h3 class="text-lg font-semibold text-white mb-2">Nothing to see here — yet</h3>
+      <p class="text-gray-500 text-sm">When people post, their posts will show up here.</p>
+    </div>
+  <% end %>
+  
+  <div class="px-4 py-3 border-t border-gray-800">
+    <p class="text-xs text-gray-600 text-center">
+      Updated every 15 minutes
+    </p>
+  </div>
+<% end %>

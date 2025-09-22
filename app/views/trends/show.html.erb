@@ -1,0 +1,47 @@
+<div class="max-w-2xl mx-auto">
+  <!-- Header -->
+  <div class="sticky top-0 bg-black/80 backdrop-blur-md border-b border-gray-800 px-4 py-3 mb-0 z-10">
+    <div class="flex items-center space-x-3">
+      <%= link_to trends_path, class: "text-white hover:bg-gray-900 rounded-full p-2 transition-colors", data: { turbo: true } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      <% end %>
+      <div>
+        <h1 class="text-xl font-bold text-white">#<%= @phrase %></h1>
+        <p class="text-sm text-gray-500">Trend konu</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tabs -->
+  <div class="border-b border-gray-800 sticky top-16 bg-black z-10">
+    <div class="flex">
+      <%= link_to trend_path(@phrase, tab: 'top'), 
+          class: "flex-1 text-center py-4 text-sm font-medium transition-colors #{'text-white border-b-2 border-blue-500' if @tab == 'top'} #{'text-gray-500 hover:text-gray-300' if @tab != 'top'}", 
+          data: { turbo_action: "advance" } do %>
+        Popüler
+      <% end %>
+      <%= link_to trend_path(@phrase, tab: 'latest'), 
+          class: "flex-1 text-center py-4 text-sm font-medium transition-colors #{'text-white border-b-2 border-blue-500' if @tab == 'latest'} #{'text-gray-500 hover:text-gray-300' if @tab != 'latest'}", 
+          data: { turbo_action: "advance" } do %>
+        Güncel
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- Posts -->
+  <div class="bg-black min-h-screen">
+    <div id="posts_list">
+      <% if @posts.any? %>
+        <%= render 'posts_page', posts: @posts %>
+      <% else %>
+        <div class="px-4 py-12 text-center">
+          <div class="text-gray-500 text-2xl mb-3">📊</div>
+          <h3 class="text-lg font-semibold text-white mb-2">Henüz gönderi yok</h3>
+          <p class="text-gray-500 text-sm">Bu konu hakkında henüz gönderi paylaşılmamış.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

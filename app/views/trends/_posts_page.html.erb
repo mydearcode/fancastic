@@ -1,0 +1,12 @@
+<% posts.each do |post| %>
+  <%= render 'posts/post', post: post %>
+<% end %>
+<% if posts.size >= 20 %>
+  <div class="px-4 py-6 text-center">
+    <div class="text-gray-500 text-sm">Loading more posts...</div>
+  </div>
+<% else %>
+  <div class="px-4 py-6 text-center">
+    <div class="text-gray-500 text-sm">You've reached the end</div>
+  </div>
+<% end %>

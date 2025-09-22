@@ -1,0 +1,2 @@
+class TrendEntry < ApplicationRecord
+end

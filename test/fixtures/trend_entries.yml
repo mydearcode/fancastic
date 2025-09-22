@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  phrase: MyString
+  count: 1
+  window: MyString
+  window_start: 2025-09-22 16:17:12
+  window_end: 2025-09-22 16:17:12
+
+two:
+  phrase: MyString
+  count: 1
+  window: MyString
+  window_start: 2025-09-22 16:17:12
+  window_end: 2025-09-22 16:17:12

@@ -1,0 +1,20 @@
+<div id="posts_list">
+  <% if @posts.any? %>
+    <%= render "posts_page", posts: @posts, phrase: @phrase, tab: @tab, page: @page %>
+    
+    <% if @posts.next_page %>
+      <div class="py-4 text-center" data-controller="infinite-scroll" data-infinite-scroll-target="trigger">
+        <%= link_to "Daha fazla yükle", 
+            trend_path(@phrase, tab: @tab, page: @page + 1), 
+            class: "text-blue-400 hover:underline",
+            data: { turbo_frame: "trending_list", turbo_action: "advance" } %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="px-4 py-12 text-center">
+      <div class="text-gray-500 text-2xl mb-3">📝</div>
+      <h3 class="text-lg font-semibold text-white mb-2">Gönderi bulunamadı</h3>
+      <p class="text-gray-500 text-sm">"<%= @phrase %>" hakkında ilk gönderiyi sen yap</p>
+    </div>
+  <% end %>
+</div>

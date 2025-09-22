@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :trends, only: [:index]
+  get 'trend/:phrase', to: 'trends#show', as: :trend
   # Suspended account route
   get 'suspended_account(/:username)', to: 'suspended_accounts#show', as: :suspended_account
   resources :reports, only: [:new, :create]
@@ -83,5 +85,8 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
+  
+  # Mount ActionCable server
+  mount ActionCable.server => '/cable'
 
 end

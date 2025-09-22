@@ -1,0 +1,13 @@
+<%= turbo_stream.update "trending_list" do %>
+  <div id="posts_list">
+    <% if @posts.any? %>
+      <%= render "posts_page", posts: @posts, phrase: @phrase, tab: @tab, page: @page %>
+    <% else %>
+      <div class="px-4 py-12 text-center">
+        <div class="text-gray-500 text-2xl mb-3">📝</div>
+        <h3 class="text-lg font-semibold text-white mb-2">Gönderi bulunamadı</h3>
+        <p class="text-gray-500 text-sm">"<%= @phrase %>" hakkında ilk gönderiyi sen yap</p>
+      </div>
+    <% end %>
+  </div>
+<% end %>

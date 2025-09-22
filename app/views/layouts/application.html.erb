@@ -49,6 +49,11 @@
                 <span>Messages</span>
               <% end %>
               
+              <%= link_to trends_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
+                <span class="text-xl">📈</span>
+                <span>Trends</span>
+              <% end %>
+              
               <%= link_to settings_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
                 <span class="text-xl">⚙️</span>
                 <span>Settings</span>
@@ -108,6 +113,10 @@
               <span class="text-xl block text-center">✉️</span>
             <% end %>
             
+            <%= link_to trends_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
+              <span class="text-xl block text-center">📈</span>
+            <% end %>
+            
             <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="text-white hover:text-blue-400 transition-colors p-2 bg-transparent border-0">
               <span class="text-xl block text-center">✏️</span>
             </button>
@@ -161,23 +170,39 @@
           
           <!-- Trends -->
           <div class="bg-gray-900 rounded-xl p-4 mb-6">
-            <h2 class="text-xl font-bold mb-4">Trends for you</h2>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold">Trends for you</h2>
+              <%= link_to trends_path, class: "text-blue-400 hover:text-blue-300 text-sm", data: { turbo: true } do %>
+                Show more
+              <% end %>
+            </div>
             <div class="space-y-4">
-              <div>
-                <div class="text-xs text-gray-500">Trending in Sports</div>
-                <div class="font-bold">#ChampionsLeague</div>
-                <div class="text-xs text-gray-500">125K posts</div>
-              </div>
-              <div>
-                <div class="text-xs text-gray-500">Trending in Football</div>
-                <div class="font-bold">#PremierLeague</div>
-                <div class="text-xs text-gray-500">95K posts</div>
-              </div>
-              <div>
-                <div class="text-xs text-gray-500">Sports · Trending</div>
-                <div class="font-bold">Manchester United</div>
-                <div class="text-xs text-gray-500">85K posts</div>
-              </div>
+              <% trending_topics = TrendEntry.select("phrase, MAX(count) as count, MAX(window_start) as window_start").where(window: "1h").where("window_start >= ?", 3.hours.ago).group(:phrase).order("MAX(count) DESC").limit(3) %>
+              <% if trending_topics.any? %>
+                <% trending_topics.each_with_index do |trend, index| %>
+                  <%= link_to trend_path(trend.phrase), class: "block hover:bg-gray-800 rounded p-2 -m-2 transition-colors", data: { turbo: true, turbo_frame: "_top" } do %>
+                    <div class="text-xs text-gray-500"><%= index + 1 %>. Trending</div>
+                    <div class="font-bold text-white"><%= trend.phrase %></div>
+                    <div class="text-xs text-gray-500"><%= number_with_delimiter(trend.count) %> posts</div>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <div>
+                  <div class="text-xs text-gray-500">Trending in Sports</div>
+                  <div class="font-bold">#ChampionsLeague</div>
+                  <div class="text-xs text-gray-500">125K posts</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Trending in Football</div>
+                  <div class="font-bold">#PremierLeague</div>
+                  <div class="text-xs text-gray-500">95K posts</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Sports · Trending</div>
+                  <div class="font-bold">Manchester United</div>
+                  <div class="text-xs text-gray-500">85K posts</div>
+                </div>
+              <% end %>
             </div>
           </div>
           
