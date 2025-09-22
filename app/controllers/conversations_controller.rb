@@ -66,7 +66,7 @@ class ConversationsController < ApplicationController
     end
     
     # Create new conversation
-    @conversation = Conversation.new(conversation_params)
+    @conversation = Conversation.new
     
     if @conversation.save
       # Add current user as participant
@@ -122,7 +122,7 @@ class ConversationsController < ApplicationController
       redirect_to existing_conversation
     else
       # Create new conversation
-      @conversation = Conversation.create!(title: "Chat with #{target_user.username}")
+      @conversation = Conversation.create!
       @conversation.conversation_participants.create!(user: Current.user)
       @conversation.conversation_participants.create!(user: target_user)
       
@@ -150,7 +150,7 @@ class ConversationsController < ApplicationController
   end
   
   def conversation_params
-    params.require(:conversation).permit(:title)
+    params.require(:conversation).permit()
   end
   
   def can_message_user?(user)

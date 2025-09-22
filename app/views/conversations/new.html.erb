@@ -33,12 +33,6 @@
             <% end %>
             
             <div>
-              <%= form.label :title, "Conversation Title (Optional)", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :title, placeholder: "Enter a title for this conversation", class: "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
-              <p class="mt-2 text-sm text-gray-500">If left empty, the conversation will be named after the participants.</p>
-            </div>
-            
-            <div>
               <label class="block text-sm font-medium text-gray-700">Select Participants</label>
               <div class="mt-2 space-y-2 max-h-60 overflow-y-auto border border-gray-300 rounded-md p-3">
                 <% @users.each do |user| %>

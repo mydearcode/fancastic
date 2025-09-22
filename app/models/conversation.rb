@@ -4,8 +4,6 @@ class Conversation < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :reports, as: :reportable, dependent: :destroy
   
-  validates :title, length: { maximum: 255 }
-  
   scope :recent, -> { order(last_message_at: :desc, updated_at: :desc) }
   
   def last_message
@@ -17,8 +15,6 @@ class Conversation < ApplicationRecord
   end
   
   def display_title(current_user)
-    return title if title.present?
-    
     other_users = other_participants(current_user)
     if other_users.count == 1
       other_users.first.username
