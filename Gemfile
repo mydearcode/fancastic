@@ -44,7 +44,7 @@ gem "thruster", require: false
 gem "tailwindcss-rails"
 
 # Use Pagy for pagination [https://github.com/ddnexus/pagy]
-gem "pagy", "~> 6.0"
+gem "pagy", "~> 9.4"
 
 # Use HTTParty for HTTP requests [https://github.com/jnunemaker/httparty]
 gem "httparty", "~> 0.21.0"
