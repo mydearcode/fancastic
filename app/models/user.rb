@@ -79,7 +79,7 @@ class User < ApplicationRecord
   
   # Energy management methods
   def can_perform_action?(action_type)
-    energy_cost = FanPulse::InteractionLog::ENERGY_COSTS[action_type] || 0
+    energy_cost = FanPulse::InteractionLog.energy_cost_for(action_type)
     return true if energy_cost >= 0 # Restores are always allowed
     energy + energy_cost >= 0
   end

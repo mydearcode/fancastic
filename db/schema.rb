@@ -79,6 +79,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_195150) do
     t.string "code"
   end
 
+  create_table "energy_cost_settings", force: :cascade do |t|
+    t.string "action_type", null: false
+    t.integer "cost", default: 0, null: false
+    t.text "description"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action_type"], name: "index_energy_cost_settings_on_action_type", unique: true
+    t.index ["active"], name: "index_energy_cost_settings_on_active"
+  end
+
   create_table "fan_pulse_interaction_logs", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "action_type"

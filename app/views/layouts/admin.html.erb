@@ -25,7 +25,9 @@
             <%= link_to "Leagues", admin_leagues_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
             <%= link_to "Teams", admin_teams_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
             <%= link_to "Users", admin_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
-            <%= link_to "Suspended Users", admin_suspended_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Users", admin_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Energy", admin_energy_index_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+
             <%= link_to "Suspension Logs", suspension_logs_admin_users_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
             <a href="<%= admin_reports_path %>" class="<%= current_page?(admin_reports_path) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %> px-3 py-2 rounded-md text-sm font-medium">Reports</a>
             

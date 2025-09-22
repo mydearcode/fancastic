@@ -132,7 +132,12 @@
           <p class="text-sm text-gray-400 mt-1">Add, edit, or remove teams</p>
         <% end %>
         
-        <%= link_to admin_reports_path, class: "block p-4 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors bg-orange-900" do %>
+        <%= link_to admin_energy_index_path, class: "block p-4 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors bg-gray-900" do %>
+          <h3 class="font-medium text-white">Energy Management</h3>
+          <p class="text-sm text-gray-400 mt-1">Manage user energy levels and costs</p>
+        <% end %>
+        
+        <%= link_to admin_reports_path, class: "block p-4 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors bg-gray-900" do %>
           <h3 class="font-medium text-white">Reports Management</h3>
           <p class="text-sm text-gray-400 mt-1">Review and handle user reports</p>
         <% end %>

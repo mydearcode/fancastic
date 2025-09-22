@@ -1,0 +1,149 @@
+<% content_for :title, "#{@user.username} - Energy Yönetimi" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-white">@<%= @user.username %> - Energy Yönetimi</h1>
+      <p class="text-gray-400 mt-1"><%= @user.email_address %></p>
+    </div>
+    
+    <%= link_to "← Geri Dön", admin_energy_index_path, 
+        class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" %>
+  </div>
+
+  <!-- Current Energy Status -->
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <h2 class="text-lg font-semibold text-white mb-4">Mevcut Energy Durumu</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="text-center">
+        <div class="text-4xl font-bold <%= @user.energy < 20 ? 'text-red-400' : @user.energy < 50 ? 'text-yellow-400' : 'text-green-400' %>">
+          <%= @user.energy %>/100
+        </div>
+        <div class="text-sm text-gray-400 mt-1">Energy Seviyesi</div>
+      </div>
+      
+      <div class="flex items-center justify-center">
+        <div class="w-48 bg-gray-700 rounded-full h-6">
+          <div class="h-6 rounded-full transition-all duration-300 <%= @user.energy < 20 ? 'bg-red-500' : @user.energy < 50 ? 'bg-yellow-500' : 'bg-green-500' %>" 
+               style="width: <%= @user.energy %>%"></div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <div class="text-lg font-semibold text-white">
+          <%= @user.energy_percentage %>%
+        </div>
+        <div class="text-sm text-gray-400 mt-1">Yüzde Oranı</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Energy Management Actions -->
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <h2 class="text-lg font-semibold text-white mb-4">Energy İşlemleri</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Increase Energy -->
+      <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
+        <h3 class="font-medium text-green-400 mb-3">Energy Artır</h3>
+        <%= form_with url: update_user_energy_admin_energy_path(@user), method: :patch, local: true, class: "space-y-3" do |form| %>
+          <%= form.hidden_field :action_type, value: 'increase' %>
+          <%= form.number_field :amount, placeholder: "Miktar", min: 1, max: 100, 
+              class: "w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent" %>
+          <%= form.submit "Artır", class: "w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-medium transition-colors" %>
+        <% end %>
+      </div>
+      
+      <!-- Decrease Energy -->
+      <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
+        <h3 class="font-medium text-red-400 mb-3">Energy Azalt</h3>
+        <%= form_with url: update_user_energy_admin_energy_path(@user), method: :patch, local: true, class: "space-y-3" do |form| %>
+          <%= form.hidden_field :action_type, value: 'decrease' %>
+          <%= form.number_field :amount, placeholder: "Miktar", min: 1, max: 100, 
+              class: "w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent" %>
+          <%= form.submit "Azalt", class: "w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded font-medium transition-colors" %>
+        <% end %>
+      </div>
+      
+      <!-- Reset Energy -->
+      <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
+        <h3 class="font-medium text-yellow-400 mb-3">Energy Sıfırla</h3>
+        <%= form_with url: update_user_energy_admin_energy_path(@user), method: :patch, local: true, class: "space-y-3" do |form| %>
+          <%= form.hidden_field :action_type, value: 'reset' %>
+          <div class="text-sm text-gray-400 mb-3">Energy'yi 0'a sıfırlar</div>
+          <%= form.submit "Sıfırla", class: "w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded font-medium transition-colors",
+              confirm: "#{@user.username} kullanıcısının energy'sini sıfırlamak istediğinizden emin misiniz?" %>
+        <% end %>
+      </div>
+      
+      <!-- Full Energy -->
+      <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
+        <h3 class="font-medium text-blue-400 mb-3">Energy Fulleme</h3>
+        <%= form_with url: update_user_energy_admin_energy_path(@user), method: :patch, local: true, class: "space-y-3" do |form| %>
+          <%= form.hidden_field :action_type, value: 'full' %>
+          <div class="text-sm text-gray-400 mb-3">Energy'yi 100'e çıkarır</div>
+          <%= form.submit "Fulleme", class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="bg-gray-800 rounded-lg border border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h2 class="text-lg font-semibold text-white">Son Energy Aktiviteleri</h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-700">
+        <thead class="bg-gray-900">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Aktivite</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Energy Değişimi</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Hedef</th>
+          </tr>
+        </thead>
+        <tbody class="bg-gray-800 divide-y divide-gray-700">
+          <% @interaction_logs.each do |log| %>
+            <tr class="hover:bg-gray-700">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                <%= log.created_at.strftime("%d.%m.%Y %H:%M") %>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  <%= log.action_type.include?('admin') ? 'bg-purple-900 text-purple-300' : 
+                      log.energy_delta > 0 ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' %>">
+                  <%= log.action_type.humanize %>
+                </span>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <span class="<%= log.energy_delta > 0 ? 'text-green-400' : log.energy_delta < 0 ? 'text-red-400' : 'text-gray-400' %>">
+                  <%= log.energy_delta > 0 ? '+' : '' %><%= log.energy_delta %>
+                </span>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                <% if log.target %>
+                  <%= log.target.class.name %> #<%= log.target.id %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    
+    <% if @interaction_logs.empty? %>
+      <div class="px-6 py-8 text-center text-gray-400">
+        Henüz energy aktivitesi bulunmuyor
+      </div>
+    <% end %>
+  </div>
+</div>

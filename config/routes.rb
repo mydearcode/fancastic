@@ -73,6 +73,18 @@ Rails.application.routes.draw do
         patch :unsuspend
       end
     end
+    
+    # Energy management routes
+    resources :energy, only: [:index, :show] do
+      member do
+        patch :update_user_energy
+      end
+      collection do
+        get :energy_costs
+        patch :update_energy_costs
+        post :bulk_energy_restore
+      end
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
