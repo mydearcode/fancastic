@@ -149,14 +149,17 @@
           </div>
         <% elsif post.quote_of_post_id.present? %>
           <!-- Quote Post -->
-          <div class="relative">
+          <div class="relative z-10">
             <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
               <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= embed_videos(post.text) %></p>
             <% end %>
           </div>
-          <div class="border border-gray-700 rounded-xl p-3 bg-gray-900 relative">
-            <%= link_to post_path(post.quote_of_post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
-              <p class="text-gray-300 hover:text-white transition-colors"><%= embed_videos(post.quote_of_post.text) %></p>
+          <!-- Quoted Original Post - Separate clickable area -->
+          <div class="border border-gray-700 rounded-xl p-3 bg-gray-900 relative z-10 hover:bg-gray-800 transition-colors">
+            <%= link_to post_path(post.quote_of_post), class: "absolute inset-0 z-20", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
+            <% end %>
+            <div class="relative z-10 pointer-events-none">
+              <p class="text-gray-300"><%= embed_videos(post.quote_of_post.text) %></p>
               <% if post.quote_of_post.image.attached? %>
                 <div class="mt-3">
                   <%= image_tag post.quote_of_post.image, 
@@ -166,7 +169,7 @@
                 </div>
               <% end %>
               <p class="text-sm text-gray-500 mt-2"><%= "@#{post.quote_of_post.user.username}" %></p>
-            <% end %>
+            </div>
           </div>
           <% # For quote posts, target is the post itself %>
         <% elsif post.in_reply_to_post_id.present? %>

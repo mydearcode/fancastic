@@ -41,14 +41,50 @@
             rows: 3 %>
       </div>
       
-      <div class="mb-4">
+      <!-- Hidden file input -->
+      <div class="hidden">
         <%= form.file_field :image, 
-            class: "block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-colors",
+            id: "post_image_input",
             accept: "image/*" %>
       </div>
       
       <div class="flex justify-between items-center">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-1">
+          <!-- Image upload icon -->
+          <button type="button" 
+                  onclick="document.getElementById('post_image_input').click()" 
+                  class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                  title="Add photo">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
+          <!-- GIF icon -->
+          <button type="button" 
+                  class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                  title="Add GIF">
+            <span class="text-sm font-bold">GIF</span>
+          </button>
+          
+          <!-- Emoji icon -->
+          <button type="button" 
+                  class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                  title="Add emoji">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
+          <!-- Location icon -->
+          <button type="button" 
+                  class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                  title="Add location">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
           <%= form.select :visibility, 
               options_for_select([['🌍 Everyone', 'everyone'], ['👥 Followers', 'followers'], ['🔒 Only Me', 'only_me']], post.visibility),
               {}, 
