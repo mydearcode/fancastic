@@ -53,7 +53,13 @@ class PostsController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.turbo_stream
+      format.turbo_stream do
+        if params[:load_more] == 'true'
+          render 'load_more'
+        else
+          render 'index'
+        end
+      end
     end
     
     @post = Post.new

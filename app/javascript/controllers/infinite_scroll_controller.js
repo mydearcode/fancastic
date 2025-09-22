@@ -24,6 +24,7 @@ export default class extends Controller {
 
   connect() {
     // Reset state on connect (happens when tabs change)
+    this.pageValue = 2 // Reset page to 2 when connecting
     this.setupObserver()
     
     if (this.hasPaginationTarget) {
@@ -46,8 +47,9 @@ export default class extends Controller {
       // Set loading state to prevent multiple requests
       this.loading = true
       
-      // Construct the URL with the current page
+      // Construct the URL with the current page value
       const url = new URL(this.urlValue, window.location.origin)
+      url.searchParams.set('page', this.pageValue)
       
       fetch(url, {
         headers: {
@@ -61,6 +63,8 @@ export default class extends Controller {
           this.finished = true
         } else {
           Turbo.renderStreamMessage(html)
+          // Increment page value for next request
+          this.pageValue = this.pageValue + 1
         }
       })
       .catch(error => {

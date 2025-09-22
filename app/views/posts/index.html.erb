@@ -1,23 +1,30 @@
 <div class="max-w-2xl mx-auto py-6">
 
-  <!-- Feed Tabs -->
-  <div class="flex border-b border-gray-800 mb-4">
-    <%= link_to "Takibimdekiler", root_path(tab: "following"), 
-        class: "px-4 py-2 text-sm font-medium #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
-        data: { turbo: true, turbo_prefetch: false } %>
-    
-    <%= link_to "Tribün", root_path(tab: "teammates"), 
-        class: "px-4 py-2 text-sm font-medium #{@tab == 'teammates' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
-        data: { turbo: true, turbo_prefetch: false } %>
-    
-    <%= link_to "Popüler", root_path(tab: "popular"), 
-        class: "px-4 py-2 text-sm font-medium #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
-        data: { turbo: true, turbo_prefetch: false } %>
-        
-    <%= link_to "Ezeli Rakipler", root_path(tab: "archrival"), 
-        class: "px-4 py-2 text-sm font-medium #{@tab == 'archrival' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
-        data: { turbo: true, turbo_prefetch: false } %>
+  <!-- Feed Tabs - Sticky -->
+  <div class="sticky top-0 z-50 bg-black border-b border-gray-800 mb-4 pb-2 -mt-6 pt-6">
+    <div class="flex">
+      <%= link_to "Takibimdekiler", root_path(tab: "following"), 
+          class: "px-4 py-2 text-sm font-medium #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          data: { turbo: true, turbo_prefetch: false } %>
+      
+      <%= link_to "Tribün", root_path(tab: "teammates"), 
+          class: "px-4 py-2 text-sm font-medium #{@tab == 'teammates' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          data: { turbo: true, turbo_prefetch: false } %>
+      
+      <%= link_to "Popüler", root_path(tab: "popular"), 
+          class: "px-4 py-2 text-sm font-medium #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          data: { turbo: true, turbo_prefetch: false } %>
+          
+      <%= link_to "Ezeli Rakipler", root_path(tab: "archrival"), 
+          class: "px-4 py-2 text-sm font-medium #{@tab == 'archrival' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          data: { turbo: true, turbo_prefetch: false } %>
+    </div>
   </div>
+
+  <!-- Post Form -->
+  <%= turbo_frame_tag "post_form" do %>
+    <%= render 'form', post: @post %>
+  <% end %>
 
   <!-- Posts Feed -->
   <%= turbo_frame_tag "posts_feed" do %>
@@ -36,7 +43,7 @@
     </div>
     
     <% unless @posts.empty? %>
-      <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next) if @pagy.next %>">
+      <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next, load_more: true) if @pagy.next %>">
         <% if @pagy.next %>
           <div class="flex justify-center">
             <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">

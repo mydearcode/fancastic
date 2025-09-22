@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     
     # Block routes
     post :block, to: "blocks#create"
-    delete :block, to: "blocks#destroy"
+    delete :block, to: "blocks#destroy", as: :unblock
   end
   
   # Blocked users list

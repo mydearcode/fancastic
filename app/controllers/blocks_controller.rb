@@ -9,13 +9,13 @@ class BlocksController < ApplicationController
   def create
     if Current.user.block(@user)
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user), notice: "#{@user.username} has been blocked.") }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username), notice: "#{@user.username} has been blocked.") }
         format.json { render json: { status: 'blocked', message: 'User blocked successfully' } }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("block_button_#{@user.id}", partial: 'shared/unblock_button', locals: { user: @user }) }
+        format.turbo_stream
       end
     else
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user), alert: "Unable to block user.") }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username), alert: "Unable to block user.") }
         format.json { render json: { error: 'Unable to block user' }, status: :unprocessable_entity }
       end
     end
@@ -24,13 +24,13 @@ class BlocksController < ApplicationController
   def destroy
     if Current.user.unblock(@user)
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user), notice: "#{@user.username} has been unblocked.") }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username), notice: "#{@user.username} has been unblocked.") }
         format.json { render json: { status: 'unblocked', message: 'User unblocked successfully' } }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("block_button_#{@user.id}", partial: 'shared/block_button', locals: { user: @user }) }
+        format.turbo_stream
       end
     else
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user), alert: "Unable to unblock user.") }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username), alert: "Unable to unblock user.") }
         format.json { render json: { error: 'Unable to unblock user' }, status: :unprocessable_entity }
       end
     end

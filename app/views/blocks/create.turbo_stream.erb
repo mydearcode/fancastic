@@ -2,6 +2,36 @@
   <%= render 'shared/unblock_button', user: @user %>
 <% end %>
 
+<%= turbo_stream.replace "dropdown_menu_#{@user.id}" do %>
+  <%= render 'shared/dropdown_menu', user: @user %>
+<% end %>
+
 <%= turbo_stream.replace "flash" do %>
   <%= render 'shared/flash', notice: "Successfully blocked #{@user.username}!" %>
+<% end %>
+
+<%= turbo_stream.append "body" do %>
+  <script>
+    // Turbo Stream render'dan önce dropdown'ı kapat
+    document.addEventListener('turbo:before-stream-render', function(event) {
+      // Sadece dropdown_menu replace işlemi için çalış
+      if (event.detail.newStream && event.detail.newStream.includes('dropdown_menu_<%= @user.id %>')) {
+        // Mevcut dropdown'ı kapat
+        const currentDropdown = document.querySelector('#dropdown_menu_<%= @user.id %> [data-dropdown-target="menu"]');
+        if (currentDropdown && !currentDropdown.classList.contains('hidden')) {
+          currentDropdown.classList.add('hidden');
+        }
+      }
+    }, { once: true });
+    
+    // Turbo Stream render'dan sonra temizlik yap
+    document.addEventListener('turbo:after-stream-render', function(event) {
+      // Tüm dropdown'ları kapat
+      document.querySelectorAll('[data-dropdown-target="menu"]').forEach(menu => {
+        if (!menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+        }
+      });
+    }, { once: true });
+  </script>
 <% end %>

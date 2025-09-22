@@ -1,7 +1,9 @@
-<%= turbo_stream.append "posts" do %>
-  <% @posts.each do |post| %>
-    <%= render 'post', post: post %>
-  <% end %>
+<%= turbo_stream.replace "posts" do %>
+  <div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
+    <% @posts.each do |post| %>
+      <%= render 'post', post: post %>
+    <% end %>
+  </div>
 <% end %>
 
 <%= turbo_stream.update "pagination" do %>
