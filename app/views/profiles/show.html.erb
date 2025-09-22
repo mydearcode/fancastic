@@ -140,7 +140,7 @@
         <div class="flex items-center space-x-3">
           <!-- Followers -->
           <div class="relative group">
-            <%= link_to user_followers_path(@user), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
+            <%= link_to user_followers_path(@user.username), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
               </svg>
@@ -154,7 +154,7 @@
           
           <!-- Following -->
           <div class="relative group">
-            <%= link_to user_following_path(@user), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
+            <%= link_to user_following_path(@user.username), class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors" do %>
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
               </svg>
@@ -207,17 +207,17 @@
                Likes
              <% end %>
           <% else %>
-            <%= link_to user_profile_path(@user, tab: 'posts'), 
+            <%= link_to user_profile_path(@user.username, tab: 'posts'), 
                  class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'posts' || params[:tab].blank? ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
                Posts
              <% end %>
              
-             <%= link_to user_profile_path(@user, tab: 'replies'), 
+             <%= link_to user_profile_path(@user.username, tab: 'replies'), 
                  class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'replies' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
                Replies
              <% end %>
              
-             <%= link_to user_profile_path(@user, tab: 'likes'), 
+             <%= link_to user_profile_path(@user.username, tab: 'likes'), 
                  class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{params[:tab] == 'likes' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'}" do %>
                Likes
              <% end %>

@@ -9,5 +9,5 @@
 <% end %>
 
 <%= turbo_stream.update "infinite-scroll-container" do %>
-  <div data-infinite-scroll-next-url-value="<%= profile_path(@user, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
+  <div data-infinite-scroll-next-url-value="<%= profile_path(@user.username, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
 <% end %>

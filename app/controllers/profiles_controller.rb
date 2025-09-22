@@ -15,8 +15,14 @@ class ProfilesController < ApplicationController
   end
 
   def show_user
-    @user = User.find(params[:id])
+    # Username ile kullanıcı bul
+    @user = User.find_by!(username: params[:username])
     @is_own_profile = @user == Current.user
+    
+    # Kullanıcı suspend edilmiş mi kontrol et
+    if @user.suspended?
+      redirect_to suspended_account_path(@user.username) and return
+    end
     
     # Engelleme durumlarını kontrol et
     @blocked_by_user = Current.user.blocked_by?(@user)
@@ -35,6 +41,16 @@ class ProfilesController < ApplicationController
       format.html { render :show }
       format.turbo_stream { render "show" }
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Kullanıcı bulunamadı"
+  end
+  
+  def redirect_legacy_profile
+    # Eski /users/:id URL'lerini yeni formata yönlendir
+    user = User.find(params[:id])
+    redirect_to user_profile_path(user.username), status: :moved_permanently
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Kullanıcı bulunamadı"
   end
 
   def edit

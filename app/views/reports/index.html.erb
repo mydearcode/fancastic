@@ -31,7 +31,7 @@
                     <% elsif report.reportable_type == "User" %>
                       <div class="text-sm font-medium text-white">User</div>
                       <div class="text-sm text-gray-400">
-                        <%= link_to "@#{report.reportable.username}", user_profile_path(report.reportable), class: "text-blue-400 hover:underline" %>
+                        <%= link_to "@#{report.reportable.username}", user_profile_path(report.reportable.username), class: "text-blue-400 hover:underline" %>
                       </div>
                     <% end %>
                   </div>
@@ -49,7 +49,7 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                <%= link_to "@#{report.reporter.username}", user_profile_path(report.reporter), class: "text-blue-400 hover:underline" %>
+                <%= link_to "@#{report.reporter.username}", user_profile_path(report.reporter.username), class: "text-blue-400 hover:underline" %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 

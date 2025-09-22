@@ -18,7 +18,9 @@ Rails.application.routes.draw do
   get "profile", to: "profiles#show"
   get "profile/edit", to: "profiles#edit"
   patch "profile", to: "profiles#update"
-  get "users/:id", to: "profiles#show_user", as: :user_profile
+  
+  # Legacy user profile route (redirect to new format)
+  get "users/:id", to: "profiles#redirect_legacy_profile"
   
   # Settings routes
   get "settings", to: "settings#index"
@@ -100,5 +102,9 @@ Rails.application.routes.draw do
   
   # Mount ActionCable server
   mount ActionCable.server => '/cable'
+  
+  # User profile friendly URLs (must be at the end to avoid conflicts)
+  get '/:username', to: 'profiles#show_user', as: :user_profile, 
+      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
 
 end

@@ -7,7 +7,7 @@
     <!-- Repost indicator at the top -->
     <div class="text-gray-400 mb-2 text-sm flex items-center pl-12 relative z-10">
       <span class="mr-1">🔄</span> 
-      <%= link_to post.user.username, user_profile_path(post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
+      <%= link_to post.user.username, user_profile_path(post.user.username), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
       <% if post.user.team.present? %>
         <span class="px-2 py-0.5 text-xs font-medium rounded mx-1" style="background-color: <%= post.user.team.color_primary %>; color: <%= post.user.team.color_secondary %>;">
           <%= post.user.team.symbol_slug.upcase %>
@@ -20,7 +20,7 @@
   <!-- Post Header -->
   <div class="flex items-start space-x-3">
     <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 relative z-10 overflow-hidden">
-      <%= link_to user_profile_path(target_post.user), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
+      <%= link_to user_profile_path(target_post.user.username), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
         <% if target_post.user.profile_picture.attached? %>
           <%= image_tag target_post.user.profile_picture, class: "w-full h-full object-cover" %>
         <% else %>
@@ -33,13 +33,13 @@
     <div class="flex-1 min-w-0">
       <div class="flex items-center justify-between mb-1 relative z-10">
         <div class="flex items-center space-x-2">
-          <span class="font-bold text-white"><%= link_to target_post.user.username, user_profile_path(target_post.user), class: "text-white hover:text-gray-300", data: { turbo_frame: "_top" } %></span>
+          <span class="font-bold text-white"><%= link_to target_post.user.username, user_profile_path(target_post.user.username), class: "text-white hover:text-gray-300", data: { turbo_frame: "_top" } %></span>
           <% if target_post.user.team.present? %>
             <span class="px-2 py-0.5 text-xs font-medium rounded" style="background-color: <%= target_post.user.team.color_primary %>; color: <%= target_post.user.team.color_secondary %>;">
               <%= target_post.user.team.symbol_slug.upcase %>
             </span>
           <% end %>
-          <span class="text-gray-500 font-normal"><%= link_to "@#{target_post.user.username}", user_profile_path(target_post.user), class: "text-gray-500 hover:text-gray-400", data: { turbo_frame: "_top" } %></span>
+          <span class="text-gray-500 font-normal"><%= link_to "@#{target_post.user.username}", user_profile_path(target_post.user.username), class: "text-gray-500 hover:text-gray-400", data: { turbo_frame: "_top" } %></span>
           <span class="text-gray-500">·</span>
           <span class="text-gray-500 text-sm"><%= time_ago_in_words(target_post.created_at) %></span>
           <% if target_post.visibility != 'everyone' %>
@@ -108,7 +108,7 @@
             <% if post.repost_of_post.in_reply_to_post_id.present? %>
               <!-- Reposted Reply Post -->
               <div class="text-gray-400 mb-2 text-sm flex items-center relative z-10">
-                <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.repost_of_post.in_reply_to_post.user.username}", user_profile_path(post.repost_of_post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
+                <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.repost_of_post.in_reply_to_post.user.username}", user_profile_path(post.repost_of_post.in_reply_to_post.user.username), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
               </div>
               <p class="text-white"><%= post.repost_of_post.text %></p>
               <% if post.repost_of_post.image.attached? %>
@@ -132,7 +132,7 @@
                         alt: "Quoted post image" %>
                   </div>
                 <% end %>
-                <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.repost_of_post.quote_of_post.user.username}", user_profile_path(post.repost_of_post.quote_of_post.user), class: "text-blue-400 hover:text-blue-300" %></p>
+                <p class="text-sm text-gray-500 mt-2"><%= link_to "@#{post.repost_of_post.quote_of_post.user.username}", user_profile_path(post.repost_of_post.quote_of_post.user.username), class: "text-blue-400 hover:text-blue-300" %></p>
               </div>
             <% else %>
               <!-- Regular Repost -->
@@ -175,7 +175,7 @@
         <% elsif post.in_reply_to_post_id.present? %>
           <!-- Reply indicator at the top -->
     <div class="text-gray-400 mb-2 text-sm flex items-center pl-12 relative z-10">
-      <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
+      <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user.username), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
     </div>
           <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
             <p class="text-white mb-3 hover:text-gray-300 transition-colors"><%= embed_videos(post.text) %></p>

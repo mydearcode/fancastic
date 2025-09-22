@@ -12,14 +12,14 @@
     <!-- Original Post -->
     <div class="border-l-4 border-blue-500 pl-4 bg-gray-900 rounded-r-lg p-4">
       <div class="flex items-center mb-2">
-        <%= link_to user_profile_path(@post.user), class: "w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2", data: { turbo_frame: "_top" } do %>
+        <%= link_to user_profile_path(@post.user.username), class: "w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2", data: { turbo_frame: "_top" } do %>
           <% if @post.user.profile_picture.attached? %>
             <%= image_tag @post.user.profile_picture, class: "w-full h-full object-cover rounded-full" %>
           <% else %>
             <%= @post.user.username.first.upcase %>
           <% end %>
         <% end %>
-        <%= link_to user_profile_path(@post.user), data: { turbo_frame: "_top" }, class: "font-semibold text-white hover:underline" do %>
+        <%= link_to user_profile_path(@post.user.username), data: { turbo_frame: "_top" }, class: "font-semibold text-white hover:underline" do %>
           @<%= @post.user.username %>
         <% end %>
         <span class="text-sm text-gray-400 ml-2"><%= time_ago_in_words(@post.created_at) %> ago</span>

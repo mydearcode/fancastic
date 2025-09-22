@@ -74,7 +74,18 @@ class User < ApplicationRecord
   end
   
   # Validations
-  validates :username, presence: true, uniqueness: true
+  validates :username, 
+    presence: true, 
+    uniqueness: { case_sensitive: false },
+    length: { in: 4..15, message: "4-15 karakter arasında olmalıdır" },
+    format: { 
+      with: /\A[a-zA-Z0-9_]+\z/, 
+      message: "sadece harf, rakam ve alt çizgi (_) içerebilir" 
+    },
+    exclusion: { 
+      in: %w[admin twitter root api www help support about terms privacy policy contact fancastic app mobile web ios android],
+      message: "bu kullanıcı adı kullanılamaz" 
+    }
   validates :energy, presence: true, numericality: { greater_than_or_equal_to: 0 }
   
   # Energy management methods

@@ -18,7 +18,7 @@
             <% other_user = conversation.other_participants(Current.user).first %>
             <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 relative z-10 overflow-hidden">
               <% if other_user %>
-                <%= link_to user_profile_path(other_user), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
+                <%= link_to user_profile_path(other_user.username), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
                   <% if other_user.profile_picture.attached? %>
                     <%= image_tag other_user.profile_picture, class: "w-full h-full object-cover" %>
                   <% else %>
