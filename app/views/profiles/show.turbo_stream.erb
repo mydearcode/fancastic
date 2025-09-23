@@ -1,13 +1,19 @@
-<%= turbo_stream.append "posts" do %>
+<% tab = params[:tab] || 'posts' %>
+<%= turbo_stream.append "#{tab}-posts" do %>
   <% @posts.each do |post| %>
-    <%= render 'posts/post', post: post %>
+    <%= render partial: 'posts/post', locals: { post: post } %>
   <% end %>
 <% end %>
 
 <%= turbo_stream.update "pagination" do %>
-  <!-- No loading button - posts load automatically on scroll -->
+  <% unless @posts.empty? || @blocked_by_user %>
+    <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= @is_own_profile ? profile_path(tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) : user_profile_path(@user.username, tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) if @pagy.next %>">
+      <!-- Pagination without button - posts load automatically on scroll -->
+    </div>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.update "infinite-scroll-container" do %>
-  <div data-infinite-scroll-next-url-value="<%= @is_own_profile ? profile_path(tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) : user_profile_path(@user.username, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
+  <div id="infinite-scroll-container" data-controller="infinite-scroll" data-infinite-scroll-target="container" data-infinite-scroll-url-value="<%= @is_own_profile ? profile_path(tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) : user_profile_path(@user.username, tab: params[:tab] || 'posts', format: :turbo_stream, page: @pagy.next) if @pagy.next %>">
+  </div>
 <% end %>

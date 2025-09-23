@@ -1,4 +1,5 @@
-<div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
+<% tab = params[:tab] || 'posts' %>
+<div id="<%= tab %>-posts" class="space-y-1" data-infinite-scroll-target="entries">
   <% if posts.empty? %>
     <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
       <div class="text-gray-500 text-4xl mb-4">🌟</div>
