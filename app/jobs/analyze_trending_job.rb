@@ -10,11 +10,11 @@ class AnalyzeTrendingJob < ApplicationJob
     
     return if recent_posts.empty?
     
-    # Set up current window - use 30-minute windows for better trend detection
+    # Set up current window - use 15-minute windows for better trend detection
     current_time = Time.current
-    window_start = current_time.beginning_of_hour + ((current_time.min / 30) * 30).minutes
-    window_end = window_start + 30.minutes
-    window_key = "30min"
+    window_start = current_time.beginning_of_hour + ((current_time.min / 15) * 15).minutes
+    window_end = window_start + 15.minutes
+    window_key = "15min"
     
     Rails.logger.info "Window: #{window_start} - #{window_end}"
     
@@ -22,27 +22,64 @@ class AnalyzeTrendingJob < ApplicationJob
     phrase_counts = Hash.new(0)
     
     recent_posts.find_each do |post|
-      # Extract hashtags
-      hashtags = post.text.scan(/#\w+/).map(&:downcase)
+      # Extract hashtags (Unicode-aware for Turkish characters) - PRESERVE ORIGINAL CASE
+      hashtags = post.text.scan(/#[\p{L}\p{N}_]+/u)
       hashtags.each { |tag| phrase_counts[tag] += 1 }
       
-      # Extract mentions
-      mentions = post.text.scan(/@\w+/).map(&:downcase)
+      # Extract mentions (Unicode-aware for Turkish characters) - PRESERVE ORIGINAL CASE
+      mentions = post.text.scan(/@[\p{L}\p{N}_]+/u)
       mentions.each { |mention| phrase_counts[mention] += 1 }
       
-      # Extract words (excluding common stop words)
-      words = post.text.downcase
-                      .gsub(/[^\w\s#@]/, ' ')
-                      .split
-                      .reject { |word| stop_words.include?(word) }
-                      .select { |word| word.length >= 3 }
+      # Extract abbreviations (2+ uppercase letters) - PRESERVE ORIGINAL CASE
+      abbreviations = post.text.scan(/\b[A-ZÇĞIÖŞÜ]{2,}\b/)
+      abbreviations.each { |abbr| phrase_counts[abbr] += 1 }
       
-      words.each { |word| phrase_counts[word] += 1 }
+      # Extract words (excluding common stop words) - Unicode-aware with improved processing
+      # PRESERVE ORIGINAL CASE for trend phrases
       
-      # Extract bigrams (two-word phrases)
-      words.each_cons(2) do |bigram|
+      # Orijinal kelimeleri çıkar (apostroflu hallerini koruyarak ve CASE'i koruyarak)
+      original_text = post.text.gsub(/[^\p{L}\p{N}\s#@']/u, ' ')
+      original_words = original_text.split
+                                  .reject { |word| stop_words.include?(word.gsub("'", "").downcase) }
+                                  .select { |word| word.gsub("'", "").length >= 2 }
+      
+      # Normalize edilmiş kelimeler (sadece arama için, trend kaydetmede kullanılmayacak)
+      processed_text = post.text.downcase
+                              .gsub(/([\p{L}]+)'([\p{L}]+)/, '\1\2') # Connect apostrophe words: "Kurulu'nda" -> "kurulunda"
+                              .gsub(/[^\p{L}\p{N}\s#@]/u, ' ')
+      words = processed_text.split
+                           .reject { |word| stop_words.include?(word) }
+                           .select { |word| word.length >= 2 }
+      
+      # Use original words for trend phrases to preserve case
+      all_words = (abbreviations + original_words).uniq
+      
+      # Tek kelimeler (1-gram) - sadece anlamlı olanları
+      all_words.each do |word|
+        # Tek kelime için daha sıkı filtre - en az 3 karakter ve stop word olmamalı
+        next if word.gsub("'", "").length < 3
+        next if stop_words.include?(word.gsub("'", "").downcase)
+        phrase_counts[word] += 1
+      end
+      
+      # Extract bigrams (two-word phrases) with better filtering
+      # Use original words to preserve case
+      original_words.each_cons(2) do |bigram|
         phrase = bigram.join(' ')
-        phrase_counts[phrase] += 1 if phrase.length >= 6
+        # More selective bigram filtering - avoid meaningless combinations
+        next if phrase.gsub("'", "").length < 6
+        next if bigram.any? { |word| word.gsub("'", "").length < 2 }
+        phrase_counts[phrase] += 1
+      end
+      
+      # Extract trigrams (three-word phrases) for better context
+      # Use original words to preserve case
+      original_words.each_cons(3) do |trigram|
+        phrase = trigram.join(' ')
+        # Only include trigrams that are substantial and meaningful
+        next if phrase.gsub("'", "").length < 12
+        next if trigram.any? { |word| word.gsub("'", "").length < 2 }
+        phrase_counts[phrase] += 1
       end
     end
     

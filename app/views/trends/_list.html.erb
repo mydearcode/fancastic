@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "trending_list" do %>
   <% if trending_topics.any? %>
     <% trending_topics.each_with_index do |trend, index| %>
-      <%= link_to trend_path(trend.phrase), class: "block px-4 py-3 border-b border-gray-800 hover:bg-gray-950 transition-colors cursor-pointer", data: { turbo: true, turbo_frame: "_top" } do %>
+      <%= link_to "/trend/#{ERB::Util.url_encode(trend.phrase)}", class: "block px-4 py-3 border-b border-gray-800 hover:bg-gray-950 transition-colors cursor-pointer", data: { turbo: true, turbo_frame: "_top" } do %>
         <div class="flex justify-between items-start">
           <div class="flex-1">
             <div class="text-xs text-gray-500 mb-1">

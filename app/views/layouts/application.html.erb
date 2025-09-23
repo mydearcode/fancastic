@@ -205,7 +205,7 @@
               <% trending_topics = TrendEntry.select("phrase, MAX(count) as count, MAX(window_start) as window_start").where(window: "15min").where("window_start >= ?", 1.hour.ago).group(:phrase).order("MAX(count) DESC").limit(3) %>
               <% if trending_topics.any? %>
                 <% trending_topics.each_with_index do |trend, index| %>
-                  <%= link_to trend_path(trend.phrase), class: "block hover:bg-gray-800 rounded p-2 -m-2 transition-colors", data: { turbo: true, turbo_frame: "_top" } do %>
+                  <%= link_to "/trend/#{ERB::Util.url_encode(trend.phrase)}", class: "block hover:bg-gray-800 rounded p-2 -m-2 transition-colors", data: { turbo: true, turbo_frame: "_top" } do %>
                     <div class="text-xs text-gray-500"><%= index + 1 %>. Trending</div>
                     <div class="font-bold text-white"><%= trend.phrase %></div>
                     <div class="text-xs text-gray-500"><%= number_with_delimiter(trend.count) %> posts</div>

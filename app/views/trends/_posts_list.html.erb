@@ -5,7 +5,7 @@
     <% if @posts.next_page %>
       <div class="py-4 text-center" data-controller="infinite-scroll" data-infinite-scroll-target="trigger">
         <%= link_to "Daha fazla yükle", 
-            trend_path(@phrase, tab: @tab, page: @page + 1), 
+            "/trend/#{ERB::Util.url_encode(@phrase)}?tab=#{@tab}&page=#{@page + 1}", 
             class: "text-blue-400 hover:underline",
             data: { turbo_frame: "trending_list", turbo_action: "advance" } %>
       </div>

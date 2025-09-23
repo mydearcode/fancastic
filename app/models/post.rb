@@ -4,6 +4,14 @@ class Post < ApplicationRecord
   # Active Storage attachment for images
   has_one_attached :image
   
+  # Soft delete scopes
+  scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :deleted, -> { where.not(deleted_at: nil) }
+  scope :with_deleted, -> { unscope(where: :deleted_at) }
+  
+  # Default scope to exclude soft deleted posts
+  default_scope { not_deleted }
+  
   # Self-referential associations for replies, reposts, and quotes
   belongs_to :in_reply_to_post, class_name: "Post", optional: true
   belongs_to :repost_of_post, class_name: "Post", optional: true
@@ -81,6 +89,27 @@ class Post < ApplicationRecord
 
   def replies_count
     replies.count
+  end
+
+  # Soft delete methods
+  def soft_delete!
+    update!(deleted_at: Time.current)
+    # Also soft delete all replies, reposts, and quotes
+    replies.update_all(deleted_at: Time.current)
+    reposts.update_all(deleted_at: Time.current)
+    quotes.update_all(deleted_at: Time.current)
+  end
+  
+  def restore!
+    update!(deleted_at: nil)
+    # Also restore all replies, reposts, and quotes
+    Post.unscoped.where(in_reply_to_post_id: id).update_all(deleted_at: nil)
+    Post.unscoped.where(repost_of_post_id: id).update_all(deleted_at: nil)
+    Post.unscoped.where(quote_of_post_id: id).update_all(deleted_at: nil)
+  end
+  
+  def deleted?
+    deleted_at.present?
   end
 
   private

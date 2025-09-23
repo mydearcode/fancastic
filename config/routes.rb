@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "search/index"
   
   resources :trends, only: [:index]
-  get 'trend/:phrase', to: 'trends#show', as: :trend
+  get 'trend/:phrase', to: 'trends#show', as: :trend, constraints: { phrase: /[^\/]+/ }
   # Suspended account route
   get 'suspended_account(/:username)', to: 'suspended_accounts#show', as: :suspended_account
   resources :reports, only: [:new, :create]
@@ -64,6 +64,11 @@ Rails.application.routes.draw do
     resources :leagues
     resources :teams
     resources :reports, only: [:index, :destroy, :update]
+    resources :posts, only: [:index, :destroy] do
+      member do
+        patch :restore
+      end
+    end
     resources :users, only: [:index] do
       collection do
         get :search

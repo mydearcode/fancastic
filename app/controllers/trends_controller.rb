@@ -61,33 +61,69 @@ class TrendsController < ApplicationController
   end
   
   def show
-    @phrase = params[:phrase] || params[:id]
+    # URL decode ve normalize et
+    raw_phrase = params[:phrase] || params[:id]
+    
+    # Güvenlik kontrolü - boş veya çok uzun phrase'leri reddet
+    if raw_phrase.blank? || raw_phrase.length > 200
+      redirect_to trends_path, alert: "Geçersiz trend parametresi."
+      return
+    end
+    
+    # URL decode et
+    begin
+      @phrase = CGI.unescape(raw_phrase)
+    rescue => e
+      Rails.logger.error "URL decode error: #{e.message}"
+      redirect_to trends_path, alert: "Geçersiz URL formatı."
+      return
+    end
+    
+    # XSS ve güvenlik kontrolü
+    if @phrase.match?(/<script|javascript:|data:|vbscript:/i)
+      Rails.logger.warn "Potential XSS attempt: #{@phrase}"
+      redirect_to trends_path, alert: "Güvenlik nedeniyle bu arama yapılamıyor."
+      return
+    end
+    
+    # Trend analiz sistemiyle uyumlu normalize işlemi
+    normalized_phrase = @phrase.downcase
+                              .gsub(/([\p{L}]+)'([\p{L}]+)/, '\1\2') # "Kurulu'nda" -> "kurulunda"
+                              .strip
+    
     @tab = params[:tab] || 'top'
     @page = params[:page]&.to_i || 1
     
+    Rails.logger.info "=== TREND SHOW DEBUG ==="
+    Rails.logger.info "Raw phrase: #{raw_phrase}"
+    Rails.logger.info "Decoded phrase: #{@phrase}"
+    Rails.logger.info "Normalized phrase: #{normalized_phrase}"
+    
     # Hashtags tablosu olmadığı için post text'inden arama yapıyoruz
     search_pattern = if @phrase.start_with?('#')
-      @phrase.downcase
+      @phrase
     elsif @phrase.start_with?('@')
-      @phrase.downcase
+      @phrase
     else
-      # Normal kelime araması için hem hashtag hem de normal kelime olarak ara
-      [@phrase.downcase, "##{@phrase.downcase}"]
+      # Orijinal phrase'i de dahil et
+      [@phrase, @phrase.downcase, normalized_phrase].uniq
     end
     
     posts_query = Post.includes(:user)
                      .where.not(text: [nil, ''])
     
     if search_pattern.is_a?(Array)
-      # Normal kelime - hem hashtag hem de text içinde ara
+      # Çoklu pattern araması - basit ILIKE kullan
+      conditions = search_pattern.map { "text ILIKE ?" }
+      query_params = search_pattern.map { |pattern| "%#{pattern}%" }
+      
       posts_query = posts_query.where(
-        "LOWER(text) LIKE ? OR LOWER(text) LIKE ?", 
-        "%#{search_pattern[0]}%", 
-        "%#{search_pattern[1]}%"
+        conditions.join(' OR '), 
+        *query_params
       )
     else
-      # Hashtag veya mention araması
-      posts_query = posts_query.where("LOWER(text) LIKE ?", "%#{search_pattern}%")
+      # Hashtag veya mention araması - basit ILIKE kullan
+      posts_query = posts_query.where('text ILIKE ?', "%#{search_pattern}%")
     end
     
     if @tab == 'latest'

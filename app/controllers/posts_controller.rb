@@ -120,7 +120,7 @@ class PostsController < ApplicationController
   end
 
   def destroy
-    @post.destroy
+    @post.soft_delete!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to root_path, notice: 'Post deleted successfully!' }

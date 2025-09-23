@@ -1,0 +1,100 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-white">Deleted Posts</h1>
+      <p class="mt-2 text-sm text-gray-400">
+        Manage soft deleted posts. You can restore or permanently delete them.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <% if @deleted_posts.any? %>
+          <table class="min-w-full divide-y divide-gray-700">
+            <thead>
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                  Post Content
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                  Author
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                  Deleted At
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                  Type
+                </th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                  <span class="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+              <% @deleted_posts.each do |post| %>
+                <tr class="bg-gray-900">
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
+                    <div class="text-white">
+                      <%= truncate(post.text, length: 100) if post.text.present? %>
+                      <% if post.text.blank? && post.is_repost? %>
+                        <span class="text-gray-400 italic">Repost</span>
+                      <% end %>
+                    </div>
+                    <% if post.image.attached? %>
+                      <div class="text-xs text-gray-400 mt-1">📷 Has image</div>
+                    <% end %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    <div class="font-medium">@<%= post.user.username %></div>
+                    <div class="text-gray-400"><%= post.user.full_name %></div>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    <%= time_ago_in_words(post.deleted_at) %> ago
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    <% if post.is_reply? %>
+                      <span class="inline-flex items-center rounded-md bg-blue-900 px-2 py-1 text-xs font-medium text-blue-300">Reply</span>
+                    <% elsif post.is_repost? %>
+                      <span class="inline-flex items-center rounded-md bg-green-900 px-2 py-1 text-xs font-medium text-green-300">Repost</span>
+                    <% elsif post.is_quote? %>
+                      <span class="inline-flex items-center rounded-md bg-purple-900 px-2 py-1 text-xs font-medium text-purple-300">Quote</span>
+                    <% else %>
+                      <span class="inline-flex items-center rounded-md bg-gray-800 px-2 py-1 text-xs font-medium text-gray-300">Original</span>
+                    <% end %>
+                  </td>
+                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                    <div class="flex space-x-2 justify-end">
+                      <%= link_to "Restore", restore_admin_post_path(post), 
+                          method: :patch,
+                          class: "text-green-400 hover:text-green-300 bg-green-900 hover:bg-green-800 px-3 py-1 rounded text-xs",
+                          data: { 
+                            confirm: "Are you sure you want to restore this post?",
+                            turbo_method: :patch
+                          } %>
+                      <%= link_to "Delete Forever", admin_post_path(post), 
+                          method: :delete,
+                          class: "text-red-400 hover:text-red-300 bg-red-900 hover:bg-red-800 px-3 py-1 rounded text-xs",
+                          data: { confirm: "Are you sure you want to permanently delete this post? This action cannot be undone." } %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+          
+          <!-- Pagination -->
+          <div class="mt-6">
+            <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+          </div>
+        <% else %>
+          <div class="text-center py-12">
+            <div class="text-gray-400 text-lg">No deleted posts found</div>
+            <p class="text-gray-500 text-sm mt-2">All posts are currently active</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
