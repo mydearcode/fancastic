@@ -1,18 +1,18 @@
 <div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
-  <% if @posts.empty? %>
+  <% if posts.empty? %>
     <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
       <div class="text-gray-500 text-4xl mb-4">🌟</div>
       <h3 class="text-xl font-semibold text-white mb-2">No posts yet</h3>
       <p class="text-gray-400">Be the first to share something amazing!</p>
     </div>
   <% else %>
-    <%= render @posts %>
+    <%= render posts %>
   <% end %>
 </div>
 
 <!-- Pagination -->
 <div id="pagination" class="my-4" data-infinite-scroll-target="pagination">
-  <% if !@posts.empty? && @pagy.pages > 1 && @pagy.page < @pagy.pages %>
+  <% if !posts.empty? && @pagy.pages > 1 && @pagy.page < @pagy.pages %>
     <div class="flex justify-center">
       <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
         Loading more posts...

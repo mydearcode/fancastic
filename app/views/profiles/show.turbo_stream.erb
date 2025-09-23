@@ -1,4 +1,4 @@
-<%= turbo_stream.append "posts-container" do %>
+<%= turbo_stream.append "posts" do %>
   <% @posts.each do |post| %>
     <%= render 'posts/post', post: post %>
   <% end %>
@@ -9,5 +9,5 @@
 <% end %>
 
 <%= turbo_stream.update "infinite-scroll-container" do %>
-  <div data-infinite-scroll-next-url-value="<%= profile_path(@user.username, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
+  <div data-infinite-scroll-next-url-value="<%= @is_own_profile ? profile_path(tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) : user_profile_path(@user.username, tab: params[:tab] || 'posts', page: @pagy.next, format: :turbo_stream) if @pagy.next %>"></div>
 <% end %>

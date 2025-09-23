@@ -40,22 +40,31 @@
           <% if Current.user %>
             <nav class="space-y-4">
               <%= link_to root_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
-                <span class="text-xl">🏠</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
                 <span>Home</span>
               <% end %>
               
               <%= link_to conversations_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
-                <span class="text-xl">✉️</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
                 <span>Messages</span>
               <% end %>
               
               <%= link_to trends_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
-                <span class="text-xl">📈</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
                 <span>Trends</span>
               <% end %>
               
               <%= link_to settings_path, class: "text-white hover:text-blue-400 font-medium transition-colors flex items-center space-x-4 p-3 rounded-full hover:bg-gray-900" do %>
-                <span class="text-xl">⚙️</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
                 <span>Settings</span>
               <% end %>
               
@@ -105,29 +114,41 @@
       <% if Current.user %>
         <div class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
           <div class="flex justify-around items-center p-3">
-            <%= link_to root_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
-              <span class="text-xl block text-center">🏠</span>
+            <%= link_to root_path, class: "flex flex-col items-center p-2 text-white hover:text-blue-400" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <span class="text-xs mt-1">Home</span>
             <% end %>
             
-            <%= link_to conversations_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
-              <span class="text-xl block text-center">✉️</span>
+            <%= link_to conversations_path, class: "flex flex-col items-center p-2 text-white hover:text-blue-400" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+              <span class="text-xs mt-1">Messages</span>
             <% end %>
             
-            <%= link_to trends_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
-              <span class="text-xl block text-center">📈</span>
+            <%= link_to trends_path, class: "flex flex-col items-center p-2 text-white hover:text-blue-400" do %>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+              <span class="text-xs mt-1">Trends</span>
             <% end %>
             
-            <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="text-white hover:text-blue-400 transition-colors p-2 bg-transparent border-0">
-              <span class="text-xl block text-center">✏️</span>
+            <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="flex flex-col items-center p-2 text-white hover:text-blue-400 bg-transparent border-0">
+              <span class="text-xl">✏️</span>
+              <span class="text-xs mt-1">Post</span>
             </button>
             
-            <%= link_to profile_path, class: "text-white hover:text-blue-400 transition-colors p-2" do %>
-              <span class="text-xl block text-center">👤</span>
+            <%= link_to profile_path, class: "flex flex-col items-center p-2 text-white hover:text-blue-400" do %>
+              <span class="text-xl">👤</span>
+              <span class="text-xs mt-1">Profile</span>
             <% end %>
             
             <% if Current.user.admin? %>
-              <%= link_to admin_root_path, class: "text-purple-400 hover:text-purple-300 transition-colors p-2" do %>
-                <span class="text-xl block text-center">⚙️</span>
+              <%= link_to admin_root_path, class: "flex flex-col items-center p-2 text-purple-400 hover:text-purple-300" do %>
+                <span class="text-xl">⚙️</span>
+                <span class="text-xs mt-1">Admin</span>
               <% end %>
             <% end %>
           </div>

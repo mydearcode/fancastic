@@ -1,7 +1,7 @@
 class ProfilesController < ApplicationController
   before_action :require_authentication
   before_action :set_teams, only: [:edit, :update]
-  before_action :set_user, only: [:show, :show_user]
+  before_action :set_tab, only: [:show, :show_user]
   
   def show
     @user = Current.user
@@ -76,7 +76,7 @@ class ProfilesController < ApplicationController
   
   private
   
-  def set_user
+  def set_tab
     @tab = params[:tab] || 'posts'
   end
   
