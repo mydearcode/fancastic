@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Search routes
+  get "search", to: "search#index"
+  get "search/index"
+  
   resources :trends, only: [:index]
   get 'trend/:phrase', to: 'trends#show', as: :trend
   # Suspended account route

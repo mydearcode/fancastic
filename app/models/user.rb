@@ -49,6 +49,12 @@ class User < ApplicationRecord
   has_many :reports, foreign_key: 'reporter_id', dependent: :nullify
   has_many :reported_as, as: :reportable, class_name: 'Report', dependent: :destroy
   
+  # Search scope for users by name
+  scope :search_by_name, ->(query) {
+    return none if query.blank?
+    where("username ILIKE ? OR full_name ILIKE ?", "%#{query}%", "%#{query}%")
+  }
+  
   # Archrivals
   has_many :archrivals, dependent: :destroy
   has_many :rival_teams, through: :archrivals

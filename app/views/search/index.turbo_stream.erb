@@ -1,0 +1,43 @@
+<% if params[:users_page] %>
+  <!-- Load more users -->
+  <%= turbo_stream.append "users-container" do %>
+    <% @users.each do |user| %>
+      <%= render 'shared/user_card', user: user %>
+    <% end %>
+  <% end %>
+
+  <%= turbo_stream.update "users-pagination" do %>
+    <% if @pagy_users && @pagy_users.next %>
+      <div id="users-pagination" class="mt-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= search_path(q: @query, users_page: @pagy_users.next, format: :turbo_stream) %>">
+        <div class="flex justify-center">
+          <div class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium">
+            Loading more users...
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div id="users-pagination"></div>
+    <% end %>
+  <% end %>
+<% elsif params[:posts_page] %>
+  <!-- Load more posts -->
+  <%= turbo_stream.append "posts-container" do %>
+    <% @posts.each do |post| %>
+      <%= render 'posts/post', post: post %>
+    <% end %>
+  <% end %>
+
+  <%= turbo_stream.update "posts-pagination" do %>
+    <% if @pagy_posts && @pagy_posts.next %>
+      <div id="posts-pagination" class="mt-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= search_path(q: @query, posts_page: @pagy_posts.next, format: :turbo_stream) %>">
+        <div class="flex justify-center">
+          <div class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium">
+            Loading more posts...
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div id="posts-pagination"></div>
+    <% end %>
+  <% end %>
+<% end %>

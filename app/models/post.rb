@@ -33,6 +33,12 @@ class Post < ApplicationRecord
   scope :quotes, -> { where.not(quote_of_post_id: nil) }
   scope :original_posts, -> { where(in_reply_to_post_id: nil, repost_of_post_id: nil, quote_of_post_id: nil) }
   
+  # Full-text search scope for post content
+  scope :search_by_content, ->(query) {
+    return none if query.blank?
+    where("to_tsvector('english', text) @@ plainto_tsquery('english', ?)", query)
+  }
+  
   def is_reply?
     in_reply_to_post_id.present?
   end
