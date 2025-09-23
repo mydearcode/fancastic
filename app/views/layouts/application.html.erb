@@ -156,7 +156,7 @@
       <% end %>
       
       <!-- Middle Column: Content -->
-      <div class="ml-0 md:ml-64 md:pl-4 flex-1 min-h-screen w-full md:max-w-xl mr-0 pb-24 md:pb-8">
+      <div class="ml-0 md:ml-64 md:pl-4 flex-1 min-h-screen w-full mr-0 pb-24 md:pb-8">
         <!-- Flash Messages -->
         <div id="flash" class="mb-4 px-4 pt-4">
           <%= render 'shared/flash', notice: notice, alert: alert %>
@@ -198,7 +198,7 @@
               <% end %>
             </div>
             <div class="space-y-4">
-              <% trending_topics = TrendEntry.select("phrase, MAX(count) as count, MAX(window_start) as window_start").where(window: "1h").where("window_start >= ?", 3.hours.ago).group(:phrase).order("MAX(count) DESC").limit(3) %>
+              <% trending_topics = TrendEntry.select("phrase, MAX(count) as count, MAX(window_start) as window_start").where(window: "15min").where("window_start >= ?", 1.hour.ago).group(:phrase).order("MAX(count) DESC").limit(3) %>
               <% if trending_topics.any? %>
                 <% trending_topics.each_with_index do |trend, index| %>
                   <%= link_to trend_path(trend.phrase), class: "block hover:bg-gray-800 rounded p-2 -m-2 transition-colors", data: { turbo: true, turbo_frame: "_top" } do %>

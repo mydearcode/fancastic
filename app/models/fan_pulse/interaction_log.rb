@@ -8,7 +8,15 @@ class FanPulse::InteractionLog < ApplicationRecord
   # Action types that consume or restore energy
   # This is kept for backward compatibility, but now reads from database
   def self.energy_costs
-    @energy_costs ||= EnergyCostSetting.costs_hash.transform_values(&:abs).transform_values(&:-@)
+    @energy_costs ||= EnergyCostSetting.costs_hash.transform_values do |cost|
+      # daily_restore should be positive (restores energy)
+      # all other actions should be negative (consume energy)
+      if cost < 0 # daily_restore is stored as negative, make it positive
+        -cost
+      else # other actions are stored as positive, make them negative
+        -cost
+      end
+    end
   end
 
   # Legacy constant for backward compatibility
@@ -25,7 +33,19 @@ class FanPulse::InteractionLog < ApplicationRecord
   # Get energy cost for an action (reads from database first, falls back to constant)
   def self.energy_cost_for(action_type)
     cost = EnergyCostSetting.cost_for(action_type)
-    return cost if cost != 0
+    
+    # If we have a database setting, transform it properly
+    if cost != 0
+      # daily_restore should be positive (restores energy)
+      # all other actions should be negative (consume energy)
+      if action_type.to_s == 'daily_restore' && cost < 0
+        return -cost # make positive
+      elsif action_type.to_s != 'daily_restore' && cost > 0
+        return -cost # make negative
+      else
+        return cost # already correct sign
+      end
+    end
     
     # Fallback to legacy constant
     ENERGY_COSTS[action_type.to_s] || 0

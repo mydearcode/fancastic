@@ -5,12 +5,12 @@ class TrendsController < ApplicationController
     # Mevcut zamanı al
     simdiki_zaman = Time.current
     
-    # Son 3 saatlik penceredeki trendleri getir (daha geniş aralık)
+    # Son 1 saatlik penceredeki 15min window trendleri getir
     # Duplicate phrase'leri engellemek için group by kullan ve en yüksek count'u al
     @trending_topics = TrendEntry
                       .select("phrase, MAX(count) as count, MAX(window_start) as window_start, MAX(window_end) as window_end")
-                      .where(window: "1h")
-                      .where("window_start >= ?", 3.hours.ago)
+                      .where(window: "15min")
+                      .where("window_start >= ?", 1.hour.ago)
                       .group(:phrase)
                       .order("MAX(count) DESC")
                       .limit(10)
@@ -19,7 +19,7 @@ class TrendsController < ApplicationController
     # Hata ayıklama için loglar
     Rails.logger.info "=== TREND ANALİZİ ==="
     Rails.logger.info "Şu anki zaman: #{simdiki_zaman}"
-    Rails.logger.info "Aranan aralık: #{15.minutes.ago} - #{Time.current}"
+    Rails.logger.info "Aranan aralık: #{1.hour.ago} - #{Time.current}"
     Rails.logger.info "Bulunan trend sayısı: #{@trending_topics.size}"
     
     # Trendler varsa ilk 5'inin detaylarını logla
