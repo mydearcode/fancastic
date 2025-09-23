@@ -2,19 +2,19 @@ class AnalyzeTrendingJob < ApplicationJob
   queue_as :default
 
   def perform
-    # Collect posts from the last 15 minutes (more frequent analysis)
-    recent_posts = Post.where(created_at: 15.minutes.ago..Time.current)
+    # Collect posts from the last 30 minutes (broader analysis window)
+    recent_posts = Post.where(created_at: 30.minutes.ago..Time.current)
                       .where.not(text: [nil, ''])
     
-    Rails.logger.info "AnalyzeTrendingJob started: analyzing #{recent_posts.count} posts from last 15 minutes"
+    Rails.logger.info "AnalyzeTrendingJob started: analyzing #{recent_posts.count} posts from last 30 minutes"
     
     return if recent_posts.empty?
     
-    # Set up current window - use 15-minute windows for more real-time trends
+    # Set up current window - use 30-minute windows for better trend detection
     current_time = Time.current
-    window_start = current_time.beginning_of_hour + ((current_time.min / 15) * 15).minutes
-    window_end = window_start + 15.minutes
-    window_key = "15min"
+    window_start = current_time.beginning_of_hour + ((current_time.min / 30) * 30).minutes
+    window_end = window_start + 30.minutes
+    window_key = "30min"
     
     Rails.logger.info "Window: #{window_start} - #{window_end}"
     

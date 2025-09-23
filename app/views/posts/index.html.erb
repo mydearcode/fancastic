@@ -1,7 +1,7 @@
-<div class="max-w-2xl mx-auto py-6">
+<div class="max-w-2xl mx-auto">
 
-  <!-- Feed Tabs - Sticky -->
-  <div class="sticky top-0 z-50 bg-black border-b border-gray-800 mb-4 pb-2 -mt-6 pt-6">
+  <!-- Feed Tabs - Sticky at top -->
+  <div class="sticky top-0 z-50 bg-black border-b border-gray-800 mb-4 pb-2">
     <div class="flex">
       <%= link_to "Takibimdekiler", root_path(tab: "following"), 
           class: "px-4 py-2 text-sm font-medium #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
@@ -22,37 +22,41 @@
   </div>
 
   <!-- Post Form -->
-  <%= turbo_frame_tag "post_form" do %>
-    <%= render 'form', post: @post %>
-  <% end %>
+  <div class="px-4">
+    <%= turbo_frame_tag "post_form" do %>
+      <%= render 'form', post: @post %>
+    <% end %>
+  </div>
 
   <!-- Posts Feed -->
-  <%= turbo_frame_tag "posts_feed" do %>
-    <div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
-      <% @posts.each do |post| %>
-        <%= render 'post', post: post %>
-      <% end %>
-      
-      <% if @posts.empty? %>
-        <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
-          <div class="text-gray-500 text-4xl mb-4">🌟</div>
-          <h3 class="text-xl font-semibold text-white mb-2">No posts yet</h3>
-          <p class="text-gray-400">Be the first to share something amazing!</p>
-        </div>
-      <% end %>
-    </div>
-    
-    <% unless @posts.empty? %>
-      <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next, load_more: true) if @pagy.next %>">
-        <% if @pagy.next %>
-          <div class="flex justify-center">
-            <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
-              Loading more posts...
-            </button>
+  <div class="px-4">
+    <%= turbo_frame_tag "posts_feed" do %>
+      <div id="posts" class="space-y-1" data-infinite-scroll-target="entries">
+        <% @posts.each do |post| %>
+          <%= render 'post', post: post %>
+        <% end %>
+        
+        <% if @posts.empty? %>
+          <div class="text-center py-12 bg-black border border-gray-800 rounded-xl">
+            <div class="text-gray-500 text-4xl mb-4">🌟</div>
+            <h3 class="text-xl font-semibold text-white mb-2">No posts yet</h3>
+            <p class="text-gray-400">Be the first to share something amazing!</p>
           </div>
         <% end %>
       </div>
+      
+      <% unless @posts.empty? %>
+        <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next, load_more: true) if @pagy.next %>">
+          <% if @pagy.next %>
+            <div class="flex justify-center">
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
+                Loading more posts...
+              </button>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
 </div>
 

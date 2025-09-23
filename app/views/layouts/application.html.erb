@@ -162,14 +162,7 @@
           <%= render 'shared/flash', notice: notice, alert: alert %>
         </div>
         
-        <!-- Post Form (Only on home page) -->
-        <% if current_page?(root_path) && Current.user %>
-          <div class="border-b border-gray-800 p-4">
-            <button data-controller="modal" data-action="click->modal#open" data-modal-target="post-modal" class="w-full text-left p-3 rounded-full bg-gray-900 hover:bg-gray-800 text-gray-400 transition-colors">
-              What's happening?
-            </button>
-          </div>
-        <% end %>
+
         
         <%= yield %>
       </div>
@@ -177,26 +170,28 @@
       <!-- Right Column: Search and Trends -->
       <div class="hidden lg:block w-80 min-h-screen border-l border-gray-800 ml-4">
         <div class="p-4 mx-4 sticky top-0">
-          <!-- Search -->
-          <div class="mb-6">
-            <div class="relative" data-controller="autocomplete" data-autocomplete-url-value="<%= search_path %>" data-action="click@window->autocomplete#clickOutside">
-              <%= form_with url: search_path, method: :get, local: true, class: "relative" do |form| %>
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <%= form.text_field :q, 
-                    placeholder: "Search", 
-                    class: "bg-gray-900 text-white w-full pl-10 pr-4 py-2 rounded-full border border-gray-800 focus:outline-none focus:border-blue-500",
-                    data: { 
-                      autocomplete_target: "input",
-                      action: "input->autocomplete#search keydown.escape->autocomplete#hideResults"
-                    } %>
-                <div data-autocomplete-target="results" class="hidden"></div>
-              <% end %>
+          <!-- Search (Hidden on trends page) -->
+          <% unless current_page?(trends_path) || request.path.start_with?('/trends/') %>
+            <div class="mb-6">
+              <div class="relative" data-controller="autocomplete" data-autocomplete-url-value="<%= search_path %>" data-action="click@window->autocomplete#clickOutside">
+                <%= form_with url: search_path, method: :get, local: true, class: "relative" do |form| %>
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <%= form.text_field :q, 
+                      placeholder: "Search", 
+                      class: "bg-gray-900 text-white w-full pl-10 pr-4 py-2 rounded-full border border-gray-800 focus:outline-none focus:border-blue-500",
+                      data: { 
+                        autocomplete_target: "input",
+                        action: "input->autocomplete#search keydown.escape->autocomplete#hideResults"
+                      } %>
+                  <div data-autocomplete-target="results" class="hidden"></div>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
           
           <!-- Trends -->
           <div class="bg-gray-900 rounded-xl p-4 mb-6">
