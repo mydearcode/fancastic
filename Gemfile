@@ -47,7 +47,7 @@ gem "tailwindcss-rails"
 gem "pagy", "~> 6.0"
 
 # Use HTTParty for HTTP requests [https://github.com/jnunemaker/httparty]
-gem "httparty", "~> 0.21.0"
+gem "httparty", "~> 0.23.1"
 # CSV gem required by HTTParty in Ruby 3.4
 gem "csv", "~> 3.2.8"
 
