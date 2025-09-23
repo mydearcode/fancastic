@@ -49,7 +49,7 @@ gem "pagy", "~> 6.0"
 # Use HTTParty for HTTP requests [https://github.com/jnunemaker/httparty]
 gem "httparty", "~> 0.21.0"
 # CSV gem required by HTTParty in Ruby 3.4
-gem "csv", "~> 3.2.8"
+gem "csv", "~> 3.3.5"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
