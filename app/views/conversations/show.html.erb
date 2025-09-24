@@ -35,7 +35,7 @@
                   <%= link_to user_profile_path(message.user.username), class: "block", data: { turbo_frame: "_top" } do %>
                     <div class="h-8 w-8 rounded-full overflow-hidden">
                       <% if message.user.profile_picture.attached? %>
-                        <%= image_tag message.user.profile_picture, class: "w-full h-full object-cover" %>
+                        <%= image_tag url_for(message.user.profile_picture), class: "w-full h-full object-cover" %>
                       <% else %>
                         <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                           <span class="text-xs font-medium text-white">

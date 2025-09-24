@@ -7,19 +7,19 @@
   }
 </script>
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closeModal(event)">
-  <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
+  <div class="bg-black border border-gray-800 rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation();">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
-      <button type="button" onclick="document.getElementById('modal').innerHTML = ''" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+      <h1 class="text-3xl font-bold text-white">Edit Profile</h1>
+      <button type="button" onclick="document.getElementById('modal').innerHTML = ''" class="text-gray-400 hover:text-gray-200 text-2xl font-bold">×</button>
     </div>
     
     <%= form_with model: @user, url: profile_path, method: :patch, class: "space-y-6", html: { multipart: true }, data: { turbo: false } do |form| %>
       <% if @user.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="bg-red-900 border border-red-700 rounded-md p-4">
           <div class="flex">
             <div class="ml-3">
-              <h3 class="text-sm font-medium text-red-800">There were some errors with your submission:</h3>
-              <div class="mt-2 text-sm text-red-700">
+              <h3 class="text-sm font-medium text-red-200">There were some errors with your submission:</h3>
+              <div class="mt-2 text-sm text-red-300">
                 <ul class="list-disc pl-5 space-y-1">
                   <% @user.errors.full_messages.each do |message| %>
                     <li><%= message %></li>
@@ -33,102 +33,100 @@
       
       <!-- Full Name Field -->
       <div class="mb-6">
-        <label for="user_full_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+        <label for="user_full_name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
         <div class="mt-1">
-          <%= form.text_field :full_name, class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md", placeholder: "Your full name" %>
+          <%= form.text_field :full_name, class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-600 bg-gray-800 text-white rounded-md", placeholder: "Your full name" %>
         </div>
       </div>
       
       <!-- Profile Picture Upload -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Profile Picture</label>
         <div class="mt-1 flex items-center space-x-4">
-          <div class="flex-shrink-0 h-16 w-16 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+          <div class="flex-shrink-0 h-16 w-16 rounded-full overflow-hidden bg-gray-700 border border-gray-600 relative group">
             <% if @user.profile_picture.attached? %>
-              <%= image_tag @user.profile_picture, class: "h-full w-full object-cover" %>
+              <%= image_tag url_for(@user.profile_picture), class: "h-full w-full object-cover" %>
             <% else %>
-              <div class="h-full w-full flex items-center justify-center bg-gray-50">
-                <svg class="h-8 w-8 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+              <div class="h-full w-full flex items-center justify-center bg-gray-700">
+                <svg class="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
               </div>
             <% end %>
+            <!-- Hover overlay with icon -->
+            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" title="Change Profile Picture">
+              <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <!-- Hidden file input -->
+            <%= form.file_field :profile_picture, 
+                class: "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10", 
+                accept: "image/*",
+                data: { action: "change->form#previewImage" } %>
           </div>
           <div class="flex-1">
-            <div class="relative">
-              <%= form.file_field :profile_picture, 
-                  class: "absolute inset-0 w-full h-full opacity-0 cursor-pointer", 
-                  accept: "image/*",
-                  data: { action: "change->form#previewImage" } %>
-              <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Change Profile Picture
-              </button>
-            </div>
-            <p class="mt-1 text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
+            <p class="text-sm text-gray-300">Click on the profile picture to change it</p>
+            <p class="mt-1 text-xs text-gray-400">JPG, PNG, GIF up to 5MB</p>
           </div>
         </div>
       </div>
       
       <!-- Cover Picture Upload -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Cover Picture</label>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Cover Picture</label>
         <div class="mt-1">
-          <div class="w-full h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+          <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-700 border border-gray-600 group">
             <% if @user.cover_picture.attached? %>
-              <%= image_tag @user.cover_picture, class: "w-full h-full object-cover" %>
+              <%= image_tag url_for(@user.cover_picture), class: "h-full w-full object-cover" %>
             <% else %>
-              <div class="h-full w-full flex items-center justify-center bg-gray-50">
-                <svg class="h-12 w-12 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <div class="h-full w-full flex items-center justify-center bg-gray-700">
+                <svg class="h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 7v10h16V7H4zm8 2l2.5 3.5L17 10l3 4H4l4-5 4 3z"/>
                 </svg>
               </div>
             <% end %>
-          </div>
-          <div class="mt-2">
-            <div class="relative">
-              <%= form.file_field :cover_picture, 
-                  class: "absolute inset-0 w-full h-full opacity-0 cursor-pointer", 
-                  accept: "image/*",
-                  data: { action: "change->form#previewCoverImage" } %>
-              <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Change Cover Picture
-              </button>
+            <!-- Hover overlay with icon -->
+            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" title="Change Cover Picture">
+              <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </div>
-            <p class="mt-1 text-xs text-gray-500">Recommended size: 1500 x 500 pixels</p>
+            <!-- Hidden file input -->
+            <%= form.file_field :cover_picture, 
+                class: "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10", 
+                accept: "image/*",
+                data: { action: "change->form#previewCoverImage" } %>
           </div>
+          <p class="mt-2 text-sm text-gray-300">Click on the cover picture to change it</p>
+          <p class="mt-1 text-xs text-gray-400">JPG, PNG, GIF up to 5MB. Recommended size: 1200x300px</p>
         </div>
       </div>
       
       <div>
-        <%= form.label :username, class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.text_field :username, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+        <%= form.label :username, class: "block text-sm font-medium text-gray-300 mb-2" %>
+        <%= form.text_field :username, class: "w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
       </div>
       
       <div>
-        <%= form.label :team_id, "Team", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.label :team_id, "Team", class: "block text-sm font-medium text-gray-300 mb-2" %>
         <%= form.select :team_id, 
             options_from_collection_for_select(@teams, :id, :name, @user.team_id), 
             { prompt: "Select a team" }, 
-            { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+            { class: "w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
       </div>
       
       <div class="mt-4">
-        <%= form.label :rival_team_ids, "Ezeli Rakipler (en fazla 2)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.label :rival_team_ids, "Ezeli Rakipler (en fazla 2)", class: "block text-sm font-medium text-gray-300 mb-2" %>
         <%= form.collection_select :rival_team_ids, 
             @teams, :id, :name, 
             { selected: @user.rival_teams.pluck(:id) }, 
-            { multiple: true, size: 5, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
-        <p class="mt-1 text-xs text-gray-500">Ctrl/Cmd tuşuna basarak en fazla 2 takım seçebilirsiniz</p>
+            { multiple: true, size: 5, class: "w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        <p class="mt-1 text-xs text-gray-400">Ctrl/Cmd tuşuna basarak en fazla 2 takım seçebilirsiniz</p>
       </div>
       
       <div>
-        <%= form.label :message_privacy, "Mesaj Gizlilik Ayarları", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.label :message_privacy, "Mesaj Gizlilik Ayarları", class: "block text-sm font-medium text-gray-300 mb-2" %>
         <%= form.select :message_privacy, 
             options_for_select([
               ['Herkesten', 'everyone'],
@@ -137,13 +135,13 @@
               ['Hiç kimseden', 'nobody']
             ], @user.message_privacy), 
             {}, 
-            { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
-        <p class="mt-1 text-xs text-gray-500">Kim size mesaj gönderebileceğini belirleyin</p>
+            { class: "w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        <p class="mt-1 text-xs text-gray-400">Kim size mesaj gönderebileceğini belirleyin</p>
       </div>
       
       <div class="flex items-center justify-between">
-        <%= link_to "Cancel", profile_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" %>
-        <%= form.submit "Update Profile", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", onclick: "setTimeout(function() { document.getElementById('modal').innerHTML = ''; }, 500); return true;" %>
+        <%= link_to "Cancel", profile_path, class: "bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" %>
+        <%= form.submit "Update Profile", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", onclick: "setTimeout(function() { document.getElementById('modal').innerHTML = ''; }, 500); return true;" %>
       </div>
     <% end %>
   </div>

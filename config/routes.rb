@@ -26,6 +26,16 @@ Rails.application.routes.draw do
   # Legacy user profile route (redirect to new format)
   get "users/:id", to: "profiles#redirect_legacy_profile"
   
+  # Notifications routes
+  resources :notifications, only: [:index] do
+    member do
+      patch :mark_as_read
+    end
+    collection do
+      patch :mark_all_as_read
+    end
+  end
+  
   # Settings routes
   get "settings", to: "settings#index"
   get "settings/blocked_users", to: "settings#blocked_users"
@@ -36,8 +46,9 @@ Rails.application.routes.draw do
   resources :users, only: [] do
     post :follow, to: "follows#create"
     delete :follow, to: "follows#destroy"
-    get :followers, to: "follows#followers"
-    get :following, to: "follows#following"
+    # Remove these conflicting routes since we have slug-based ones at the bottom
+    # get :followers, to: "follows#followers"
+    # get :following, to: "follows#following"
     
     # Block routes
     post :block, to: "blocks#create"
@@ -114,6 +125,10 @@ Rails.application.routes.draw do
   
   # User profile friendly URLs (must be at the end to avoid conflicts)
   get '/:username', to: 'profiles#show_user', as: :user_profile, 
+      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+  get '/:username/followers', to: 'follows#followers', as: :user_followers,
+      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+  get '/:username/following', to: 'follows#following', as: :user_following,
       constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
 
 end

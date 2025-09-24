@@ -87,14 +87,10 @@ export default class extends Controller {
 
   selectUser(event) {
     const username = event.currentTarget.dataset.username
-    this.inputTarget.value = username
     this.hideResults()
     
-    // Trigger search form submission
-    const form = this.inputTarget.closest('form')
-    if (form) {
-      form.requestSubmit()
-    }
+    // Direkt kullanıcının profil sayfasına yönlendir
+    window.location.href = `/${username}`
   }
 
   hideResults() {

@@ -3,7 +3,7 @@
     <div class="flex items-center mb-4">
       <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
         <% if Current.user && Current.user.profile_picture.attached? %>
-          <%= image_tag Current.user.profile_picture, class: "w-full h-full object-cover" %>
+          <%= image_tag url_for(Current.user.profile_picture), class: "w-full h-full object-cover" %>
         <% else %>
           <div class="w-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold h-full">
             <%= Current.user&.username&.first&.upcase || '?' %>
@@ -22,7 +22,7 @@
       </div>
     </div>
     
-    <%= form_with model: post, local: false, data: { turbo_frame: "post_form", controller: "modal-form", action: "turbo:submit-end->modal-form#closeModal" } do |form| %>
+    <%= form_with model: post, local: false, data: { turbo_frame: "post_form", controller: "modal-form mention", action: "turbo:submit-end->modal-form#closeModal" } do |form| %>
       <% if post.errors.any? %>
         <div class="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-2">Please fix the following errors:</h4>
@@ -34,11 +34,15 @@
         </div>
       <% end %>
       
-      <div class="mb-4">
+      <div class="mb-4 relative">
         <%= form.text_area :text, 
             placeholder: "What's happening?", 
             class: "w-full p-4 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-xl",
-            rows: 3 %>
+            rows: 3,
+            data: { mention_target: "textarea" } %>
+        
+        <!-- Mention önerileri için container -->
+        <div data-mention-target="suggestions" class="hidden"></div>
       </div>
       
       <!-- Hidden file input -->

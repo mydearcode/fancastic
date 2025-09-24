@@ -13,6 +13,9 @@ class User < ApplicationRecord
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
   
+  # Notifications
+  has_many :notifications, dependent: :destroy
+  
   # Likes association
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: :post
@@ -166,5 +169,21 @@ class User < ApplicationRecord
   
   def blocking_user_ids
     blocking_users.pluck(:id)
+  end
+  
+  # Unread messages count
+  def unread_messages_count
+    total_unread = 0
+    conversations.includes(:conversation_participants, :messages).each do |conversation|
+      participant = conversation.conversation_participants.find_by(user: self)
+      next unless participant
+      
+      if participant.last_read_at
+        total_unread += conversation.messages.where('created_at > ?', participant.last_read_at).count
+      else
+        total_unread += conversation.messages.count
+      end
+    end
+    total_unread
   end
 end

@@ -93,6 +93,10 @@ class PostsController < ApplicationController
     if @post.save
       # Consume energy for posting
       Current.user.perform_action('post', @post)
+      
+      # Process mentions in the post
+      MentionService.process_mentions(@post)
+      
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to root_path, notice: 'Post created successfully!' }
@@ -144,8 +148,19 @@ class PostsController < ApplicationController
       end
     else
       # Like the post
-      @post.likes.create!(user: Current.user)
+      like = @post.likes.create!(user: Current.user)
       Current.user.perform_action('like', @post)
+      
+      # Send notification to post owner (if not liking own post)
+      if @post.user != Current.user
+        NotificationService.create_and_broadcast(
+          user: @post.user,
+          notifiable: like,
+          message: "#{Current.user.username} liked your post",
+          title: "New Like"
+        )
+      end
+      
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, notice: 'Post liked!') }
         format.turbo_stream { render turbo_stream: turbo_stream.replace("post_#{@post.id}", partial: 'posts/post', locals: { post: @post }) }
@@ -183,6 +198,17 @@ class PostsController < ApplicationController
       
       if @repost.save
         Current.user.perform_action('repost', @post)
+        
+        # Send notification to original post owner (if not reposting own post)
+        if @post.user != Current.user
+          NotificationService.create_and_broadcast(
+            user: @post.user,
+            notifiable: @repost,
+            message: "#{Current.user.username} reposted your post",
+            title: "New Repost"
+          )
+        end
+        
         respond_to do |format|
           format.html { redirect_back(fallback_location: root_path, notice: 'Post reposted successfully!') }
           format.turbo_stream { render :repost }
@@ -208,6 +234,20 @@ class PostsController < ApplicationController
         
         if @quote_post.save
           Current.user.perform_action('quote')
+          
+          # Send notification to original post owner (if not quoting own post)
+          if @post.user != Current.user
+            NotificationService.create_and_broadcast(
+              user: @post.user,
+              notifiable: @quote_post,
+              message: "#{Current.user.username} quoted your post",
+              title: "New Quote"
+            )
+          end
+          
+          # Process mentions in the quote
+          MentionService.process_mentions(@quote_post)
+          
           respond_to do |format|
             format.html { redirect_to posts_path, notice: 'Post quoted successfully!' }
             format.turbo_stream do
@@ -250,6 +290,20 @@ class PostsController < ApplicationController
     
     if @reply_post.save
       Current.user.perform_action('reply', @post)
+      
+      # Send notification to original post owner (if not replying to own post)
+      if @post.user != Current.user
+        NotificationService.create_and_broadcast(
+          user: @post.user,
+          notifiable: @reply_post,
+          message: "#{Current.user.username} replied to your post",
+          title: "New Reply"
+        )
+      end
+      
+      # Process mentions in the reply
+      MentionService.process_mentions(@reply_post)
+      
       respond_to do |format|
         format.html { redirect_to post_path(@post), notice: 'Reply posted successfully!' }
         format.turbo_stream

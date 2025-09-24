@@ -100,7 +100,7 @@ class ProfilesController < ApplicationController
                          .order(created_at: :desc)
     end
     
-    @pagy, @posts = pagy(posts_query, items: 5)
+    @pagy, @posts = pagy(posts_query, items: 5) if posts_query
   end
   
   def user_params

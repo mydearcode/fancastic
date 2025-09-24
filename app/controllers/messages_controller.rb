@@ -18,7 +18,24 @@ class MessagesController < ApplicationController
     if @message.save
       # Mark conversation as read for current user
       participant = @conversation.conversation_participants.find_by(user: Current.user)
-      participant&.mark_as_read!
+      if participant
+        participant.mark_as_read!
+        # Broadcast updated unread messages count for sender
+        MessageService.broadcast_unread_count(Current.user)
+      end
+      
+      # Send notification to other participants and broadcast their unread count
+      other_participants = @conversation.users.where.not(id: Current.user.id)
+      other_participants.each do |user|
+        NotificationService.create_and_broadcast(
+          user: user,
+          notifiable: @message,
+          message: "#{Current.user.username} sent you a message",
+          title: "New Message"
+        )
+        # Broadcast updated unread messages count for receiver
+        MessageService.broadcast_unread_count(user)
+      end
       
       redirect_to @conversation, notice: 'Message sent successfully.'
     else

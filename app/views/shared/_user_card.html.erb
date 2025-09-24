@@ -1,21 +1,21 @@
-<%= link_to user_profile_path(user.username), class: "block p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors" do %>
+<%= link_to user_profile_path(user.username), class: "block p-4 bg-black rounded-lg border border-gray-800 hover:border-gray-600 transition-colors" do %>
   <div class="flex items-center space-x-3">
     <div class="flex-shrink-0">
       <% if user.profile_picture.attached? %>
-        <%= image_tag user.profile_picture, class: "w-12 h-12 rounded-full object-cover" %>
+        <%= image_tag url_for(user.profile_picture), class: "w-12 h-12 rounded-full object-cover" %>
       <% else %>
-        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-          <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
           </svg>
         </div>
       <% end %>
     </div>
     <div class="flex-1 min-w-0">
-      <p class="text-sm font-medium text-gray-900 truncate">
+      <p class="text-sm font-medium text-white truncate">
         <%= user.full_name.presence || user.username %>
       </p>
-      <p class="text-sm text-gray-500 truncate">@<%= user.username %></p>
+      <p class="text-sm text-gray-400 truncate">@<%= user.username %></p>
     </div>
   </div>
 <% end %>

@@ -14,7 +14,11 @@ class ConversationsController < ApplicationController
     
     # Mark conversation as read
     participant = @conversation.conversation_participants.find_by(user: Current.user)
-    participant&.mark_as_read!
+    if participant
+      participant.mark_as_read!
+      # Broadcast updated unread messages count
+      MessageService.broadcast_unread_count(Current.user)
+    end
   end
   
   def new

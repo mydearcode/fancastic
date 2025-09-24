@@ -20,7 +20,7 @@
               <% if other_user %>
                 <%= link_to user_profile_path(other_user.username), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
                   <% if other_user.profile_picture.attached? %>
-                    <%= image_tag other_user.profile_picture, class: "w-full h-full object-cover" %>
+                    <%= image_tag url_for(other_user.profile_picture), class: "w-full h-full object-cover" %>
                   <% else %>
                     <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                       <%= other_user.username.first.upcase %>

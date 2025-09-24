@@ -5,7 +5,7 @@
       <span class="mr-1">↩️</span> Replying to @<%= post.user.username %>
     </div>
     
-    <%= form_with model: reply_post, url: reply_post_path(post), local: false, data: { turbo_frame: "reply_form" } do |form| %>
+    <%= form_with model: reply_post, url: reply_post_path(post), local: false, data: { turbo_frame: "reply_form", controller: "mention" } do |form| %>
       <% if reply_post.errors.any? %>
         <div class="mb-3 p-3 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-1 text-sm">Please fix the following errors:</h4>
@@ -27,7 +27,7 @@
         <!-- Form content -->
         <div class="flex-1">
           <!-- Compact text area -->
-          <div class="mb-3">
+          <div class="mb-3 relative">
             <%= form.text_area :text, 
                 placeholder: "Post your reply",
                 class: "w-full p-3 bg-black border border-gray-800 rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-base transition-all duration-200",
@@ -36,8 +36,12 @@
                 data: { 
                   auto_expand: true,
                   min_rows: 1,
-                  max_rows: 6
+                  max_rows: 6,
+                  mention_target: "textarea"
                 } %>
+            
+            <!-- Mention önerileri için container -->
+            <div data-mention-target="suggestions" class="hidden"></div>
           </div>
           
           <!-- Hidden file input -->

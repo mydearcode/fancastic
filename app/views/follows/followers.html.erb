@@ -1,31 +1,31 @@
 <div class="max-w-4xl mx-auto p-6">
-  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+  <div class="bg-black border border-gray-800 rounded-lg shadow-lg overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-800">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900"><%= @user.username %>'s Followers</h1>
-          <p class="text-gray-600"><%= pluralize(@followers.count, 'follower') %></p>
+          <h1 class="text-2xl font-bold text-white"><%= @user.username %>'s Followers</h1>
+          <p class="text-gray-400"><%= pluralize(@followers.count, 'follower') %></p>
         </div>
-        <%= link_to "← Back to Profile", user_profile_path(@user.username), class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= link_to "← Back to Profile", user_profile_path(@user.username), class: "bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" %>
       </div>
     </div>
 
     <!-- Followers List -->
-    <div class="divide-y divide-gray-200">
+    <div class="divide-y divide-gray-800">
       <% if @followers.any? %>
         <% @followers.each do |follower| %>
-          <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+          <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-900">
             <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold text-gray-600">
+              <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-lg font-bold text-white">
                 <%= follower.username.first.upcase if follower.username.present? %>
               </div>
               <div>
-                <%= link_to user_profile_path(follower.username), class: "text-lg font-semibold text-gray-900 hover:text-blue-600" do %>
+                <%= link_to user_profile_path(follower.username), class: "text-lg font-semibold text-white hover:text-blue-400" do %>
                   <%= follower.username %>
                 <% end %>
                 <% if follower.team.present? %>
-                  <p class="text-sm text-gray-600"><%= follower.team.name %> fan</p>
+                  <p class="text-sm text-gray-400"><%= follower.team.name %> fan</p>
                 <% end %>
               </div>
             </div>
@@ -35,11 +35,11 @@
                 <div id="follow_button_<%= follower.id %>">
                   <% if Current.user.following?(follower) %>
                     <%= button_to "Unfollow", user_follow_path(follower), method: :delete, 
-                        class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        class: "bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
                         data: { turbo_stream: true } %>
                   <% else %>
                     <%= button_to "Follow", user_follow_path(follower), method: :post, 
-                        class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
                         data: { turbo_stream: true } %>
                   <% end %>
                 </div>
@@ -49,7 +49,7 @@
         <% end %>
       <% else %>
         <div class="px-6 py-8 text-center">
-          <p class="text-gray-500 text-lg">No followers yet.</p>
+          <p class="text-gray-400 text-lg">No followers yet.</p>
         </div>
       <% end %>
     </div>

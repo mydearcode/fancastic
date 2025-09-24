@@ -27,7 +27,7 @@
               <!-- Profile Picture -->
               <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
                 <% if user.profile_picture.attached? %>
-                  <%= image_tag user.profile_picture, class: "w-full h-full object-cover" %>
+                  <%= image_tag url_for(user.profile_picture), class: "w-full h-full object-cover" %>
                 <% else %>
                   <div class="w-full h-full bg-indigo-500 flex items-center justify-center">
                     <%= user.username.first.upcase %>
