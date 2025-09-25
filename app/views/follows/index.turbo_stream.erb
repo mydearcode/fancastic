@@ -1,0 +1,127 @@
+<%= turbo_stream.replace "follows-content" do %>
+  <!-- Tab Navigation -->
+  <div id="tab-navigation" class="border-b border-gray-800">
+    <nav class="flex">
+      <%= link_to user_follows_path(@user.username, tab: 'followers'), 
+          class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'followers'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'followers'}",
+          data: { turbo_frame: "follows-content" } do %>
+        Followers
+      <% end %>
+      
+      <%= link_to user_follows_path(@user.username, tab: 'following'), 
+          class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'following'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'following'}",
+          data: { turbo_frame: "follows-content" } do %>
+        Following
+      <% end %>
+      
+      <%= link_to user_follows_path(@user.username, tab: 'tribun'), 
+          class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'tribun'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'tribun'}",
+          data: { turbo_frame: "follows-content" } do %>
+        Tribün
+      <% end %>
+      
+      <%= link_to user_follows_path(@user.username, tab: 'ezeli_rakipler'), 
+          class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'ezeli_rakipler'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'ezeli_rakipler'}",
+          data: { turbo_frame: "follows-content" } do %>
+        Ezeli Rakipler
+      <% end %>
+    </nav>
+  </div>
+  
+  <div class="divide-y divide-gray-800" data-infinite-scroll-target="entries">
+    <% 
+      case @tab
+      when 'following'
+        users_to_show = @following
+      when 'tribun'
+        users_to_show = @tribun_users || []
+      when 'ezeli_rakipler'
+        users_to_show = @ezeli_rakipler || []
+      else
+        users_to_show = @followers
+      end
+    %>
+    
+    <% if users_to_show.any? %>
+      <% users_to_show.each do |user| %>
+        <div class="p-4 hover:bg-gray-900 transition-colors">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                <%= user.username.first.upcase if user.username.present? %>
+              </div>
+              <div>
+                <%= link_to user_profile_path(user.username), class: "text-lg font-semibold text-white hover:text-blue-400", data: { turbo: false } do %>
+                  <%= user.username %>
+                <% end %>
+                <% if user.team.present? %>
+                  <p class="text-sm text-gray-400"><%= user.team.name %> fan</p>
+                <% end %>
+              </div>
+            </div>
+            
+            <% if Current.user != user %>
+              <div class="flex space-x-2">
+                <div id="follow_button_<%= user.id %>">
+                  <% if Current.user.following?(user) %>
+                    <%= button_to "Unfollow", user_follow_path(user), method: :delete, 
+                        class: "bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        data: { turbo_stream: true } %>
+                  <% else %>
+                    <%= button_to "Follow", user_follow_path(user), method: :post, 
+                        class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                        data: { turbo_stream: true } %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="p-8 text-center text-gray-400">
+        <% case @tab %>
+        <% when 'following' %>
+          Not following anyone yet.
+        <% when 'tribun' %>
+          <% if @user.team.present? %>
+            No <%= @user.team.name %> fans following yet.
+          <% else %>
+            User hasn't selected a team yet.
+          <% end %>
+        <% when 'ezeli_rakipler' %>
+          <% if @user.rival_team.present? %>
+            No <%= @user.rival_team.name %> fans following yet.
+          <% else %>
+            User hasn't selected a rival team yet.
+          <% end %>
+        <% else %>
+          No followers yet.
+        <% end %>
+      </div>
+    <% end %>
+    
+    <!-- Pagination -->
+    <div id="pagination" class="my-4" data-infinite-scroll-target="pagination">
+      <% if !users_to_show.empty? && @pagy.pages > 1 && @pagy.page < @pagy.pages %>
+        <div class="flex justify-center">
+          <div class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium">
+            Loading more users...
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "tab-description" do %>
+  <% if @tab == 'following' %>
+    Following <%= pluralize(@following.count, 'user') %>
+  <% elsif @tab == 'tribun' %>
+    <%= pluralize((@tribun_users || []).count, 'tribün member') %>
+  <% elsif @tab == 'ezeli_rakipler' %>
+    <%= pluralize((@ezeli_rakipler || []).count, 'ezeli rakip') %>
+  <% else %>
+    <%= pluralize(@followers.count, 'follower') %>
+  <% end %>
+<% end %>

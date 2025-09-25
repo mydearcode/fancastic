@@ -69,6 +69,11 @@ class User < ApplicationRecord
     end
   end
   
+  # Primary rival team (first one)
+  def rival_team
+    rival_teams.first
+  end
+  
   # Suspension methods
   def suspend!(reason)
     update(suspended: true, suspend_reason: reason, suspend_date: Date.today)

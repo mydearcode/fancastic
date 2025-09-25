@@ -40,12 +40,66 @@ class FollowsController < ApplicationController
   def followers
     @user = User.find_by!(username: params[:username])
     @followers = @user.followers.includes(:team).limit(50)
+    @following = @user.following.includes(:team).limit(50)
+    @tab = params[:tab] || 'followers'
+    
+    respond_to do |format|
+      format.html { render :index }
+      format.turbo_stream
+    end
   end
 
   # GET /:username/following
   def following
     @user = User.find_by!(username: params[:username])
+    @followers = @user.followers.includes(:team).limit(50)
     @following = @user.following.includes(:team).limit(50)
+    @tab = params[:tab] || 'following'
+    
+    respond_to do |format|
+      format.html { render :index }
+      format.turbo_stream
+    end
+  end
+
+  # GET /:username/follows (new unified endpoint)
+  def index
+    @user = User.find_by!(username: params[:username])
+    
+    # Pagination için pagy kullan
+    case params[:tab]
+    when 'following'
+      @pagy, @following = pagy(@user.following.includes(:team), items: 20)
+      @followers = @user.followers.includes(:team).limit(20)
+    when 'tribun'
+      # Aynı takım taraftarları
+      if @user.team.present?
+        @pagy, @tribun_users = pagy(@user.followers.joins(:team).where(teams: { id: @user.team.id }).includes(:team), items: 20)
+      else
+        @pagy, @tribun_users = pagy(User.none, items: 20)
+      end
+      @followers = @user.followers.includes(:team).limit(20)
+      @following = @user.following.includes(:team).limit(20)
+    when 'ezeli_rakipler'
+      # Rakip takım taraftarları
+      if @user.rival_team.present?
+        @pagy, @ezeli_rakipler = pagy(@user.followers.joins(:team).where(teams: { id: @user.rival_team.id }).includes(:team), items: 20)
+      else
+        @pagy, @ezeli_rakipler = pagy(User.none, items: 20)
+      end
+      @followers = @user.followers.includes(:team).limit(20)
+      @following = @user.following.includes(:team).limit(20)
+    else # 'followers'
+      @pagy, @followers = pagy(@user.followers.includes(:team), items: 20)
+      @following = @user.following.includes(:team).limit(20)
+    end
+    
+    @tab = params[:tab] || 'followers'
+    
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   private

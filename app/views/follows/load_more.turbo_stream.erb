@@ -1,0 +1,62 @@
+<%= turbo_stream.append "follows-list" do %>
+  <% 
+    case @tab
+    when 'following'
+      users_to_show = @following
+    when 'tribun'
+      users_to_show = @tribun_users || []
+    when 'ezeli_rakipler'
+      users_to_show = @ezeli_rakipler || []
+    else
+      users_to_show = @followers
+    end
+  %>
+  
+  <% users_to_show.each do |user| %>
+    <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-900">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-lg font-bold text-white">
+          <%= user.username.first.upcase if user.username.present? %>
+        </div>
+        <div>
+          <%= link_to user_profile_path(user.username), class: "text-lg font-semibold text-white hover:text-blue-400", data: { turbo: false } do %>
+            <%= user.username %>
+          <% end %>
+          <% if user.team.present? %>
+            <p class="text-sm text-gray-400"><%= user.team.name %> fan</p>
+          <% end %>
+        </div>
+      </div>
+      
+      <% if Current.user != user %>
+        <div class="flex space-x-2">
+          <div id="follow_button_<%= user.id %>">
+            <% if Current.user.following?(user) %>
+              <%= button_to "Unfollow", user_follow_path(user), method: :delete, 
+                  class: "bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                  data: { turbo_stream: true } %>
+            <% else %>
+              <%= button_to "Follow", user_follow_path(user), method: :post, 
+                  class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                  data: { turbo_stream: true } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update "pagination" do %>
+  <% if @pagy && @pagy.next %>
+    <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= user_follows_path(@user.username, tab: @tab, format: :turbo_stream, page: @pagy.next) %>">
+      <div class="flex justify-center">
+        <div class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium">
+          Loading more users...
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div id="pagination"></div>
+  <% end %>
+<% end %>

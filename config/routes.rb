@@ -126,6 +126,8 @@ Rails.application.routes.draw do
   # User profile friendly URLs (must be at the end to avoid conflicts)
   get '/:username', to: 'profiles#show_user', as: :user_profile, 
       constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+  get '/:username/follows', to: 'follows#index', as: :user_follows,
+      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
   get '/:username/followers', to: 'follows#followers', as: :user_followers,
       constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
   get '/:username/following', to: 'follows#following', as: :user_following,
