@@ -2,7 +2,7 @@ class Post < ApplicationRecord
   belongs_to :user
   
   # Active Storage attachment for images
-  has_one_attached :image
+  has_many_attached :images
   
   # Soft delete scopes
   scope :not_deleted, -> { where(deleted_at: nil) }
@@ -30,10 +30,10 @@ class Post < ApplicationRecord
   enum :visibility, { everyone: 0, team_only: 1, followers: 2, only_me: 3 }
   
   # Validations
-  validates :text, presence: true, unless: :is_repost_or_has_image?
+  validates :text, presence: true, unless: :is_repost_or_has_images?
   validates :visibility, presence: true
   validates :repost_of_post_id, uniqueness: { scope: :user_id, message: "You have already reposted this post" }, if: :is_repost?
-  validate :image_format_and_size, if: -> { image.attached? }
+  validate :images_format_and_size, if: -> { images.attached? }
   
   # Scopes and helper methods
   scope :replies, -> { where.not(in_reply_to_post_id: nil) }
@@ -114,21 +114,25 @@ class Post < ApplicationRecord
 
   private
   
-  def is_repost_or_has_image?
-    is_repost? || image.attached?
+  def is_repost_or_has_images?
+    is_repost? || images.attached?
   end
   
-  def image_format_and_size
-    return unless image.attached?
+  def images_format_and_size
+    return unless images.attached?
     
-    # Check file type
-    unless image.content_type.in?(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])
-      errors.add(:image, 'must be a JPEG, PNG, GIF, or WebP image')
-    end
-    
-    # Check file size (max 10MB)
-    if image.byte_size > 10.megabytes
-      errors.add(:image, 'must be less than 10MB')
+    images.each do |image|
+      # Check file type
+      unless image.content_type.in?(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])
+        errors.add(:images, 'must be JPEG, PNG, GIF, or WebP images')
+        break
+      end
+      
+      # Check file size (max 10MB per image)
+      if image.byte_size > 10.megabytes
+        errors.add(:images, 'must be less than 10MB each')
+        break
+      end
     end
   end
 end

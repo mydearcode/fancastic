@@ -42,8 +42,8 @@
                         <span class="text-gray-400 italic">Repost</span>
                       <% end %>
                     </div>
-                    <% if post.image.attached? %>
-                      <div class="text-xs text-gray-400 mt-1">📷 Has image</div>
+                    <% if post.images.attached? %>
+                      <div class="text-xs text-gray-400 mt-1">📷 Has <%= pluralize(post.images.count, 'image') %></div>
                     <% end %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">

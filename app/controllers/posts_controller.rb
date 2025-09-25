@@ -331,10 +331,10 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:text, :image, :visibility, :in_reply_to_post_id, :repost_of_post_id, :quote_of_post_id)
+    params.require(:post).permit(:text, :visibility, :in_reply_to_post_id, :repost_of_post_id, :quote_of_post_id, images: [])
   end
   
   def quote_params
-    params.require(:post).permit(:text, :image, :visibility)
+    params.require(:post).permit(:text, :visibility, images: [])
   end
 end

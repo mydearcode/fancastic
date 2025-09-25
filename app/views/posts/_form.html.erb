@@ -43,22 +43,26 @@
         
         <!-- Mention önerileri için container -->
         <div data-mention-target="suggestions" class="hidden"></div>
+        
+        <!-- Image preview container -->
+        <div class="image-preview-container mt-3 hidden"></div>
       </div>
       
       <!-- Hidden file input -->
       <div class="hidden">
-        <%= form.file_field :image, 
-            id: "post_image_input",
-            accept: "image/*" %>
+        <%= form.file_field :images, 
+            id: "post_images_input",
+            accept: "image/*",
+            multiple: true %>
       </div>
       
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-1">
           <!-- Image upload icon -->
           <button type="button" 
-                  onclick="document.getElementById('post_image_input').click()" 
+                  onclick="document.getElementById('post_images_input').click()" 
                   class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
-                  title="Add photo">
+                  title="Add photos">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
             </svg>

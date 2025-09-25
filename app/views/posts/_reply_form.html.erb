@@ -30,7 +30,7 @@
           <div class="mb-3 relative">
             <%= form.text_area :text, 
                 placeholder: "Post your reply",
-                class: "w-full p-3 bg-black border border-gray-800 rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-base transition-all duration-200",
+                class: "w-full p-3 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-base transition-all duration-200",
                 rows: 1,
                 id: "reply_textarea",
                 data: { 
@@ -42,13 +42,17 @@
             
             <!-- Mention önerileri için container -->
             <div data-mention-target="suggestions" class="hidden"></div>
+            
+            <!-- Image preview container -->
+            <div class="image-preview-container mt-3 hidden"></div>
           </div>
           
           <!-- Hidden file input -->
           <div class="hidden">
-            <%= form.file_field :image, 
-                id: "reply_image_input",
-                accept: "image/*" %>
+            <%= form.file_field :images, 
+                id: "reply_images_input",
+                accept: "image/*",
+                multiple: true %>
           </div>
           
           <!-- Hidden visibility select -->
@@ -65,9 +69,9 @@
             <div class="flex items-center space-x-1">
               <!-- Image upload icon -->
               <button type="button" 
-                      onclick="document.getElementById('reply_image_input').click()" 
+                      onclick="document.getElementById('reply_images_input').click()" 
                       class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
-                      title="Add photo">
+                      title="Add photos">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
                 </svg>
