@@ -1,7 +1,7 @@
 <!-- Determine target post for interactions -->
 <% target_post = post.repost_of_post_id.present? && post.text.blank? ? post.repost_of_post : post %>
 
-<div id="post_<%= post.id %>" class="bg-black border-b border-gray-800 py-3 hover:bg-gray-950 transition-colors cursor-pointer relative">
+<div id="post_<%= post.id %>" class="bg-black border-b border-gray-800 py-3 hover:bg-gray-950 transition-colors cursor-pointer relative" data-controller="post-click" data-post-click-url-value="<%= post_path(target_post) %>">
   
   <% if post.repost_of_post_id.present? && post.text.blank? %>
     <!-- Repost indicator at the top -->
@@ -319,5 +319,5 @@
         <% end %>
 </div>
 
-<%= link_to "", post_path(target_post), class: "absolute inset-0 z-0", data: { turbo_frame: "_top", turbo_prefetch: false } %>
+
 </div> <!-- Closing the main post div -->

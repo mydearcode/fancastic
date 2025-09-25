@@ -1,0 +1,23 @@
+<%= turbo_stream.replace "quote_modal", "" %>
+
+<%= turbo_stream.prepend "posts" do %>
+  <%= render 'posts/post', post: @quote_post %>
+<% end %>
+
+<%= turbo_stream.replace "flash" do %>
+  <%= render 'shared/flash', notice: "Post quoted successfully!" %>
+<% end %>
+
+<%= turbo_stream.append "body" do %>
+  <script>
+    // Quote işleminden sonra tüm dropdown'ları kapat
+    document.addEventListener('turbo:after-stream-render', function(event) {
+      // Tüm dropdown'ları kapat
+      document.querySelectorAll('[data-dropdown-target="menu"]').forEach(menu => {
+        if (!menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+        }
+      });
+    }, { once: true });
+  </script>
+<% end %>
