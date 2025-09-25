@@ -1,0 +1,139 @@
+.profile-hover-card {
+  position: fixed;
+  z-index: 9999;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 16px;
+  width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease-out;
+  pointer-events: none;
+}
+
+.profile-hover-card.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.profile-hover-card .profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.profile-hover-card .profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #333;
+}
+
+.profile-hover-card .profile-avatar-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: 2px solid #333;
+}
+
+.profile-hover-card .follow-btn {
+  background: #1d9bf0;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.profile-hover-card .follow-btn:hover {
+  background: #1a8cd8;
+}
+
+.profile-hover-card .follow-btn.following {
+  background: transparent;
+  color: white;
+  border: 1px solid #536471;
+}
+
+.profile-hover-card .follow-btn.following:hover {
+  background: #f4212e;
+  border-color: #f4212e;
+  color: white;
+}
+
+.profile-hover-card .profile-name {
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.profile-hover-card .profile-username {
+  color: #71767b;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.profile-hover-card .profile-team {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.profile-hover-card .profile-bio {
+  color: white;
+  font-size: 15px;
+  line-height: 1.3;
+  margin: 12px 0;
+}
+
+.profile-hover-card .profile-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.profile-hover-card .stat {
+  color: #71767b;
+  font-size: 14px;
+}
+
+.profile-hover-card .stat-number {
+  color: white;
+  font-weight: 700;
+}
+
+.profile-hover-card .loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #71767b;
+}
+
+.profile-hover-card .error {
+  color: #f4212e;
+  text-align: center;
+  padding: 20px;
+}

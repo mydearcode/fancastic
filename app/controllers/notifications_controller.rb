@@ -13,6 +13,9 @@ class NotificationsController < ApplicationController
     grouped_notifications = {}
     
     notifications.each do |notification|
+      # notification.notifiable nil kontrolü
+      next if notification.notifiable.nil?
+      
       # Post ID'sini belirle
       post_id = case notification.notifiable_type
       when 'Post'

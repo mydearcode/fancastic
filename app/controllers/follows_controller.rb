@@ -2,37 +2,49 @@ class FollowsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: [:create, :destroy]
 
-  # POST /users/:user_id/follow
+  # POST /users/:user_id/follow or POST /:username/follow
   def create
     if Current.user.follow(@user)
-      # Takip edildiğinde bildirim oluştur
-      NotificationService.create_and_broadcast(
+      # Bildirim oluştur
+      Notification.create!(
         user: @user,
-        message: "#{Current.user.username} started following you",
-        notifiable: Current.user.active_follows.find_by(followed: @user)
+        notifiable: Current.user.active_follows.find_by(followed: @user),
+        message: "#{Current.user.username} seni takip etmeye başladı"
       )
       
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user)) }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username)) }
         format.turbo_stream
-        format.json { render json: { status: 'followed', followers_count: @user.followers_count } }
+        format.json { 
+          render json: { 
+            following: Current.user.following?(@user), 
+            followers_count: @user.followers_count 
+          }, 
+          status: :ok 
+        }
       end
     else
       respond_to do |format|
-        format.html { redirect_back(fallback_location: user_profile_path(@user), alert: 'Unable to follow user') }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Unable to follow user" }) }
-        format.json { render json: { error: 'Unable to follow user' }, status: :unprocessable_entity }
+        format.html { redirect_back(fallback_location: user_profile_path(@user.username), alert: "Takip edilemedi") }
+        format.json { render json: { error: "Follow failed" }, status: :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /users/:user_id/follow
+  # DELETE /users/:user_id/follow or DELETE /:username/follow
   def destroy
     Current.user.unfollow(@user)
+    
     respond_to do |format|
-      format.html { redirect_back(fallback_location: user_profile_path(@user)) }
+      format.html { redirect_back(fallback_location: user_profile_path(@user.username)) }
       format.turbo_stream
-      format.json { render json: { status: 'unfollowed', followers_count: @user.followers_count } }
+      format.json { 
+        render json: { 
+          following: Current.user.following?(@user), 
+          followers_count: @user.followers_count 
+        }, 
+        status: :ok 
+      }
     end
   end
 
@@ -105,7 +117,11 @@ class FollowsController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:user_id])
+    if params[:username].present?
+      @user = User.find_by!(username: params[:username])
+    else
+      @user = User.find(params[:user_id])
+    end
   end
 
   def authenticate_user!

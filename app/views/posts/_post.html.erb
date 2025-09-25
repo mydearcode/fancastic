@@ -19,12 +19,15 @@
   
   <!-- Post Header -->
   <div class="flex items-start space-x-3">
-    <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 relative z-10 overflow-hidden">
+    <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 relative z-10 overflow-hidden" 
+         data-controller="profile-hover" 
+         data-profile-hover-username-value="<%= target_post.user.username %>"
+         data-action="mouseenter->profile-hover#mouseEnter mouseleave->profile-hover#mouseLeave">
       <%= link_to user_profile_path(target_post.user.username), class: "absolute inset-0 flex items-center justify-center", data: { turbo_frame: "_top" } do %>
         <% if target_post.user.profile_picture.attached? %>
-          <%= image_tag url_for(target_post.user.profile_picture), class: "w-full h-full object-cover" %>
+          <%= image_tag url_for(target_post.user.profile_picture), class: "w-full h-full object-cover rounded-full" %>
         <% else %>
-          <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+          <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center rounded-full">
             <%= target_post.user.username.first.upcase %>
           </div>
         <% end %>
@@ -33,13 +36,31 @@
     <div class="flex-1 min-w-0">
       <div class="flex items-center justify-between mb-1 relative z-10">
         <div class="flex items-center space-x-2">
-          <span class="font-bold text-white"><%= link_to target_post.user.username, user_profile_path(target_post.user.username), class: "text-white hover:text-gray-300", data: { turbo_frame: "_top" } %></span>
+          <span class="font-bold text-white">
+            <%= link_to target_post.user.username, user_profile_path(target_post.user.username), 
+                class: "text-white hover:text-gray-300", 
+                data: { 
+                  turbo_frame: "_top",
+                  controller: "profile-hover",
+                  "profile-hover-username-value": target_post.user.username,
+                  action: "mouseenter->profile-hover#mouseEnter mouseleave->profile-hover#mouseLeave"
+                } %>
+          </span>
           <% if target_post.user.team.present? %>
             <span class="px-2 py-0.5 text-xs font-medium rounded" style="background-color: <%= target_post.user.team.color_primary %>; color: <%= target_post.user.team.color_secondary %>;">
               <%= target_post.user.team.symbol_slug.upcase %>
             </span>
           <% end %>
-          <span class="text-gray-500 font-normal"><%= link_to "@#{target_post.user.username}", user_profile_path(target_post.user.username), class: "text-gray-500 hover:text-gray-400", data: { turbo_frame: "_top" } %></span>
+          <span class="text-gray-500 font-normal">
+            <%= link_to "@#{target_post.user.username}", user_profile_path(target_post.user.username), 
+                class: "text-gray-500 hover:text-gray-400", 
+                data: { 
+                  turbo_frame: "_top",
+                  controller: "profile-hover",
+                  "profile-hover-username-value": target_post.user.username,
+                  action: "mouseenter->profile-hover#mouseEnter mouseleave->profile-hover#mouseLeave"
+                } %>
+          </span>
           <span class="text-gray-500">·</span>
           <span class="text-gray-500 text-sm"><%= time_ago_in_words(target_post.created_at) %></span>
           <% if target_post.visibility != 'everyone' %>

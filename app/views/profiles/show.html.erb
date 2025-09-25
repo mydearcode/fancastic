@@ -42,6 +42,41 @@
               <% end %>
             </div>
             <p class="text-gray-400 text-sm">@<%= @user.username %></p>
+            
+            <!-- Bio -->
+            <% if @user.bio.present? %>
+              <p class="text-white text-sm mt-2"><%= @user.bio %></p>
+            <% end %>
+            
+            <!-- Location, Website, Birth Date -->
+            <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-400">
+              <% if @user.location.present? %>
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span><%= @user.location %></span>
+                </div>
+              <% end %>
+              
+              <% if @user.website.present? %>
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"></path>
+                  </svg>
+                  <%= link_to @user.website, @user.website, target: "_blank", class: "text-blue-400 hover:text-blue-300" %>
+                </div>
+              <% end %>
+              
+              <% if @user.birth_date.present? %>
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>Born <%= @user.birth_date.strftime("%B %d, %Y") %><% if @user.age.present? %> (Age <%= @user.age %>)<% end %></span>
+                </div>
+              <% end %>
+            </div>
           </div>
         </div>
         
@@ -51,11 +86,11 @@
             <!-- Follow/Unfollow Button -->
             <div id="follow_button_<%= @user.id %>">
               <% if Current.user.following?(@user) %>
-                <%= button_to "Following", user_follow_path(@user), method: :delete, 
+                <%= button_to "Following", user_unfollow_path(@user.username), method: :delete, 
                     class: "px-4 py-1.5 text-sm font-medium border border-gray-600 text-white bg-transparent hover:bg-red-600 hover:border-red-600 rounded-full transition-colors",
                     data: { turbo_stream: true } %>
               <% else %>
-                <%= button_to "Follow", user_follow_path(@user), method: :post, 
+                <%= button_to "Follow", user_follow_path(@user.username), method: :post, 
                     class: "px-4 py-1.5 text-sm font-medium bg-white text-black hover:bg-gray-200 rounded-full transition-colors",
                     data: { turbo_stream: true } %>
               <% end %>

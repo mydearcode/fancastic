@@ -42,14 +42,8 @@ Rails.application.routes.draw do
   get "settings/privacy", to: "settings#privacy"
   get "settings/notifications", to: "settings#notifications"
   
-  # Follow routes
+  # Block routes only - follow routes moved to username-based routing
   resources :users, only: [] do
-    post :follow, to: "follows#create"
-    delete :follow, to: "follows#destroy"
-    # Remove these conflicting routes since we have slug-based ones at the bottom
-    # get :followers, to: "follows#followers"
-    # get :following, to: "follows#following"
-    
     # Block routes
     post :block, to: "blocks#create"
     delete :block, to: "blocks#destroy", as: :unblock
@@ -120,17 +114,28 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   
+  # API routes
+  namespace :api do
+    resources :users, only: [:show], param: :username
+  end
+  
   # Mount ActionCable server
   mount ActionCable.server => '/cable'
   
   # User profile friendly URLs (must be at the end to avoid conflicts)
   get '/:username', to: 'profiles#show_user', as: :user_profile, 
-      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
   get '/:username/follows', to: 'follows#index', as: :user_follows,
-      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
   get '/:username/followers', to: 'follows#followers', as: :user_followers,
-      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
   get '/:username/following', to: 'follows#following', as: :user_following,
-      constraints: { username: /[a-zA-Z0-9_]{4,15}/ }
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  
+  # Username-based follow routes
+  post '/:username/follow', to: 'follows#create', as: :user_follow,
+       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  delete '/:username/follow', to: 'follows#destroy', as: :user_unfollow,
+         constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
 
 end

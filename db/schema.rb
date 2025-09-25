@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_24_092539) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_25_174837) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "unaccent"
@@ -393,6 +393,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_24_092539) do
     t.integer "suspend_reason"
     t.date "suspend_date"
     t.datetime "suspended_at"
+    t.text "bio"
+    t.string "location"
+    t.string "website"
+    t.date "birth_date"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end

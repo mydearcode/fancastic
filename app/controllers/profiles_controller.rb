@@ -104,7 +104,7 @@ class ProfilesController < ApplicationController
   end
   
   def user_params
-    params.require(:user).permit(:full_name, :username, :team_id, :message_privacy, :profile_picture, :cover_picture, rival_team_ids: [])
+    params.require(:user).permit(:full_name, :username, :team_id, :message_privacy, :profile_picture, :cover_picture, :bio, :location, :website, :birth_date, rival_team_ids: [])
   end
   
   def set_teams

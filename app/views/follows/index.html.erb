@@ -36,25 +36,25 @@
         <nav class="flex">
           <%= link_to user_follows_path(@user.username, tab: 'followers'), 
               class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'followers'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'followers'}",
-              data: { turbo_frame: "follows-content" } do %>
+              data: { turbo_frame: "follows-content", turbo_prefetch: false } do %>
             Followers
           <% end %>
           
           <%= link_to user_follows_path(@user.username, tab: 'following'), 
               class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'following'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'following'}",
-              data: { turbo_frame: "follows-content" } do %>
+              data: { turbo_frame: "follows-content", turbo_prefetch: false } do %>
             Following
           <% end %>
           
           <%= link_to user_follows_path(@user.username, tab: 'tribun'), 
               class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'tribun'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'tribun'}",
-              data: { turbo_frame: "follows-content" } do %>
+              data: { turbo_frame: "follows-content", turbo_prefetch: false } do %>
             Tribün
           <% end %>
           
           <%= link_to user_follows_path(@user.username, tab: 'ezeli_rakipler'), 
               class: "flex-1 px-4 py-3 text-center font-medium border-b-2 #{'border-blue-500 text-blue-400' if @tab == 'ezeli_rakipler'} #{'border-transparent text-gray-400 hover:text-white' unless @tab == 'ezeli_rakipler'}",
-              data: { turbo_frame: "follows-content" } do %>
+              data: { turbo_frame: "follows-content", turbo_prefetch: false } do %>
             Ezeli Rakipler
           <% end %>
         </nav>
@@ -78,16 +78,29 @@
             <div class="p-4 hover:bg-gray-900 transition-colors">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-lg font-bold text-white">
-                    <%= user.username.first.upcase if user.username.present? %>
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden relative">
+                    <%= link_to user_profile_path(user.username), class: "w-full h-full flex items-center justify-center", data: { turbo_frame: "_top" } do %>
+                      <% if user.profile_picture.attached? %>
+                        <%= image_tag url_for(user.profile_picture), class: "w-full h-full object-cover rounded-full" %>
+                      <% else %>
+                        <div class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center rounded-full">
+                          <%= user.username.first.upcase if user.username.present? %>
+                        </div>
+                      <% end %>
+                    <% end %>
                   </div>
                   <div>
-                    <%= link_to user_profile_path(user.username), class: "text-lg font-semibold text-white hover:text-blue-400", data: { turbo: false } do %>
-                      <%= user.username %>
-                    <% end %>
-                    <% if user.team.present? %>
-                      <p class="text-sm text-gray-400"><%= user.team.name %> fan</p>
-                    <% end %>
+                    <div class="flex items-center space-x-2">
+                      <%= link_to user_profile_path(user.username), class: "text-lg font-semibold text-white hover:text-blue-400", data: { turbo_frame: "_top" } do %>
+                        <%= user.username %>
+                      <% end %>
+                      <% if user.team.present? %>
+                        <span class="px-2 py-0.5 text-xs font-medium rounded" style="background-color: <%= user.team.color_primary %>; color: <%= user.team.color_secondary %>;">
+                          <%= user.team.symbol_slug.upcase %>
+                        </span>
+                      <% end %>
+                    </div>
+                    <p class="text-sm text-gray-400">@<%= user.username %></p>
                   </div>
                 </div>
                 

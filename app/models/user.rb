@@ -101,6 +101,9 @@ class User < ApplicationRecord
       message: "bu kullanıcı adı kullanılamaz" 
     }
   validates :energy, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :website, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "geçerli bir URL olmalıdır" }, allow_blank: true
+  validates :bio, length: { maximum: 160, message: "en fazla 160 karakter olabilir" }
+  validates :location, length: { maximum: 30, message: "en fazla 30 karakter olabilir" }
   
   # Energy management methods
   def can_perform_action?(action_type)
@@ -190,5 +193,15 @@ class User < ApplicationRecord
       end
     end
     total_unread
+  end
+  
+  # Age calculation from birth_date
+  def age
+    return nil unless birth_date
+    
+    today = Date.current
+    age = today.year - birth_date.year
+    age -= 1 if today < birth_date + age.years
+    age
   end
 end

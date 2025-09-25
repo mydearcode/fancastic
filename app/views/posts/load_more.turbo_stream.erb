@@ -5,8 +5,9 @@
 <% end %>
 
 <%= turbo_stream.update "pagination" do %>
+  <% tab = params[:tab] || 'following' %>
   <% if @pagy.next %>
-    <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: @tab, format: :turbo_stream, page: @pagy.next, load_more: true) if @pagy.next %>">
+    <div id="pagination" class="my-4" data-controller="infinite-scroll" data-infinite-scroll-target="pagination" data-infinite-scroll-url-value="<%= root_path(tab: tab, format: :turbo_stream, page: @pagy.next, load_more: true) if @pagy.next %>">
       <div class="flex justify-center">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition">
           Loading more posts...
