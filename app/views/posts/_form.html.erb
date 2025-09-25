@@ -22,7 +22,7 @@
       </div>
     </div>
     
-    <%= form_with model: post, local: false, data: { turbo_frame: "post_form", controller: "modal-form mention", action: "turbo:submit-end->modal-form#closeModal" } do |form| %>
+    <%= form_with model: post, local: false, data: { turbo_frame: "post_form", controller: "modal-form mention image-paste", action: "turbo:submit-end->modal-form#closeModal" } do |form| %>
       <% if post.errors.any? %>
         <div class="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-2">Please fix the following errors:</h4>
@@ -39,7 +39,7 @@
             placeholder: "What's happening?", 
             class: "w-full p-4 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-xl",
             rows: 3,
-            data: { mention_target: "textarea" } %>
+            data: { mention_target: "textarea", image_paste_target: "textarea" } %>
         
         <!-- Mention önerileri için container -->
         <div data-mention-target="suggestions" class="hidden"></div>
@@ -53,7 +53,8 @@
         <%= form.file_field :images, 
             id: "post_images_input",
             accept: "image/*",
-            multiple: true %>
+            multiple: true,
+            data: { image_paste_target: "fileInput" } %>
       </div>
       
       <div class="flex justify-between items-center">

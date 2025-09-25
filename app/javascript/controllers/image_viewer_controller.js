@@ -1,135 +1,180 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "image", "prevBtn", "nextBtn", "counter"]
-  static values = { 
-    images: Array,
-    currentIndex: Number
-  }
-
+  static targets = ["image"]
+  
   connect() {
-    this.currentIndexValue = 0
-    this.imagesValue = []
+    this.currentIndex = 0
+    this.images = Array.from(this.element.querySelectorAll('[data-image-viewer-target="image"]'))
+    this.setupKeyboardNavigation()
+    this.setupGlobalModalHandlers()
   }
 
-  openViewer(event) {
-    event.preventDefault()
-    event.stopPropagation()
-    
+  disconnect() {
+    this.removeKeyboardNavigation()
+    this.removeGlobalModalHandlers()
+  }
+
+  showImage(event) {
     const clickedImage = event.currentTarget
-    const imageUrl = clickedImage.dataset.imageUrl
+    this.currentIndex = this.images.indexOf(clickedImage)
     
-    // Find all images in the same post
-    const postElement = clickedImage.closest('[data-controller*="image-viewer"]')
-    if (postElement) {
-      const allImages = postElement.querySelectorAll('img[data-action*="click->image-viewer#openViewer"]')
-      this.imagesValue = Array.from(allImages).map(img => img.dataset.imageUrl)
-      this.currentIndexValue = this.imagesValue.indexOf(imageUrl)
-    } else {
-      this.imagesValue = [imageUrl]
-      this.currentIndexValue = 0
-    }
+    if (this.currentIndex === -1) return
     
     this.showModal()
-    this.updateImage()
-    this.updateNavigation()
+  }
+
+  // Alias for showImage to match the action name used in templates
+  openViewer(event) {
+    this.showImage(event)
+  }
+
+  showModal() {
+    const modal = document.getElementById('image-viewer-modal')
+    const modalImage = document.querySelector('#image-viewer-modal img')
+    const counter = document.querySelector('#image-viewer-modal .image-counter')
+    const prevBtn = document.querySelector('#image-viewer-modal .prev-btn')
+    const nextBtn = document.querySelector('#image-viewer-modal .next-btn')
     
-    // Prevent body scroll
+    if (!modal || !modalImage) return
+    
+    // Set this controller as the active one
+    window.activeImageViewer = this
+    
+    this.updateModalImage()
+    modal.classList.remove('hidden')
+    modal.style.display = 'flex'
     document.body.style.overflow = 'hidden'
+    
+    // Update navigation buttons visibility
+    if (prevBtn) prevBtn.style.display = this.images.length > 1 ? 'flex' : 'none'
+    if (nextBtn) nextBtn.style.display = this.images.length > 1 ? 'flex' : 'none'
   }
 
-  closeViewer(event) {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
+  updateModalImage() {
+    const modalImage = document.querySelector('#image-viewer-modal img')
+    const counter = document.querySelector('#image-viewer-modal .image-counter')
     
-    this.hideModal()
+    if (!modalImage || this.currentIndex < 0 || this.currentIndex >= this.images.length) return
     
-    // Restore body scroll
-    document.body.style.overflow = ''
-  }
-
-  nextImage(event) {
-    event.preventDefault()
-    event.stopPropagation()
+    const currentImage = this.images[this.currentIndex]
+    const imageSrc = currentImage.src || currentImage.dataset.src
     
-    if (this.currentIndexValue < this.imagesValue.length - 1) {
-      this.currentIndexValue++
-      this.updateImage()
-      this.updateNavigation()
+    modalImage.src = imageSrc
+    modalImage.alt = currentImage.alt || `Resim ${this.currentIndex + 1}`
+    
+    if (counter) {
+      counter.textContent = `${this.currentIndex + 1} / ${this.images.length}`
     }
   }
 
-  prevImage(event) {
-    event.preventDefault()
-    event.stopPropagation()
+  nextImage() {
+    if (this.images.length <= 1) return
     
-    if (this.currentIndexValue > 0) {
-      this.currentIndexValue--
-      this.updateImage()
-      this.updateNavigation()
+    this.currentIndex = (this.currentIndex + 1) % this.images.length
+    this.updateModalImage()
+  }
+
+  prevImage() {
+    if (this.images.length <= 1) return
+    
+    this.currentIndex = this.currentIndex === 0 ? this.images.length - 1 : this.currentIndex - 1
+    this.updateModalImage()
+  }
+
+  closeViewer() {
+    const modal = document.getElementById('image-viewer-modal')
+    if (modal) {
+      modal.classList.add('hidden')
+      modal.style.display = 'none'
+      document.body.style.overflow = ''
+      window.activeImageViewer = null
     }
   }
 
   handleKeydown(event) {
+    const modal = document.getElementById('image-viewer-modal')
+    if (!modal || modal.classList.contains('hidden') || window.activeImageViewer !== this) return
+    
     switch(event.key) {
       case 'Escape':
         this.closeViewer()
         break
       case 'ArrowLeft':
-        if (this.currentIndexValue > 0) {
-          this.prevImage(event)
-        }
+        event.preventDefault()
+        this.prevImage()
         break
       case 'ArrowRight':
-        if (this.currentIndexValue < this.imagesValue.length - 1) {
-          this.nextImage(event)
-        }
+        event.preventDefault()
+        this.nextImage()
         break
     }
   }
 
-  handleBackdropClick(event) {
-    if (event.target === event.currentTarget) {
-      this.closeViewer()
+  setupKeyboardNavigation() {
+    this.keydownHandler = this.handleKeydown.bind(this)
+    document.addEventListener('keydown', this.keydownHandler)
+  }
+
+  removeKeyboardNavigation() {
+    if (this.keydownHandler) {
+      document.removeEventListener('keydown', this.keydownHandler)
     }
   }
 
-  showModal() {
-    this.modalTarget.classList.remove('hidden')
-    this.modalTarget.classList.add('flex')
-    
-    // Add event listeners
-    document.addEventListener('keydown', this.handleKeydown.bind(this))
+  setupGlobalModalHandlers() {
+    // Global modal close handler
+    this.modalCloseHandler = (event) => {
+      if (window.activeImageViewer === this) {
+        this.closeViewer()
+      }
+    }
+
+    // Global modal navigation handlers
+    this.modalPrevHandler = (event) => {
+      if (window.activeImageViewer === this) {
+        this.prevImage()
+      }
+    }
+
+    this.modalNextHandler = (event) => {
+      if (window.activeImageViewer === this) {
+        this.nextImage()
+      }
+    }
+
+    // Global modal backdrop click handler
+    this.modalBackdropHandler = (event) => {
+      if (window.activeImageViewer === this && event.target.id === 'image-viewer-modal') {
+        this.closeViewer()
+      }
+    }
+
+    // Add event listeners to global modal elements
+    const closeBtn = document.querySelector('#image-viewer-modal .close-btn')
+    const prevBtn = document.querySelector('#image-viewer-modal .prev-btn')
+    const nextBtn = document.querySelector('#image-viewer-modal .next-btn')
+    const modal = document.getElementById('image-viewer-modal')
+
+    if (closeBtn) closeBtn.addEventListener('click', this.modalCloseHandler)
+    if (prevBtn) prevBtn.addEventListener('click', this.modalPrevHandler)
+    if (nextBtn) nextBtn.addEventListener('click', this.modalNextHandler)
+    if (modal) modal.addEventListener('click', this.modalBackdropHandler)
   }
 
-  hideModal() {
-    this.modalTarget.classList.add('hidden')
-    this.modalTarget.classList.remove('flex')
-    
-    // Remove event listeners
-    document.removeEventListener('keydown', this.handleKeydown.bind(this))
-  }
+  removeGlobalModalHandlers() {
+    const closeBtn = document.querySelector('#image-viewer-modal .close-btn')
+    const prevBtn = document.querySelector('#image-viewer-modal .prev-btn')
+    const nextBtn = document.querySelector('#image-viewer-modal .next-btn')
+    const modal = document.getElementById('image-viewer-modal')
 
-  updateImage() {
-    if (this.hasImageTarget && this.imagesValue[this.currentIndexValue]) {
-      this.imageTarget.src = this.imagesValue[this.currentIndexValue]
-      this.imageTarget.alt = `Image ${this.currentIndexValue + 1} of ${this.imagesValue.length}`
-    }
-  }
+    if (closeBtn && this.modalCloseHandler) closeBtn.removeEventListener('click', this.modalCloseHandler)
+    if (prevBtn && this.modalPrevHandler) prevBtn.removeEventListener('click', this.modalPrevHandler)
+    if (nextBtn && this.modalNextHandler) nextBtn.removeEventListener('click', this.modalNextHandler)
+    if (modal && this.modalBackdropHandler) modal.removeEventListener('click', this.modalBackdropHandler)
 
-  updateNavigation() {
-    if (this.hasCounterTarget) {
-      this.counterTarget.textContent = `${this.currentIndexValue + 1} / ${this.imagesValue.length}`
-    }
-    
-    if (this.hasPrevBtnTarget) {
-      this.prevBtnTarget.style.display = this.currentIndexValue > 0 ? 'block' : 'none'
-    }
-    
-    if (this.hasNextBtnTarget) {
-      this.nextBtnTarget.style.display = this.currentIndexValue < this.imagesValue.length - 1 ? 'block' : 'none'
+    if (window.activeImageViewer === this) {
+      window.activeImageViewer = null
     }
   }
 }

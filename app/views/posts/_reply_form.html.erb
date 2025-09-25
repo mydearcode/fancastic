@@ -5,7 +5,7 @@
       <span class="mr-1">↩️</span> Replying to @<%= post.user.username %>
     </div>
     
-    <%= form_with model: reply_post, url: reply_post_path(post), local: false, data: { turbo_frame: "reply_form", controller: "mention" } do |form| %>
+    <%= form_with model: reply_post, url: reply_post_path(post), local: false, data: { turbo_frame: "reply_form", controller: "mention image-paste" } do |form| %>
       <% if reply_post.errors.any? %>
         <div class="mb-3 p-3 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-1 text-sm">Please fix the following errors:</h4>
@@ -37,7 +37,8 @@
                   auto_expand: true,
                   min_rows: 1,
                   max_rows: 6,
-                  mention_target: "textarea"
+                  mention_target: "textarea",
+                  image_paste_target: "textarea"
                 } %>
             
             <!-- Mention önerileri için container -->
@@ -52,7 +53,8 @@
             <%= form.file_field :images, 
                 id: "reply_images_input",
                 accept: "image/*",
-                multiple: true %>
+                multiple: true,
+                data: { image_paste_target: "fileInput" } %>
           </div>
           
           <!-- Hidden visibility select -->
