@@ -43,6 +43,11 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   
+  # Profile completion check
+  def profile_complete?
+    full_name.present? && bio.present? && team.present?
+  end
+
   # Enums
   enum :message_privacy, { everyone: 0, followers: 1, team_mates: 2, nobody: 3 }
   enum :role, { user: 0, moderator: 1, admin: 2 }

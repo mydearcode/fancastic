@@ -51,8 +51,8 @@
                     %>
                     
                     <% if notif_user %>
-                      <div class="absolute" style="left: <%= index * 8 %>px; z-index: <%= 10 - index %>;">
-                        <%= link_to user_profile_path(notif_user.username), class: "block" do %>
+                      <div class="absolute pointer-events-none" style="left: <%= index * 8 %>px; z-index: <%= 10 - index %>;">
+                        <%= link_to user_profile_path(notif_user.username), class: "block pointer-events-auto" do %>
                           <% if notif_user.profile_picture.attached? %>
                             <%= image_tag url_for(notif_user.profile_picture), class: "w-8 h-8 rounded-full object-cover border-2 border-black" %>
                           <% else %>
@@ -67,7 +67,7 @@
                   
                   <!-- Count indicator for more than 3 users -->
                   <% if count > 3 %>
-                    <div class="absolute" style="left: 24px; z-index: 1;">
+                    <div class="absolute pointer-events-none" style="left: 24px; z-index: 1;">
                       <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs font-bold border-2 border-black">
                         +<%= count - 3 %>
                       </div>

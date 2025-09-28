@@ -23,8 +23,8 @@ class NotificationsController < ApplicationController
       when 'Like'
         notification.notifiable.post_id
       when 'Follow'
-        # Follow bildirimleri için post ID yok, unique key kullan
-        "#{notification.notifiable_type}_#{notification.id}"
+        # Follow bildirimleri için post ID yok, nil kullan
+        nil
       else
         # Diğer bildirim türleri için post ilişkisini kontrol et
         if notification.notifiable.respond_to?(:post_id)
@@ -48,7 +48,7 @@ class NotificationsController < ApplicationController
         'mention'
       elsif notification.message.include?('quoted')
         'quote'
-      elsif notification.message.include?('following')
+      elsif notification.message.include?('following') || notification.message.include?('takip etmeye başladı')
         'follow'
       else
         'other'

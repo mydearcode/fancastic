@@ -34,11 +34,11 @@
               <div class="flex space-x-2">
                 <div id="follow_button_<%= follower.id %>">
                   <% if Current.user.following?(follower) %>
-                    <%= button_to "Unfollow", user_follow_path(follower), method: :delete, 
-                        class: "bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
-                        data: { turbo_stream: true } %>
-                  <% else %>
-                    <%= button_to "Follow", user_follow_path(follower), method: :post, 
+                    <%= button_to "Unfollow", user_follow_path(follower.username), method: :delete,
+                            class: "bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
+                            data: { turbo_stream: true } %>
+                      <% else %>
+                        <%= button_to "Follow", user_follow_path(follower.username), method: :post, 
                         class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm border-0",
                         data: { turbo_stream: true } %>
                   <% end %>
