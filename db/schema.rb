@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_174837) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_28_165646) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "unaccent"
@@ -397,8 +397,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_174837) do
     t.string "location"
     t.string "website"
     t.date "birth_date"
+    t.boolean "email_verified", default: false, null: false
+    t.string "verification_token"
+    t.datetime "verification_sent_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["verification_token"], name: "index_users_on_verification_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

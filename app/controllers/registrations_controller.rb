@@ -10,11 +10,25 @@ class RegistrationsController < ApplicationController
     @user = User.new(registration_params)
     @user.energy = 100 # Default energy for new users
     
-    if @user.save
-      start_new_session_for @user
-      redirect_to profile_edit_path, notice: "Welcome to Fancastic! Please complete your profile."
-    else
-      render :new, status: :unprocessable_entity
+    begin
+      if @user.save
+        # Generate verification token and send email
+        @user.generate_verification_token
+        @user.save!
+        
+        UserMailer.email_verification(@user).deliver_now
+        
+        redirect_to new_email_verification_path, notice: "Hesabınız oluşturuldu! E-posta adresinize gönderilen onay linkine tıklayarak hesabınızı aktifleştirin."
+      else
+        render :new, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotUnique => e
+      if e.message.include?('email_address')
+        @user.errors.add(:email_address, 'Bu e-posta adresi zaten kullanılıyor')
+        render :new, status: :unprocessable_entity
+      else
+        raise e
+      end
     end
   end
 

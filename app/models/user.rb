@@ -48,6 +48,26 @@ class User < ApplicationRecord
     full_name.present? && bio.present? && team.present?
   end
 
+  # Email verification methods
+  def generate_verification_token
+    self.verification_token = SecureRandom.urlsafe_base64(32)
+    self.verification_sent_at = Time.current
+  end
+
+  def verify_email!
+    update!(email_verified: true, verification_token: nil, verification_sent_at: nil)
+  end
+
+  def verification_token_expired?
+    return true unless verification_sent_at
+    verification_sent_at < 24.hours.ago
+  end
+
+  def can_resend_verification?
+    return true unless verification_sent_at
+    verification_sent_at < 5.minutes.ago
+  end
+
   # Enums
   enum :message_privacy, { everyone: 0, followers: 1, team_mates: 2, nobody: 3 }
   enum :role, { user: 0, moderator: 1, admin: 2 }

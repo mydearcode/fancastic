@@ -56,6 +56,10 @@ Rails.application.routes.draw do
   resources :registrations, only: [:new, :create]
   resources :passwords, param: :token
   
+  # Email verification routes
+  resources :email_verifications, only: [:new, :create]
+  get 'verify_email/:token', to: 'email_verifications#show', as: :verify_email
+  
   # Messaging routes
   resources :conversations do
     resources :messages, only: [:create, :destroy]

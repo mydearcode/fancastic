@@ -46,10 +46,11 @@ class ApplicationController < ActionController::Base
     # Kullanıcı yoksa veya profili tamamsa işlem yapma
     return unless Current.user && !Current.user.profile_complete?
     
-    # İzin verilen controller ve action'lar (profil düzenleme, çıkış yapma, vs.)
+    # İzin verilen controller ve action'lar (profil düzenleme, çıkış yapma, email verification vs.)
     allowed = (controller_name == 'profiles' && ['edit', 'update'].include?(action_name)) ||
               (controller_name == 'sessions' && action_name == 'destroy') ||
-              controller_name == 'suspended_accounts'
+              controller_name == 'suspended_accounts' ||
+              controller_name == 'email_verifications'
     
     # Eğer izin verilen sayfalardan birine erişiyorsa devam et
     return if allowed

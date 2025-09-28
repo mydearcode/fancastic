@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #1f2937; color: white; padding: 20px; text-align: center; }
+    .content { padding: 30px 20px; }
+    .button { 
+      display: inline-block; 
+      background: #3b82f6; 
+      color: white; 
+      padding: 12px 30px; 
+      text-decoration: none; 
+      border-radius: 5px; 
+      margin: 20px 0;
+    }
+    .footer { background: #f3f4f6; padding: 20px; text-align: center; font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏆 Fancastic</h1>
+    </div>
+    
+    <div class="content">
+      <h2>Merhaba <%= @user.username %>!</h2>
+      
+      <p>Fancastic'e hoş geldin! Hesabını aktifleştirmek için e-posta adresini onaylaman gerekiyor.</p>
+      
+      <p>Aşağıdaki butona tıklayarak e-posta adresini onaylayabilirsin:</p>
+      
+      <div style="text-align: center;">
+        <a href="<%= @verification_url %>" class="button">E-posta Adresimi Onayla</a>
+      </div>
+      
+      <p>Eğer buton çalışmıyorsa, aşağıdaki linki tarayıcına kopyalayabilirsin:</p>
+      <p style="word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 5px;">
+        <%= @verification_url %>
+      </p>
+      
+      <p><strong>Bu link 24 saat geçerlidir.</strong></p>
+      
+      <p>Eğer bu hesabı sen oluşturmadıysan, bu e-postayı görmezden gelebilirsin.</p>
+    </div>
+    
+    <div class="footer">
+      <p>Bu e-posta Fancastic tarafından gönderilmiştir.</p>
+      <p>Sorularınız için: support@fancastic.com</p>
+    </div>
+  </div>
+</body>
+</html>

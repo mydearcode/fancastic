@@ -7,6 +7,12 @@ class SessionsController < ApplicationController
 
   def create
     if user = User.authenticate_by(params.permit(:email_address, :password))
+      # Check if email is verified
+      unless user.email_verified?
+        redirect_to new_email_verification_path, alert: "Giriş yapmadan önce e-posta adresinizi onaylamanız gerekiyor. Onay e-postasını tekrar göndermek için e-posta adresinizi girin."
+        return
+      end
+      
       start_new_session_for user
       
       respond_to do |format|
