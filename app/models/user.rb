@@ -122,7 +122,7 @@ class User < ApplicationRecord
       message: "sadece harf, rakam ve alt çizgi (_) içerebilir" 
     },
     exclusion: { 
-      in: %w[admin twitter root api www help support about terms privacy policy contact fancastic app mobile web ios android],
+      in: %w[admin twitter root api www help support about terms privacy policy contact weuz app mobile web ios android],
       message: "bu kullanıcı adı kullanılamaz" 
     }
   validates :energy, presence: true, numericality: { greater_than_or_equal_to: 0 }

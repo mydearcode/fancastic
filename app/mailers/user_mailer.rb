@@ -5,7 +5,7 @@ class UserMailer < ApplicationMailer
     
     mail(
       to: @user.email_address,
-      subject: 'Fancastic - E-posta Adresinizi Onaylayın'
+      subject: 'Weuz - E-posta Adresinizi Onaylayın'
     )
   end
 end

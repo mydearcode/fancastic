@@ -4,18 +4,21 @@
 
 # Create Countries
 england = Country.find_or_create_by!(name: "England") do |country|
+  country.code = "EN"
   country.flag_url = "https://flagcdn.com/w320/gb-eng.png"
   country.color_primary = "#FF1744"
   country.color_secondary = "#FFFFFF"
 end
 
 spain = Country.find_or_create_by!(name: "Spain") do |country|
+  country.code = "ES"
   country.flag_url = "https://flagcdn.com/w320/es.png"
   country.color_primary = "#AA151B"
   country.color_secondary = "#F1BF00"
 end
 
 germany = Country.find_or_create_by!(name: "Germany") do |country|
+  country.code = "DE"
   country.flag_url = "https://flagcdn.com/w320/de.png"
   country.color_primary = "#000000"
   country.color_secondary = "#DD0000"
@@ -120,7 +123,7 @@ if User.count == 0
 
   Post.create!(
     user: user3,
-    text: "Welcome to Fancastic! The ultimate platform for football fans worldwide! ⚽🌍",
+    text: "Welcome to Weuz! The ultimate platform for football fans worldwide! ⚽🌍",
     visibility: "everyone"
   )
 
@@ -142,7 +145,6 @@ if User.count == 0
   if Conversation.count == 0
     # Conversation between user1 and user2
     conversation1 = Conversation.create!(
-      title: "Football Discussion",
       last_message_at: 2.hours.ago
     )
     
@@ -171,7 +173,7 @@ if User.count == 0
     
     conversation2.messages.create!(
       user: user3,
-      content: "Welcome to Fancastic! Hope you're enjoying the platform so far.",
+      content: "Welcome to Weuz! Hope you're enjoying the platform so far.",
       created_at: 30.minutes.ago
     )
     
