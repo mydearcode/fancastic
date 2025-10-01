@@ -62,13 +62,13 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("DOMAIN_NAME", "example.com") }
 
-  # Mailgun SMTP configuration
+  # SendGrid SMTP configuration
   config.action_mailer.smtp_settings = {
     port: 587,
-    address: 'smtp.mailgun.org',
-    user_name: Rails.application.credentials.dig(:mailgun, :smtp_username),
-    password: Rails.application.credentials.dig(:mailgun, :smtp_password),
-    domain: Rails.application.credentials.dig(:mailgun, :domain),
+    address: 'smtp.sendgrid.net',
+    user_name: 'apikey',
+    password: Rails.application.credentials.dig(:sendgrid, :api_key),
+    domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
     authentication: :plain,
     enable_starttls_auto: true
   }

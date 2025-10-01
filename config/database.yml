@@ -82,8 +82,8 @@ production:
   primary: &primary_production
     <<: *default
     database: weuz_production
-  username: weuz
-  password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
+    username: weuz
+    password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: weuz_production_cache
