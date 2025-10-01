@@ -12,8 +12,5 @@ test:
   <<: *default
 
 production:
-  adapter: solid_cache
-  connects_to:
-    database:
-      writing: cache
+  database: cache
   <<: *default
