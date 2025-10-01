@@ -13,4 +13,7 @@ test:
 
 production:
   database: cache
+  connects_to:
+    database:
+      writing: cache
   <<: *default
