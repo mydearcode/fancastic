@@ -79,26 +79,20 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary:
+  primary: &primary_production
     <<: *default
     database: weuz_production
     username: weuz
     password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
-  queue:
-    <<: *default
-    database: weuz_queue
-    username: weuz
-    password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
-    migrations_paths: db/queue_migrate
   cache:
-    <<: *default
+    <<: *primary_production
     database: weuz_cache
-    username: weuz
-    password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
     migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: weuz_queue
+    migrations_paths: db/queue_migrate
   cable:
-    <<: *default
+    <<: *primary_production
     database: weuz_cable
-    username: weuz
-    password: <%= ENV["WEUZ_DATABASE_PASSWORD"] %>
     migrations_paths: db/cable_migrate
