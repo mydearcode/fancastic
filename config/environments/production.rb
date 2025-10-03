@@ -78,6 +78,10 @@ Rails.application.configure do
   smtp_user = ENV['BREVO_LOGIN'] || Rails.application.credentials.dig(:brevo, :login)
   smtp_password = ENV['BREVO_SMTP_KEY'] || Rails.application.credentials.dig(:brevo, :smtp_key)
   
+  # Temporary Gmail SMTP for testing (remove after Brevo is fixed)
+  # smtp_user = ENV['GMAIL_USERNAME'] || 'your-gmail@gmail.com'
+  # smtp_password = ENV['GMAIL_APP_PASSWORD'] || 'your-app-password'
+  
   config.action_mailer.smtp_settings = {
     port: 587,
     address: 'smtp-relay.brevo.com',
@@ -87,6 +91,17 @@ Rails.application.configure do
     authentication: :plain,
     enable_starttls_auto: true
   }
+  
+  # Gmail SMTP settings (uncomment to test)
+  # config.action_mailer.smtp_settings = {
+  #   port: 587,
+  #   address: 'smtp.gmail.com',
+  #   user_name: smtp_user,
+  #   password: smtp_password,
+  #   domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
+  #   authentication: :plain,
+  #   enable_starttls_auto: true
+  # }
 
   # Debug SMTP configuration (remove after fixing)
   puts "SMTP Debug - User: #{smtp_user.present? ? 'SET' : 'NOT SET'}"
