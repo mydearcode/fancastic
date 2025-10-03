@@ -59,55 +59,21 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
   
-  # E-posta gönderimi için farklı seçenekler:
-  
-  # Seçenek 1: Localhost SMTP (Postfix/Sendmail kurulu ise)
-  config.action_mailer.delivery_method = :smtp
-  
-  # Seçenek 2: File delivery (test için)
-  # config.action_mailer.delivery_method = :file
-  # config.action_mailer.file_settings = { location: Rails.root.join('tmp/mail') }
-  
-  # Seçenek 3: SendGrid (mevcut)
   config.action_mailer.delivery_method = :smtp
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("DOMAIN_NAME", "weuz.net") }
 
   # Brevo SMTP configuration
-  smtp_user = ENV['BREVO_LOGIN'] || Rails.application.credentials.dig(:brevo, :login)
-  smtp_password = ENV['BREVO_SMTP_KEY'] || Rails.application.credentials.dig(:brevo, :smtp_key)
-  
-  # Temporary Gmail SMTP for testing (remove after Brevo is fixed)
-  # smtp_user = ENV['GMAIL_USERNAME'] || 'your-gmail@gmail.com'
-  # smtp_password = ENV['GMAIL_APP_PASSWORD'] || 'your-app-password'
-  
   config.action_mailer.smtp_settings = {
     port: 587,
     address: 'smtp-relay.brevo.com',
-    user_name: smtp_user,
-    password: smtp_password,
+    user_name: ENV['BREVO_LOGIN'],
+    password: ENV['BREVO_SMTP_KEY'],
     domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
     authentication: :plain,
     enable_starttls_auto: true
   }
-  
-  # Gmail SMTP settings (uncomment to test)
-  # config.action_mailer.smtp_settings = {
-  #   port: 587,
-  #   address: 'smtp.gmail.com',
-  #   user_name: smtp_user,
-  #   password: smtp_password,
-  #   domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
-  #   authentication: :plain,
-  #   enable_starttls_auto: true
-  # }
-
-  # Debug SMTP configuration (remove after fixing)
-  puts "SMTP Debug - User: #{smtp_user.present? ? 'SET' : 'NOT SET'}"
-  puts "SMTP Debug - Password: #{smtp_password.present? ? 'SET' : 'NOT SET'}"
-  puts "SMTP Debug - ENV BREVO_LOGIN: #{ENV['BREVO_LOGIN'].present? ? 'SET' : 'NOT SET'}"
-  puts "SMTP Debug - ENV BREVO_SMTP_KEY: #{ENV['BREVO_SMTP_KEY'].present? ? 'SET' : 'NOT SET'}"
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
