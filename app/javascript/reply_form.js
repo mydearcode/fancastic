@@ -10,7 +10,7 @@ document.addEventListener('turbo:load', function() {
 
 function initializeReplyForm() {
   const textarea = document.getElementById('reply_textarea');
-  const charCount = document.getElementById('char_count');
+  const charCount = document.getElementById('reply_char_count');
   
   if (!textarea) return;
   

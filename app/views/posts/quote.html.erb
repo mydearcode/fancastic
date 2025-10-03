@@ -17,14 +17,28 @@
     </div>
     
     <%= form_with model: @quote_post, url: quote_post_path(@post), method: :post, class: "space-y-4", 
-    data: { turbo: true },
+    data: { 
+      turbo: true,
+      controller: "quote-form"
+    },
     onsubmit: "setTimeout(function() { document.getElementById('quote_modal').innerHTML = ''; }, 500);" do |form| %>
       <%= form.hidden_field :quote_of_post_id, value: @post.id %>
       
-      <div>
+      <div class="relative">
         <%= form.text_area :text, placeholder: "Add your comment...", 
             class: "w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent", 
-            rows: 3 %>
+            rows: 3,
+            id: "quote_textarea",
+            maxlength: 280,
+            data: { 
+              quote_form_target: "textarea",
+              action: "input->quote-form#updateCounter"
+            } %>
+        
+        <!-- Character counter -->
+        <div class="absolute bottom-2 right-3 text-sm text-gray-500">
+          <span id="quote_char_count" data-quote-form-target="counter">0/280</span>
+        </div>
       </div>
       
       <div>

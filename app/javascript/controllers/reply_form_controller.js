@@ -1,35 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container", "textarea", "counter"]
+  static targets = ["textarea", "counter"]
   static values = { maxLength: { type: Number, default: 280 } }
 
   connect() {
-    // Controller connected
-    if (this.hasTextareaTarget) {
-      this.updateCounter()
-    }
-  }
-
-  loadForm() {
-    // Only load the form when the modal is actually opened
-    if (this.containerTarget.innerHTML === "") {
-      fetch('/posts/new')
-        .then(response => response.text())
-        .then(html => {
-          this.containerTarget.innerHTML = html;
-          // Initialize character counter after form is loaded
-          setTimeout(() => {
-            if (this.hasTextareaTarget) {
-              this.updateCounter()
-            }
-          }, 100)
-        })
-        .catch(error => {
-          console.error('Error loading post form:', error);
-          this.containerTarget.innerHTML = '<p class="text-red-500">Error loading form. Please try again.</p>';
-        });
-    }
+    this.updateCounter()
   }
 
   updateCounter() {
@@ -51,6 +27,9 @@ export default class extends Controller {
       this.counterTarget.classList.add('text-gray-500')
     }
     
+    // Auto-expand functionality
+    this.autoExpand()
+    
     // Disable submit button if over limit
     const submitButton = this.element.querySelector('input[type="submit"], button[type="submit"]')
     if (submitButton) {
@@ -63,7 +42,34 @@ export default class extends Controller {
     }
   }
 
-  getCSRFToken() {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  autoExpand() {
+    const textarea = this.textareaTarget
+    
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = 'auto'
+    
+    // Calculate the number of lines
+    const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight)
+    const minRows = parseInt(textarea.dataset.minRows) || 1
+    const maxRows = parseInt(textarea.dataset.maxRows) || 6
+    
+    // Calculate new height based on content
+    const newHeight = Math.min(
+      Math.max(textarea.scrollHeight, lineHeight * minRows),
+      lineHeight * maxRows
+    )
+    
+    textarea.style.height = newHeight + 'px'
+  }
+
+  focus() {
+    if (this.textareaTarget.rows === 1) {
+      this.textareaTarget.rows = 2
+      this.autoExpand()
+    }
+  }
+
+  paste() {
+    setTimeout(() => this.updateCounter(), 0)
   }
 }

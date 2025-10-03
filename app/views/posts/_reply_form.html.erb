@@ -5,7 +5,12 @@
       <span class="mr-1">↩️</span> Replying to @<%= post.user.username %>
     </div>
     
-    <%= form_with model: reply_post, url: reply_post_path(post), local: false, data: { turbo_frame: "reply_form", controller: "mention image-paste" } do |form| %>
+    <%= form_with model: reply_post, url: reply_post_path(post), method: :post, 
+        data: { 
+          turbo_frame: "reply_form",
+          controller: "mention image-paste reply-form",
+          action: "turbo:submit-end->reply-form#reset"
+        } do |form| %>
       <% if reply_post.errors.any? %>
         <div class="mb-3 p-3 bg-red-900 border border-red-700 rounded-lg">
           <h4 class="text-red-300 font-medium mb-1 text-sm">Please fix the following errors:</h4>
@@ -33,12 +38,15 @@
                 class: "w-full p-3 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-base transition-all duration-200",
                 rows: 1,
                 id: "reply_textarea",
+                maxlength: 280,
                 data: { 
                   auto_expand: true,
                   min_rows: 1,
                   max_rows: 6,
                   mention_target: "textarea",
-                  image_paste_target: "textarea"
+                  image_paste_target: "textarea",
+                  reply_form_target: "textarea",
+                  action: "input->reply-form#updateCounter focus->reply-form#focus paste->reply-form#paste"
                 } %>
             
             <!-- Mention önerileri için container -->
@@ -107,8 +115,8 @@
             
             <!-- Right side - Reply button -->
             <div class="flex items-center space-x-2">
-              <!-- Character count (placeholder) -->
-              <span class="text-sm text-gray-500" id="char_count"></span>
+              <!-- Character count -->
+              <span class="text-sm text-gray-500" id="reply_char_count" data-reply-form-target="counter">0/280</span>
               
               <%= form.submit "Reply", 
                   class: "px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black transition-colors font-semibold text-sm disabled:opacity-50" %>
