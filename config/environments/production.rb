@@ -62,7 +62,7 @@ Rails.application.configure do
   # E-posta gönderimi için farklı seçenekler:
   
   # Seçenek 1: Localhost SMTP (Postfix/Sendmail kurulu ise)
-  config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.delivery_method = :smtp
   
   # Seçenek 2: File delivery (test için)
   # config.action_mailer.delivery_method = :file
