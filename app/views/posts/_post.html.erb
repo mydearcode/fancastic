@@ -131,7 +131,7 @@
               <div class="text-gray-400 mb-2 text-sm flex items-center relative z-10">
                 <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.repost_of_post.in_reply_to_post.user.username}", user_profile_path(post.repost_of_post.in_reply_to_post.user.username), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
               </div>
-              <p class="text-white"><%= embed_videos(post.repost_of_post.text) %></p>
+              <p class="text-white break-words"><%= embed_videos(post.repost_of_post.text) %></p>
               <% if post.repost_of_post.images.attached? %>
                 <div class="mt-3">
                   <% if post.repost_of_post.images.count == 1 %>
@@ -161,9 +161,9 @@
               <% end %>
             <% elsif post.repost_of_post.quote_of_post_id.present? %>
               <!-- Reposted Quote Post -->
-              <p class="text-white mb-3"><%= embed_videos(post.repost_of_post.text) %></p>
+              <p class="text-white mb-3 break-words"><%= embed_videos(post.repost_of_post.text) %></p>
               <div class="border border-gray-700 rounded-xl p-3 bg-gray-900">
-                <p class="text-gray-300"><%= embed_videos(post.repost_of_post.quote_of_post.text) %></p>
+                <p class="text-gray-300 break-words"><%= embed_videos(post.repost_of_post.quote_of_post.text) %></p>
                 <% if post.repost_of_post.quote_of_post.images.attached? %>
                   <div class="mt-3">
                     <% if post.repost_of_post.quote_of_post.images.count == 1 %>
@@ -195,7 +195,7 @@
               </div>
             <% else %>
               <!-- Regular Repost -->
-              <p class="text-white"><%= embed_videos(post.repost_of_post.text) %></p>
+              <p class="text-white break-words"><%= embed_videos(post.repost_of_post.text) %></p>
               <% if post.repost_of_post.images.attached? %>
                 <div class="mt-3">
                   <% if post.repost_of_post.images.count == 1 %>
@@ -238,7 +238,7 @@
             <% end %>
             <div class="relative z-10 pointer-events-none">
               <div class="pointer-events-auto">
-                <p class="text-gray-300"><%= embed_videos(post.quote_of_post.text) %></p>
+                <p class="text-gray-300 break-words"><%= embed_videos(post.quote_of_post.text) %></p>
               </div>
               <% if post.quote_of_post.images.attached? %>
                 <div class="mt-3">
@@ -277,14 +277,14 @@
       <span class="mr-1">↩️</span> Replying to <%= link_to "@#{post.in_reply_to_post.user.username}", user_profile_path(post.in_reply_to_post.user.username), class: "text-blue-400 hover:text-blue-300", data: { turbo_frame: "_top" } %>
     </div>
           <%= link_to post_path(post), class: "block", data: { turbo_frame: "_top", turbo_prefetch: false } do %>
-            <div class="text-white mb-3 hover:text-gray-300 transition-colors relative z-10">
+            <div class="text-white mb-3 hover:text-gray-300 transition-colors relative z-10 break-words">
               <%= embed_videos(post.text) %>
             </div>
           <% end %>
           <% # For reply posts, target is the post itself %>
         <% else %>
           <!-- Regular Post -->
-          <div class="text-white hover:text-gray-300 transition-colors text-[15px] leading-5 relative z-10">
+          <div class="text-white hover:text-gray-300 transition-colors text-[15px] leading-5 relative z-10 break-words">
             <%= embed_videos(post.text) %>
           </div>
           <% # For regular posts, target is the post itself %>

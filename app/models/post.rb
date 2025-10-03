@@ -30,7 +30,7 @@ class Post < ApplicationRecord
   enum :visibility, { everyone: 0, team_only: 1, followers: 2, only_me: 3 }
   
   # Validations
-  validates :text, presence: true, unless: :is_repost_or_has_images?
+  validates :text, presence: { message: "boş bırakılamaz" }, unless: :is_repost_or_has_images?
   validates :text, length: { maximum: 280, message: "en fazla 280 karakter olabilir" }, allow_blank: true
   validates :visibility, presence: true
   validates :repost_of_post_id, uniqueness: { scope: :user_id, message: "You have already reposted this post" }, if: :is_repost?
