@@ -72,7 +72,7 @@ Rails.application.configure do
   # config.action_mailer.delivery_method = :smtp
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("DOMAIN_NAME", "example.com") }
+  config.action_mailer.default_url_options = { host: ENV.fetch("DOMAIN_NAME", "weuz.net") }
 
   # Brevo SMTP configuration
   config.action_mailer.smtp_settings = {
