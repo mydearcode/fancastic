@@ -78,8 +78,8 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     port: 587,
     address: 'smtp-relay.brevo.com',
-    user_name: Rails.application.credentials.dig(:brevo, :login),
-    password: Rails.application.credentials.dig(:brevo, :smtp_key),
+    user_name: ENV['BREVO_LOGIN'] || Rails.application.credentials.dig(:brevo, :login),
+    password: ENV['BREVO_SMTP_KEY'] || Rails.application.credentials.dig(:brevo, :smtp_key),
     domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
     authentication: :plain,
     enable_starttls_auto: true
