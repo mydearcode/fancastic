@@ -58,17 +58,28 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.delivery_method = :smtp
+  
+  # E-posta gönderimi için farklı seçenekler:
+  
+  # Seçenek 1: Localhost SMTP (Postfix/Sendmail kurulu ise)
+  config.action_mailer.delivery_method = :sendmail
+  
+  # Seçenek 2: File delivery (test için)
+  # config.action_mailer.delivery_method = :file
+  # config.action_mailer.file_settings = { location: Rails.root.join('tmp/mail') }
+  
+  # Seçenek 3: SendGrid (mevcut)
+  # config.action_mailer.delivery_method = :smtp
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("DOMAIN_NAME", "example.com") }
 
-  # SendGrid SMTP configuration
+  # Brevo SMTP configuration
   config.action_mailer.smtp_settings = {
     port: 587,
-    address: 'smtp.sendgrid.net',
-    user_name: 'apikey',
-    password: Rails.application.credentials.dig(:sendgrid, :api_key),
+    address: 'smtp-relay.brevo.com',
+    user_name: Rails.application.credentials.dig(:brevo, :login),
+    password: Rails.application.credentials.dig(:brevo, :smtp_key),
     domain: ENV.fetch("DOMAIN_NAME", "weuz.net"),
     authentication: :plain,
     enable_starttls_auto: true
