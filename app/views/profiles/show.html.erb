@@ -183,12 +183,21 @@
           
           <!-- Energy -->
           <div class="relative group">
-            <div class="flex items-center space-x-1 text-gray-400 cursor-pointer">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
-              </svg>
-              <span class="text-sm font-medium"><%= @user.energy %></span>
-            </div>
+            <% if @is_own_profile %>
+              <%= link_to energy_path, class: "flex items-center space-x-1 text-gray-400 hover:text-white transition-colors", data: { turbo_frame: "_top" } do %>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-sm font-medium"><%= @user.energy %></span>
+              <% end %>
+            <% else %>
+              <div class="flex items-center space-x-1 text-gray-400">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-sm font-medium"><%= @user.energy %></span>
+              </div>
+            <% end %>
             <!-- Tooltip -->
             <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
               Energy: <%= @user.energy %>/100<br>

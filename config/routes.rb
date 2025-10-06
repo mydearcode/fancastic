@@ -35,7 +35,11 @@ Rails.application.routes.draw do
       patch :mark_all_as_read
     end
   end
-  
+
+  # Energy routes (user-facing)
+  get "energy", to: "energy#index", as: :energy
+  post "energy/claim", to: "energy#claim", as: :claim_energy
+
   # Settings routes
   get "settings", to: "settings#index"
   get "settings/blocked_users", to: "settings#blocked_users"

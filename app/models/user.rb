@@ -140,6 +140,30 @@ class User < ApplicationRecord
   def perform_action(action_type, target = nil)
     FanPulse::InteractionLog.log_interaction(self, action_type, target)
   end
+
+  # Daily energy claim helpers
+  def can_claim_daily_energy?
+    # Kullanıcı günlük enerji claim'ini bugün yapmamışsa true döner
+    last_claim_date.nil? || last_claim_date < Date.current
+  end
+
+  def claim_daily_energy
+    unless can_claim_daily_energy?
+      return { success: false, message: "Günlük energy zaten alındı." }
+    end
+
+    amount = Setting.daily_claim_amount
+
+    begin
+      # Enerjiyi günlük restore olarak logla ve kullanıcı enerjisini güncelle
+      FanPulse::InteractionLog.log_interaction(self, 'daily_restore')
+      update!(last_claim_date: Date.current)
+
+      { success: true, message: "Günlük energy (+#{amount}) başarıyla eklendi." }
+    rescue => e
+      { success: false, message: "Energy claim sırasında hata: #{e.message}" }
+    end
+  end
   
   def energy_percentage
     (energy.to_f / 100 * 100).round
