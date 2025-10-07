@@ -2,21 +2,21 @@
 
   <!-- Feed Tabs - Sticky at top -->
   <div class="sticky top-0 z-50 bg-black border-b border-gray-800 mb-4 pb-2">
-    <div class="flex">
+    <div class="flex overflow-x-auto scrollbar-hide">
       <%= link_to "Takibimdekiler", root_path(tab: "following"), 
-          class: "px-4 py-2 text-sm font-medium #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          class: "px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap #{@tab == 'following' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
           data: { turbo: true, turbo_prefetch: false } %>
       
       <%= link_to "Tribün", root_path(tab: "teammates"), 
-          class: "px-4 py-2 text-sm font-medium #{@tab == 'teammates' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          class: "px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap #{@tab == 'teammates' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
           data: { turbo: true, turbo_prefetch: false } %>
       
       <%= link_to "Popüler", root_path(tab: "popular"), 
-          class: "px-4 py-2 text-sm font-medium #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+          class: "px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap #{@tab == 'popular' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
           data: { turbo: true, turbo_prefetch: false } %>
           
-      <%= link_to "Ezeli Rakipler", root_path(tab: "archrival"), 
-          class: "px-4 py-2 text-sm font-medium #{@tab == 'archrival' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
+      <%= link_to "Haters", root_path(tab: "archrival"), 
+          class: "px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap #{@tab == 'archrival' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'}", 
           data: { turbo: true, turbo_prefetch: false } %>
     </div>
   </div>
