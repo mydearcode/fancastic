@@ -1,9 +1,9 @@
-<div class="max-w-2xl mx-auto px-4 py-6">
+<div class="max-w-2xl mx-auto px-2 sm:px-4 py-6 mobile-container overflow-x-hidden">
   <div class="md:grid md:grid-cols-3 md:gap-6">
     <div class="md:col-span-1">
-      <div class="px-4 sm:px-0">
-        <h3 class="text-lg font-medium leading-6 text-gray-900">New Conversation</h3>
-        <p class="mt-1 text-sm text-gray-600">
+      <div class="px-2 sm:px-4 md:px-0">
+        <h3 class="text-lg font-medium leading-6 text-gray-100 mobile-responsive-text">New Conversation</h3>
+        <p class="mt-1 text-sm text-gray-400">
           Start a new conversation with other fans.
         </p>
       </div>
@@ -12,15 +12,15 @@
     <div class="mt-5 md:mt-0 md:col-span-2">
       <%= form_with model: @conversation, local: true, class: "space-y-6" do |form| %>
         <div class="shadow sm:rounded-md sm:overflow-hidden">
-          <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+          <div class="px-4 py-5 bg-gray-900 space-y-6 sm:p-6 border border-gray-800 rounded-lg">
             <% if @conversation.errors.any? %>
-              <div class="rounded-md bg-red-50 p-4">
+              <div class="rounded-md bg-red-900 border border-red-700 p-4">
                 <div class="flex">
                   <div class="ml-3">
-                    <h3 class="text-sm font-medium text-red-800">
+                    <h3 class="text-sm font-medium text-red-200">
                       There were <%= pluralize(@conversation.errors.count, "error") %> with your submission:
                     </h3>
-                    <div class="mt-2 text-sm text-red-700">
+                    <div class="mt-2 text-sm text-red-300">
                       <ul class="list-disc pl-5 space-y-1">
                         <% @conversation.errors.full_messages.each do |message| %>
                           <li><%= message %></li>

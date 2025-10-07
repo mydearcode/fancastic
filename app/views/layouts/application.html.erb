@@ -26,9 +26,9 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-black text-white font-sans">
-    <div class="flex justify-center min-h-screen">
-      <div class="flex min-h-screen max-w-7xl w-full relative">
+  <body class="bg-black text-white font-sans overflow-x-hidden">
+    <div class="flex justify-center min-h-screen overflow-x-hidden">
+      <div class="flex min-h-screen max-w-7xl w-full relative overflow-x-hidden">
         <!-- Left Column: Logo and Navigation (Desktop) -->
         <div class="hidden md:block w-64 fixed h-full border-r border-gray-800 bg-black z-40">
         <div class="p-4 mx-4">
@@ -219,9 +219,9 @@
       </div>
       
       <!-- Middle Column: Content -->
-      <div class="ml-0 md:ml-64 md:pl-4 flex-1 min-h-screen w-full mr-0 pb-24 md:pb-8">
+      <div class="ml-0 md:ml-64 md:pl-4 flex-1 min-h-screen w-full mr-0 pb-24 md:pb-8 overflow-x-hidden">
         <!-- Flash Messages -->
-        <div id="flash" class="mb-4 px-4 pt-4">
+        <div id="flash" class="mb-4 px-2 sm:px-4 pt-4 mobile-container">
           <%= render 'shared/flash', notice: notice, alert: alert %>
         </div>
         
