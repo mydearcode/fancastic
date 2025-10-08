@@ -30,7 +30,7 @@
   <!-- Profile Content -->
   <div class="px-4 pb-4">
     <!-- Profile Picture & Action Buttons -->
-     <div class="flex justify-between items-start -mt-20 mb-4">
+     <div class="flex justify-between items-start -mt-20 mb-4 relative z-10">
        <!-- Profile Picture -->
        <div class="relative">
          <% if @user.profile_picture.attached? %>
@@ -51,7 +51,7 @@
        </div>
 
       <!-- Action Buttons -->
-      <div class="flex gap-2 mt-16">
+      <div class="flex gap-2 mt-16 relative z-20">
         <% if defined?(@is_own_profile) && @is_own_profile == false %>
           <!-- Follow/Unfollow Button -->
           <div id="follow_button_<%= @user.id %>">
