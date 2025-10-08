@@ -14,7 +14,17 @@
   <% end %>
 
   <!-- Cover Photo -->
-  <div class="h-48 sm:h-52 bg-gray-800 relative overflow-hidden" style="<% if @user.cover_picture.attached? %>background-image: url('<%= url_for(@user.cover_picture) %>'); background-size: cover; background-position: center;<% else %><% if @user.team.present? %>background: linear-gradient(135deg, <%= @user.team.color_primary %>, <%= @user.team.color_secondary %>);<% else %>background: linear-gradient(135deg, #374151, #1f2937);<% end %><% end %>">
+  <div class="h-48 sm:h-52 bg-gray-800 relative overflow-hidden <% if @user.cover_picture.attached? %>cursor-pointer hover:opacity-90 transition-opacity<% end %>" 
+       style="<% if @user.cover_picture.attached? %>background-image: url('<%= url_for(@user.cover_picture) %>'); background-size: cover; background-position: center;<% else %><% if @user.team.present? %>background: linear-gradient(135deg, <%= @user.team.color_primary %>, <%= @user.team.color_secondary %>);<% else %>background: linear-gradient(135deg, #374151, #1f2937);<% end %><% end %>"
+       <% if @user.cover_picture.attached? %>
+         data-controller="image-viewer"
+         data-action="click->image-viewer#openViewer"
+       <% end %>>
+    <% if @user.cover_picture.attached? %>
+      <%= image_tag url_for(@user.cover_picture), 
+          class: "w-full h-full object-cover opacity-0", 
+          data: { image_viewer_target: "image", action: "click->image-viewer#openViewer", image_url: url_for(@user.cover_picture) } %>
+    <% end %>
   </div>
 
   <!-- Profile Content -->
@@ -24,9 +34,13 @@
        <!-- Profile Picture -->
        <div class="relative">
          <% if @user.profile_picture.attached? %>
-           <%= link_to url_for(@user.profile_picture), target: "_blank", class: "block w-24 h-24 rounded-full border-4 border-black bg-gray-800 overflow-hidden hover:opacity-90 transition-opacity" do %>
-             <%= image_tag url_for(@user.profile_picture), class: "w-full h-full object-cover" %>
-           <% end %>
+           <div class="block w-24 h-24 rounded-full border-4 border-black bg-gray-800 overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                data-controller="image-viewer"
+                data-action="click->image-viewer#openViewer">
+             <%= image_tag url_for(@user.profile_picture), 
+                 class: "w-full h-full object-cover",
+                 data: { image_viewer_target: "image", action: "click->image-viewer#openViewer", image_url: url_for(@user.profile_picture) } %>
+           </div>
          <% else %>
            <div class="w-24 h-24 rounded-full border-4 border-black bg-gray-800 overflow-hidden flex items-center justify-center">
              <span class="text-2xl font-bold text-gray-400">
