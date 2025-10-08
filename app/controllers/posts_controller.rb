@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :require_authentication
-  before_action :set_post, only: [:edit, :update, :destroy]
+  before_action :set_post, only: [:edit, :update]
 
   def index
     @tab = params[:tab] || 'following'
@@ -134,6 +134,14 @@ class PostsController < ApplicationController
   end
 
   def destroy
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
+    
     @post.soft_delete!
     respond_to do |format|
       format.turbo_stream

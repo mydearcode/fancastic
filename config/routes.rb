@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   # Username-based post routes (new format)
   get '/:username/posts/:id', to: 'posts#show', as: :user_post,
       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  delete '/:username/posts/:id', to: 'posts#destroy', as: :destroy_user_post,
+         constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
   post '/:username/posts/:id/like', to: 'posts#like', as: :like_user_post,
        constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
   post '/:username/posts/:id/repost', to: 'posts#repost', as: :repost_user_post,

@@ -1,82 +1,154 @@
 <%= turbo_frame_tag "quote_modal" do %>
   <!-- Modal Overlay -->
   <div id="quote-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closeModal(event)">
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+    <div class="bg-black border border-gray-800 rounded-xl shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Quote Post</h2>
-        <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+        <h2 class="text-xl font-bold text-white">Quote Post</h2>
+        <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="text-gray-400 hover:text-gray-200 text-2xl font-bold">×</button>
       </div>
-    
-    <!-- Energy Bar -->
-    <div class="flex items-center space-x-2 mb-4">
-      <span class="text-sm font-medium text-gray-600">Energy:</span>
-      <div class="w-24 bg-gray-200 rounded-full h-2.5">
-        <div class="bg-green-600 h-2.5 rounded-full <%= 'bg-yellow-500' if Current.user.energy < 50 %> <%= 'bg-red-500' if Current.user.energy < 20 %>" style="width: <%= Current.user.energy %>%"></div>
-      </div>
-      <span class="text-sm text-gray-500"><%= Current.user.energy %>/100</span>
-    </div>
-    
-    <%= form_with model: @quote_post, url: smart_create_quote_post_path(@post), method: :post, class: "space-y-4", 
-    data: { 
-      turbo: true,
-      controller: "quote-form"
-    },
-    onsubmit: "setTimeout(function() { document.getElementById('quote_modal').innerHTML = ''; }, 500);" do |form| %>
-      <%= form.hidden_field :quote_of_post_id, value: @post.id %>
       
-      <div class="relative">
-        <%= form.text_area :text, placeholder: "Add your comment...", 
-            class: "w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent", 
-            rows: 3,
-            id: "quote_textarea",
-            maxlength: 280,
-            data: { 
-              quote_form_target: "textarea",
-              action: "input->quote-form#updateCounter"
-            } %>
+      <!-- Quote form using existing post form partial -->
+      <%= form_with model: @quote_post, url: smart_create_quote_post_path(@post), method: :post, 
+          data: { 
+            turbo: true,
+            controller: "modal-form mention image-paste post-form",
+            action: "turbo:submit-end->modal-form#closeModal",
+            post_form_target: "container"
+          },
+          onsubmit: "setTimeout(function() { document.getElementById('quote_modal').innerHTML = ''; }, 500);" do |form| %>
+        <%= form.hidden_field :quote_of_post_id, value: @post.id %>
         
-        <!-- Character counter -->
-        <div class="absolute bottom-2 right-3 text-sm text-gray-500">
-          <span id="quote_char_count" data-quote-form-target="counter">0/280</span>
-        </div>
-      </div>
-      
-      <div>
-        <%= form.file_field :image, 
-            accept: "image/*",
-            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            placeholder: "Add an image (optional)" %>
-        <p class="text-xs text-gray-500 mt-1">Supported formats: JPEG, PNG, GIF, WebP (max 10MB)</p>
-      </div>
-      
-      <!-- Original Post Preview -->
-      <% if @post && @post.user %>
-        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-          <div class="flex items-center mb-2">
-            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-2">
-              <%= @post.user.username.first.upcase %>
-            </div>
-            <span class="font-semibold text-gray-900">@<%= @post.user.username %></span>
-            <span class="text-sm text-gray-500 ml-2"><%= time_ago_in_words(@post.created_at) %> ago</span>
+        <% if @quote_post.errors.any? %>
+          <div class="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+            <h4 class="text-red-300 font-medium mb-2">Please fix the following errors:</h4>
+            <ul class="text-red-300 text-sm">
+              <% @quote_post.errors.full_messages.each do |message| %>
+                <li>• <%= message %></li>
+              <% end %>
+            </ul>
           </div>
-          <p class="text-gray-700"><%= @post.text %></p>
-        </div>
-      <% end %>
-      
-      <div class="flex justify-between items-center">
-        <div class="flex space-x-4">
-          <%= form.select :visibility, 
-              options_for_select(Post.visibilities.map { |key, value| [key.humanize, key] }, 'everyone'),
-              {},
-              { class: "px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" } %>
+        <% end %>
+        
+        <div class="mb-4 relative">
+          <%= form.text_area :text, 
+              placeholder: "Add your comment...", 
+              class: "w-full p-4 bg-black border border-gray-800 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-500 text-xl",
+              rows: 3,
+              id: "quote_textarea",
+              maxlength: 280,
+              data: { 
+                mention_target: "textarea", 
+                image_paste_target: "textarea",
+                post_form_target: "textarea",
+                action: "input->post-form#updateCounter"
+              } %>
+          
+          <!-- Character counter -->
+          <div class="absolute bottom-2 right-3 text-sm text-gray-500">
+            <span id="quote_char_count" data-post-form-target="counter">0/280</span>
+          </div>
+          
+          <!-- Mention önerileri için container -->
+          <div data-mention-target="suggestions" class="hidden"></div>
+          
+          <!-- Image preview container -->
+          <div class="image-preview-container mt-3 hidden"></div>
         </div>
         
-        <div class="flex space-x-3">
-          <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-medium transition-colors">Cancel</button>
-          <%= form.submit "Quote Post (-3 Energy)", class: "bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg font-medium transition-colors" %>
+        <!-- Hidden file input -->
+        <div class="hidden">
+          <%= form.file_field :images, 
+              id: "quote_images_input",
+              accept: "image/*",
+              multiple: true,
+              data: { image_paste_target: "fileInput" } %>
         </div>
-      </div>
-    <% end %>
+        
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center space-x-1">
+            <!-- Image upload icon -->
+            <button type="button" 
+                    onclick="document.getElementById('quote_images_input').click()" 
+                    class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                    title="Add photos">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            
+            <!-- GIF icon -->
+            <button type="button" 
+                    class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                    title="Add GIF">
+              <span class="text-sm font-bold">GIF</span>
+            </button>
+            
+            <!-- Emoji icon -->
+            <button type="button" 
+                    class="p-2 text-blue-400 hover:bg-blue-900 hover:bg-opacity-20 rounded-full transition-colors"
+                    title="Add emoji">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            
+            <%= form.select :visibility, 
+                options_for_select([['🌍 Everyone', 'everyone'], ['👥 Followers', 'followers'], ['🔒 Only Me', 'only_me']], @quote_post.visibility),
+                {}, 
+                { class: "px-4 py-2 bg-black border border-gray-800 rounded-full text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-300" } %>
+          </div>
+          
+          <div class="flex space-x-3">
+            <button type="button" onclick="document.getElementById('quote_modal').innerHTML = ''" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-xl font-medium transition-colors">Cancel</button>
+            <%= form.submit "Quote Post (-3 Energy)", 
+                class: "px-8 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black transition-colors font-semibold disabled:opacity-50" %>
+          </div>
+        </div>
+        
+        <!-- Original Post Preview -->
+        <% if @post && @post.user %>
+          <div class="border border-gray-700 rounded-xl p-4 bg-gray-900">
+            <div class="flex items-center mb-2">
+              <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+                <% if @post.user.profile_picture&.attached? %>
+                  <%= image_tag @post.user.profile_picture, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <div class="w-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold h-full">
+                    <%= @post.user.username.first.upcase %>
+                  </div>
+                <% end %>
+              </div>
+              <span class="font-semibold text-white">@<%= @post.user.username %></span>
+              <span class="text-sm text-gray-400 ml-2"><%= time_ago_in_words(@post.created_at) %> ago</span>
+            </div>
+            <p class="text-gray-300"><%= @post.text %></p>
+            
+            <!-- Show original post images if any -->
+            <% if @post.images.attached? %>
+              <div class="mt-3">
+                <% if @post.images.count == 1 %>
+                  <div class="rounded-xl overflow-hidden">
+                    <%= image_tag @post.images.first, class: "w-full h-auto max-h-96 object-cover" %>
+                  </div>
+                <% else %>
+                  <div class="grid gap-2 rounded-xl overflow-hidden" style="grid-template-columns: repeat(<%= [@post.images.count, 2].min %>, 1fr);">
+                    <% @post.images.first(4).each_with_index do |image, index| %>
+                      <div class="relative">
+                        <%= image_tag image, class: "w-full h-32 object-cover" %>
+                        <% if index == 3 && @post.images.count > 4 %>
+                          <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">+<%= @post.images.count - 4 %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
   
