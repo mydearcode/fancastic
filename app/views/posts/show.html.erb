@@ -1,11 +1,23 @@
 <% content_for :title, "#{@post.user.full_name || @post.user.username} (@#{@post.user.username}) on Weuz" %>
 <% content_for :description, strip_tags(@post.text) %>
-<% if @post.images.attached? && @post.images.first %>
-  <% content_for :head do %>
+<% content_for :head do %>
+  <% if @post.images.attached? && @post.images.first %>
     <meta property="og:image" content="<%= url_for(@post.images.first) %>">
     <meta property="twitter:image" content="<%= url_for(@post.images.first) %>">
     <meta property="twitter:card" content="summary_large_image">
+  <% else %>
+    <meta property="og:image" content="<%= request.base_url %>/icon.png">
+    <meta property="twitter:image" content="<%= request.base_url %>/icon.png">
+    <meta property="twitter:card" content="summary">
   <% end %>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="<%= request.original_url %>">
+  <meta property="og:title" content="<%= content_for(:title) %>">
+  <meta property="og:description" content="<%= content_for(:description) %>">
+  <meta property="og:site_name" content="Weuz">
+  <meta property="twitter:url" content="<%= request.original_url %>">
+  <meta property="twitter:title" content="<%= content_for(:title) %>">
+  <meta property="twitter:description" content="<%= content_for(:description) %>">
 <% end %>
 
 <div class="max-w-2xl mx-auto px-4 py-6">
