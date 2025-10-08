@@ -437,7 +437,10 @@
         <!-- Share -->
         <div data-controller="share" 
              data-share-url-value="<%= post_url(target_post) %>" 
-             data-share-text-value="<%= truncate(strip_tags(target_post.text), length: 100) %>">
+             data-share-text-value="<%= truncate(strip_tags(target_post.text), length: 100) %>"
+             <% if target_post.images.attached? && target_post.images.first %>
+               data-share-image-value="<%= url_for(target_post.images.first) %>"
+             <% end %>>
           <button type="button" class="hover:text-[#81b71a] transition-colors flex items-center group"
                   title="Share" data-action="click->share#sharePost">
             <div class="p-3">

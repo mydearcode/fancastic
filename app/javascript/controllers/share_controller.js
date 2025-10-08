@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { url: String, text: String }
+  static values = { url: String, text: String, image: String }
 
   connect() {
     // Share controller is ready
@@ -11,12 +11,49 @@ export default class extends Controller {
     event.preventDefault()
     event.stopPropagation()
     
-    if (navigator.share) {
-      navigator.share({
-        title: 'Fancastic Post',
-        text: this.textValue,
-        url: this.urlValue
-      }).then(() => {
+    const shareData = {
+      title: 'Fancastic Post',
+      text: this.textValue,
+      url: this.urlValue
+    }
+
+    // Add image if available and supported
+    if (this.imageValue && navigator.canShare) {
+      // For Web Share API Level 2 (files support)
+      fetch(this.imageValue)
+        .then(response => response.blob())
+        .then(blob => {
+          const file = new File([blob], 'image.jpg', { type: blob.type })
+          const shareDataWithFile = {
+            ...shareData,
+            files: [file]
+          }
+          
+          if (navigator.canShare(shareDataWithFile)) {
+            return navigator.share(shareDataWithFile)
+          } else {
+            return navigator.share(shareData)
+          }
+        })
+        .catch(() => {
+          // Fallback to sharing without image
+          if (navigator.share) {
+            navigator.share(shareData)
+          } else {
+            this.fallbackShare()
+          }
+        })
+        .then(() => {
+          // Shared successfully
+        })
+        .catch((error) => {
+          if (error.name !== 'AbortError') {
+            console.error('Error sharing:', error);
+            this.fallbackShare();
+          }
+        })
+    } else if (navigator.share) {
+      navigator.share(shareData).then(() => {
         // Shared successfully
       }).catch((error) => {
         // Only show error if it's not a user cancellation
