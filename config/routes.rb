@@ -9,14 +9,85 @@ Rails.application.routes.draw do
   get 'suspended_account(/:username)', to: 'suspended_accounts#show', as: :suspended_account
   resources :reports, only: [:new, :create]
   root "posts#index"
-  resources :posts do
+  
+  # Post creation route
+  resources :posts, only: [:create, :new]
+  
+  # Username-based post routes (new format)
+  get '/:username/posts/:id', to: 'posts#show', as: :user_post,
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  post '/:username/posts/:id/like', to: 'posts#like', as: :like_user_post,
+       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  post '/:username/posts/:id/repost', to: 'posts#repost', as: :repost_user_post,
+       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  post '/:username/posts/:id/reply', to: 'posts#reply', as: :reply_user_post,
+       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  get '/:username/posts/:id/quote', to: 'posts#quote', as: :quote_user_post,
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  post '/:username/posts/:id/quote', to: 'posts#quote', as: :create_quote_user_post,
+       constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+  get '/:username/posts/:id/quotes', to: 'posts#quotes', as: :quotes_user_post,
+      constraints: { username: /[a-zA-Z0-9_]{3,20}/ }
+
+  # Legacy post routes with redirects to new username-based format
+  resources :posts, only: [:show] do
     member do
-      post :like
-      post :repost
-      post :reply
-      get :quote
-      post :quote
-      get :quotes
+      get '/', to: redirect { |params, request| 
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      post :like, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/like"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      post :repost, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/repost"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      post :reply, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/reply"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      get :quote, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/quote"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      post :quote, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/quote"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
+      get :quotes, to: redirect { |params, request|
+        begin
+          post = Post.find(params[:id])
+          "/#{post.user.username}/posts/#{post.id}/quotes"
+        rescue ActiveRecord::RecordNotFound
+          "/posts"
+        end
+      }
     end
   end
   get "profile", to: "profiles#show"

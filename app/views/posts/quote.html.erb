@@ -16,7 +16,7 @@
       <span class="text-sm text-gray-500"><%= Current.user.energy %>/100</span>
     </div>
     
-    <%= form_with model: @quote_post, url: quote_post_path(@post), method: :post, class: "space-y-4", 
+    <%= form_with model: @quote_post, url: smart_create_quote_post_path(@post), method: :post, class: "space-y-4", 
     data: { 
       turbo: true,
       controller: "quote-form"

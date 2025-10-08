@@ -2,6 +2,39 @@ module ApplicationHelper
   include Pagy::Frontend
   include YoutubeHelper
   
+  # Smart URL helpers for username-based post URLs
+  def smart_post_path(post, **options)
+    user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_post_url(post, **options)
+    user_post_url(post.user.username, post, **options)
+  end
+
+  def smart_like_post_path(post, **options)
+    like_user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_repost_post_path(post, **options)
+    repost_user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_quote_post_path(post, **options)
+    quote_user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_quotes_post_path(post, **options)
+    quotes_user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_reply_post_path(post, **options)
+    reply_user_post_path(post.user.username, post, **options)
+  end
+
+  def smart_create_quote_post_path(post, **options)
+    create_quote_user_post_path(post.user.username, post, **options)
+  end
+  
   # Post içeriğindeki hem YouTube hem de TikTok videolarını gömme
   def embed_videos(content)
     return content if content.blank?

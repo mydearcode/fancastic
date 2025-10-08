@@ -21,7 +21,7 @@
               <% if report.reportable_type == "Post" %>
                 <div class="text-sm font-medium text-white">Post</div>
                 <div class="text-sm text-gray-400">
-                  <%= link_to "View Post", post_path(report.reportable), class: "text-blue-400 hover:underline" %>
+                  <%= link_to "View Post", smart_post_path(report.reportable), class: "text-blue-400 hover:underline" %>
                 </div>
                 <div class="text-xs text-gray-500 mt-1">
                   <%= report.reportable.text.truncate(50) %>

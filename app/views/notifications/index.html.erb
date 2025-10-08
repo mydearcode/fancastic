@@ -219,27 +219,30 @@
                 <% end %>
               <% elsif group[:post_id] %>
                 <!-- Post-related notifications -->
-                <%= link_to post_path(group[:post_id]), class: "block hover:bg-gray-900 rounded-lg p-2 -m-2 transition-colors" do %>
-                  <div class="flex items-center justify-between">
-                    <p class="text-xs sm:text-sm text-white pr-2">
-                      <%= grouped_message %>
-                    </p>
-                    <% if notifications_in_group.any?(&:unread?) %>
-                      <span class="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 flex-shrink-0">
-                        New
-                      </span>
-                    <% end %>
-                  </div>
-                  <% if group[:post_summary].present? %>
-                    <div class="mt-2 p-2 bg-gray-900 rounded-lg border-l-2 border-blue-500">
-                      <p class="text-xs text-gray-300 italic break-words">
-                        "<%= group[:post_summary] %>"
+                <% post = Post.find_by(id: group[:post_id]) %>
+                <% if post %>
+                  <%= link_to smart_post_path(post), class: "block hover:bg-gray-900 rounded-lg p-2 -m-2 transition-colors" do %>
+                    <div class="flex items-center justify-between">
+                      <p class="text-xs sm:text-sm text-white pr-2">
+                        <%= grouped_message %>
                       </p>
+                      <% if notifications_in_group.any?(&:unread?) %>
+                        <span class="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 flex-shrink-0">
+                          New
+                        </span>
+                      <% end %>
                     </div>
+                    <% if group[:post_summary].present? %>
+                      <div class="mt-2 p-2 bg-gray-900 rounded-lg border-l-2 border-blue-500">
+                        <p class="text-xs text-gray-300 italic break-words">
+                          "<%= group[:post_summary] %>"
+                        </p>
+                      </div>
+                    <% end %>
+                    <p class="text-xs text-gray-400 mt-1">
+                      <%= time_ago_in_words(notification.created_at) %> ago
+                    </p>
                   <% end %>
-                  <p class="text-xs text-gray-400 mt-1">
-                    <%= time_ago_in_words(notification.created_at) %> ago
-                  </p>
                 <% end %>
               <% else %>
                 <!-- Fallback for other notifications -->

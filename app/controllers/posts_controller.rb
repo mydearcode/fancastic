@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :require_authentication
-  before_action :set_post, only: [:show, :edit, :update, :destroy, :like, :repost, :reply, :quote]
+  before_action :set_post, only: [:edit, :update, :destroy]
 
   def index
     @tab = params[:tab] || 'following'
@@ -66,9 +66,19 @@ class PostsController < ApplicationController
   end
 
   def show
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
+    
     @replies = @post.replies.includes(:user, :in_reply_to_post, :repost_of_post, :quote_of_post)
                     .order(created_at: :desc)
     @reply_post = Post.new(visibility: 'everyone')
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
 
   def new
@@ -132,6 +142,14 @@ class PostsController < ApplicationController
   end
   
   def like
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
+    
     unless Current.user.can_perform_action?('like')
       redirect_back(fallback_location: root_path, alert: 'Not enough energy to like this post.')
       return
@@ -166,9 +184,19 @@ class PostsController < ApplicationController
         format.turbo_stream { render turbo_stream: turbo_stream.replace("post_#{@post.id}", partial: 'posts/post', locals: { post: @post }) }
       end
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
   
   def repost
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
+    
     unless Current.user.can_perform_action?('repost')
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, alert: 'Not enough energy to repost.') }
@@ -221,10 +249,18 @@ class PostsController < ApplicationController
         end
       end
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
   
   def quote
-    @post = Post.find(params[:id])
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
     
     if request.post?
       # Handle quote creation
@@ -249,7 +285,7 @@ class PostsController < ApplicationController
           MentionService.process_mentions(@quote_post)
           
           respond_to do |format|
-            format.html { redirect_to posts_path, notice: 'Post quoted successfully!' }
+            format.html { redirect_to root_path, notice: 'Post quoted successfully!' }
             format.turbo_stream do
               # First, clear the modal
               render turbo_stream: [
@@ -262,20 +298,28 @@ class PostsController < ApplicationController
           render :quote
         end
       else
-        redirect_to posts_path, alert: 'Not enough energy to quote.'
+        redirect_to root_path, alert: 'Not enough energy to quote.'
       end
     else
       # Handle quote form display
       if Current.user.can_perform_action?('quote')
         @quote_post = Current.user.posts.build
       else
-        redirect_to posts_path, alert: 'Not enough energy to quote.'
+        redirect_to root_path, alert: 'Not enough energy to quote.'
       end
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
   
   def reply
-    @post = Post.find(params[:id])
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
     
     unless Current.user.can_perform_action?('reply')
       respond_to do |format|
@@ -305,23 +349,34 @@ class PostsController < ApplicationController
       MentionService.process_mentions(@reply_post)
       
       respond_to do |format|
-        format.html { redirect_to post_path(@post), notice: 'Reply posted successfully!' }
+        format.html { redirect_to smart_post_path(@post), notice: 'Reply posted successfully!' }
         format.turbo_stream
       end
     else
       respond_to do |format|
-        format.html { redirect_to post_path(@post), alert: 'Failed to post reply. Please try again.' }
+        format.html { redirect_to smart_post_path(@post), alert: 'Failed to post reply. Please try again.' }
         format.turbo_stream { render turbo_stream: turbo_stream.replace("reply_form", partial: "posts/reply_form", locals: { post: @post, reply_post: @reply_post }) }
       end
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
   
   def quotes
-    @post = Post.find(params[:id])
+    # Handle username-based routing
+    if params[:username]
+      @user = User.find_by!(username: params[:username])
+      @post = @user.posts.find(params[:id])
+    else
+      @post = Post.find(params[:id])
+    end
+    
     @quotes = Post.includes(:user, :quote_of_post)
                   .where(quote_of_post: @post)
                   .order(created_at: :desc)
                   .limit(50)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "Post or user not found"
   end
 
   private
