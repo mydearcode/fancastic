@@ -79,7 +79,7 @@ GEM
     bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
     benchmark (0.4.1)
-    bigdecimal (3.2.3)
+    bigdecimal (3.3.0)
     bindex (0.8.1)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
@@ -117,7 +117,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    httparty (0.21.0)
+    httparty (0.23.2)
+      csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
@@ -393,7 +394,7 @@ DEPENDENCIES
   capybara
   csv (~> 3.2.8)
   debug
-  httparty (~> 0.21.0)
+  httparty (~> 0.23.2)
   importmap-rails
   jbuilder
   kamal
