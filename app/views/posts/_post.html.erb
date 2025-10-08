@@ -436,8 +436,8 @@
 
         <!-- Share -->
         <div data-controller="share" 
-             data-share-url-value="<%= post_url(target_post) %>" 
-             data-share-text-value="<%= truncate(strip_tags(target_post.text), length: 100) %>"
+             data-share-url-value="<%= user_post_url(target_post.user.username, target_post) %>" 
+             data-share-text-value="<%= "#{target_post.user.full_name || target_post.user.username} (@#{target_post.user.username}) on Weuz\n\n#{strip_tags(target_post.text)}" %>"
              <% if target_post.images.attached? && target_post.images.first %>
                data-share-image-value="<%= url_for(target_post.images.first) %>"
              <% end %>>
